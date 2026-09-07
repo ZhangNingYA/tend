@@ -1,4 +1,5 @@
 /* The research notebook: archive, reading layout, and Markdown Q&A. */
+html:has(> body.papers-page) { overflow-x: clip; }
 .papers-page {
   --notebook-bg: #f9faf7;
   --notebook-ink: #252c27;
@@ -9,6 +10,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: clip;
   margin: 0;
   background: var(--notebook-bg);
   color: var(--notebook-ink);
@@ -93,9 +95,9 @@
 .notebook-endnote { margin: 25px 0 0; color: var(--notebook-muted); font-family: var(--notebook-serif); font-size: 0.9rem; font-style: italic; }
 .notebook-empty { padding-block: 40px; color: var(--notebook-muted); }
 
-/* Note cover. A question directory appears only after questions are added. */
+/* Note cover and a directory for overviews or question-and-answer notes. */
 .paper-document { max-width: 800px; padding: 32px 0 85px; }
-.paper-document.has-questions { max-width: 1120px; }
+.paper-document.has-contents { max-width: 1120px; }
 .paper-back { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 64px; color: var(--notebook-muted) !important; font-size: 0.74rem; text-decoration: none; }
 .paper-back:hover { color: var(--notebook-accent) !important; }
 .paper-cover-topic { padding-left: 12px; border-left: 1px solid var(--notebook-line); letter-spacing: 0.05em; }
@@ -105,8 +107,8 @@
 .paper-cover-description { max-width: 760px; margin: 32px 0 0; color: #515b51; font-size: 0.98rem; line-height: 2.05; text-wrap: pretty; }
 .paper-cover-bottom { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; margin-top: 30px; color: var(--notebook-muted); font-size: 0.66rem; }
 .paper-reading-layout { padding-top: 76px; }
-.has-questions .paper-cover { padding-bottom: 32px; border-bottom: 1px solid var(--notebook-ink); }
-.has-questions .paper-reading-layout { display: grid; grid-template-columns: 235px minmax(0, 1fr); gap: 72px; align-items: start; padding-top: 42px; }
+.has-contents .paper-cover { padding-bottom: 32px; border-bottom: 1px solid var(--notebook-ink); }
+.has-contents .paper-reading-layout { display: grid; grid-template-columns: 235px minmax(0, 1fr); gap: 72px; align-items: start; padding-top: 42px; }
 .paper-contents { align-self: stretch; min-width: 0; }
 .paper-contents-inner { position: sticky; top: 91px; max-height: calc(100dvh - 115px); overflow-y: auto; scrollbar-width: thin; }
 .paper-contents summary { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 5px 4px 19px 0; color: var(--notebook-muted); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; list-style: none; }
@@ -128,9 +130,10 @@
 .paper-prose h2[id^='问']::before { display: block; margin-bottom: 12px; color: var(--notebook-accent); font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; content: 'QUESTION ' counter(question, decimal-leading-zero); }
 .paper-prose h2:first-child { margin-top: 0; }
 .paper-prose h2[id^='问']:first-child { padding-top: 0; border-top: 0; }
+.has-contents .paper-prose h2:first-child { padding-top: 0; border-top: 0; }
 .paper-prose h2#原论文 { margin-bottom: 15px; padding-top: 22px; color: var(--notebook-muted); font-size: 0.74rem; font-weight: 500; }
 .paper-prose h2#原论文 + p { font-size: 0.86rem; }
-.paper-prose h3 { margin: 27px 0 10px; font-size: 1rem; font-weight: 600; line-height: 1.7; scroll-margin-top: 90px; }
+.paper-prose h3 { margin: 44px 0 16px; font-size: 1.12rem; font-weight: 600; line-height: 1.7; scroll-margin-top: 90px; }
 .paper-prose p { margin: 15px 0; }
 .paper-prose strong { font-weight: 600; color: var(--notebook-ink); }
 .paper-prose blockquote { margin: 0 0 24px; padding: 15px 21px; border-left: 2px solid #7c8c70; background: #f0f3ec; color: #45533e; font-size: 0.94rem; line-height: 1.9; }
@@ -159,6 +162,8 @@
 .paper-prose table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin: 23px 0; font-size: 0.85rem; line-height: 1.65; }
 .paper-prose th, .paper-prose td { padding: 12px 18px; border-bottom: 1px solid var(--notebook-line); text-align: left; }
 .paper-prose th { color: var(--notebook-muted); font-weight: 500; background: #f0f3ec; }
+.paper-prose .paper-results :is(th, td) { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.paper-prose .paper-results :is(th, td):not(:first-child) { text-align: right; }
 .paper-prose code:not(.katex *) { padding: 2px 5px; border-radius: 3px; background: #edf0e8; font-size: 0.85em; }
 .paper-prose pre { max-width: 100%; overflow-x: auto; padding: 20px; border: 1px solid var(--notebook-line); border-radius: 3px; line-height: 1.7; }
 .paper-prose pre code { padding: 0; background: transparent; }
@@ -169,7 +174,7 @@
   .notebook-hero { gap: 35px; grid-template-columns: minmax(0, 1fr) 185px; }
   .notebook-entry-link { grid-template-columns: 35px minmax(0, 1fr) 30px; gap: 20px; }
   .notebook-entry-open > span { display: none; }
-  .has-questions .paper-reading-layout { grid-template-columns: 195px minmax(0, 1fr); gap: 36px; }
+  .has-contents .paper-reading-layout { grid-template-columns: 195px minmax(0, 1fr); gap: 36px; }
 }
 @media (max-width: 760px) {
   .papers-shell { width: calc(100% - 40px); }
@@ -192,7 +197,7 @@
   .paper-bibliography { gap: 7px 10px; font-size: 0.68rem; }
   .paper-bibliography > span { padding-left: 10px; }
   .paper-reading-layout { padding-top: 48px; }
-  .has-questions .paper-reading-layout { display: block; padding-top: 25px; }
+  .has-contents .paper-reading-layout { display: block; padding-top: 25px; }
   .paper-contents { margin-bottom: 30px; border-bottom: 1px solid var(--notebook-line); }
   .paper-contents-inner { position: static; max-height: none; overflow: visible; }
   .paper-contents summary { padding-bottom: 18px; }
@@ -203,6 +208,7 @@
   .paper-prose blockquote { padding: 13px 16px; }
   .paper-prose .katex-display { padding: 20px 15px; font-size: 0.92em; }
   .paper-prose th, .paper-prose td { padding: 10px 12px; }
+  .paper-prose .paper-results :is(th, td) { padding-inline: 8px; font-size: 0.78rem; }
   .papers-footer { font-size: 0.65rem; }
   .papers-footer a > span { margin-left: 3px; }
 }
@@ -214,7 +220,7 @@
   .paper-note .site-header, .papers-skip, .paper-contents, .paper-back, .papers-footer { display: none; }
   .papers-shell { width: 100%; }
   .paper-document { max-width: none; padding: 0; }
-  .has-questions .paper-reading-layout { display: block; }
+  .has-contents .paper-reading-layout { display: block; }
   .paper-prose { font-size: 10pt; }
   .paper-prose h2, .paper-prose h3 { break-after: avoid; }
   .paper-prose .katex-display { break-inside: avoid; border: 0; background: transparent; padding-inline: 0; font-size: 0.85em; }

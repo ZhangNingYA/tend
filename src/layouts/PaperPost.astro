@@ -12,6 +12,7 @@ type Props = CollectionEntry<'papers'>['data'] & { headings: MarkdownHeading[] }
 const { title, description, pubDate, updatedDate, authors, venue, year, topic, headings } = Astro.props;
 const questions = headings.filter((heading) => heading.depth === 2 && heading.text.startsWith('问：'));
 const reference = headings.find((heading) => heading.depth === 2 && heading.text === '原论文');
+const sections = headings.filter((heading) => (heading.depth === 2 || heading.depth === 3) && heading.text !== '原论文');
 ---
 
 <!doctype html>
@@ -23,7 +24,7 @@ const reference = headings.find((heading) => heading.depth === 2 && heading.text
     <a class="papers-skip" href="#main">跳至正文</a>
     <BlogHeader active="papers" />
 
-    <main id="main" class:list={['papers-shell', 'paper-document', { 'has-questions': questions.length > 0 }]}>
+    <main id="main" class:list={['papers-shell', 'paper-document', { 'has-contents': sections.length > 0 }]}>
       <a class="paper-back" href="/papers/"><ArrowLeft size={15} stroke-width={1.6} /> All paper notes</a>
 
       <header class="paper-cover">
@@ -38,18 +39,18 @@ const reference = headings.find((heading) => heading.depth === 2 && heading.text
       </header>
 
       <div class="paper-reading-layout">
-        {questions.length > 0 && (
-          <aside class="paper-contents" aria-label="问题导航">
+        {sections.length > 0 && (
+          <aside class="paper-contents" aria-label="内容导航">
             <div class="paper-contents-inner">
-              <details open>
+              <details open data-paper-contents>
                 <summary><span>On this page</span><span class="paper-contents-toggle" aria-hidden="true"></span></summary>
-                <nav aria-label="问题目录">
+                <nav aria-label="文章目录">
                   <ol>
-                    {questions.map((question, index) => (
+                    {sections.map((section) => (
                       <li>
-                        <a href={`#${question.slug}`} data-question-link>
-                          <span class="paper-nav-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                          <span>{question.text.replace(/^问：\s*/, '')}</span>
+                        <a href={`#${section.slug}`} data-note-section-link>
+                          <span class="paper-nav-number" aria-hidden="true">{section.text.match(/^(\d+)\./)?.[1].padStart(2, '0') ?? '—'}</span>
+                          <span>{section.text.replace(/^问：\s*/, '').replace(/^\d+\.\s*/, '')}</span>
                         </a>
                       </li>
                     ))}
@@ -73,11 +74,14 @@ const reference = headings.find((heading) => heading.depth === 2 && heading.text
     </footer>
 
     <script>
-      const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-question-link]'));
+      const contents = document.querySelector<HTMLDetailsElement>('[data-paper-contents]');
+      if (contents && window.matchMedia('(max-width: 760px)').matches) contents.open = false;
+
+      const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-note-section-link]'));
       const sections = links.map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))));
 
       if (links.length) {
-        const updateCurrentQuestion = () => {
+        const updateCurrentSection = () => {
           let current = -1;
           sections.forEach((section, index) => {
             if (section && section.getBoundingClientRect().top <= 180) current = index;
@@ -93,17 +97,22 @@ const reference = headings.find((heading) => heading.depth === 2 && heading.text
           if (pending) return;
           pending = true;
           requestAnimationFrame(() => {
-            updateCurrentQuestion();
+            updateCurrentSection();
             pending = false;
           });
         }, { passive: true });
-        updateCurrentQuestion();
+        updateCurrentSection();
       }
 
       document.querySelectorAll<HTMLElement>('.paper-prose .katex-display').forEach((formula) => {
         formula.tabIndex = 0;
         formula.setAttribute('role', 'region');
         formula.setAttribute('aria-label', '公式，可使用左右方向键横向滚动');
+      });
+
+      document.querySelectorAll<HTMLElement>('.paper-prose table').forEach((table) => {
+        table.tabIndex = 0;
+        table.setAttribute('aria-label', '论文数据表，可使用左右方向键横向滚动');
       });
     </script>
   </body>

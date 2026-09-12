@@ -87,6 +87,31 @@ function Trajectory() {
   </>;
 }
 
+function Slam() {
+  const [loop, setLoop] = useState(true);
+  const [weight, setWeight] = useState(0.8);
+  const raw = [[0, 0], [1.1, 0.1], [2.2, 0.0], [3.1, 1.0], [2.9, 2.1], [1.9, 2.0], [0.8, 1.1], [0.15, 0.12]];
+  const correction = loop ? weight / (weight + 0.3) : 0;
+  const points = raw.map(([x, y], index) => [x - raw[7][0] * correction * index / 7, y - raw[7][1] * correction * index / 7]);
+  const project = ([x, y]) => [80 + x * 125, 315 - y * 110];
+  const polyline = (values) => values.map(project).map(([x, y]) => `${x},${y}`).join(' ');
+  return <>
+    <h3>实验：回环怎样拉回一张二维地图？</h3>
+    <p>这是一组刻意简化的二维位姿轨迹：末端重新看到起点，但里程计累计出一点闭环误差。打开回环因子后，误差会沿轨迹分摊；这不是完整 SLAM 求解器，而是用来观察约束传播的可视化模型。</p>
+    <div className="fg-lab-controls"><label className="fg-toggle"><input type="checkbox" checked={loop} onChange={(e) => setLoop(e.target.checked)} />加入回环因子</label><Slider label="回环权重" value={weight} onChange={setWeight} min={0.05} max={2} step={0.05} /></div>
+    <svg viewBox="0 0 600 380" role="img" aria-label={loop ? '棕色实线为加入回环后的二维轨迹，灰色虚线为仅使用里程计的轨迹。' : '灰色虚线为二维里程计轨迹，当前未加入回环。'}>
+      <path d="M80 315H575M80 315V30" stroke="#d1d8cc" />
+      <polyline points={polyline(raw)} fill="none" stroke="#879480" strokeWidth="2" strokeDasharray="7 6" />
+      {loop && <polyline points={polyline(points)} fill="none" stroke="#a14f38" strokeWidth="3" />}
+      {raw.map((point, index) => { const [x, y] = project(loop ? points[index] : point); return <g key={index}><circle cx={x} cy={y} r="6" fill={loop ? '#a14f38' : '#64735e'} /><text x={x + 9} y={y - 9} fill="#344832" fontSize="13">x{index}</text></g>; })}
+      <circle cx={80} cy={315} r="10" fill="none" stroke="#526b48" strokeWidth="2" /><text x="92" y="340" fill="#69716a" fontSize="13">起点 / 回环目标</text>
+      <text x="490" y="45" fill="#69716a" fontSize="13">y</text><text x="560" y="332" fill="#69716a" fontSize="13">x</text>
+    </svg>
+    <div className="fg-lab-output" aria-live="polite"><p>回环残差（末端到起点）：<strong>{loop ? `${number(points[7][0])} m, ${number(points[7][1])} m` : '未加入'}</strong></p><p>启用回环后，系统要同时满足局部运动和全局闭合；约束越强，校正越明显。</p></div>
+    <p className="fg-fine">灰色虚线是原始里程计轨迹，棕色实线是教学用的线性误差分摊。真实 SLAM 还要估计旋转、地标、观测关联，并反复线性化。</p>
+  </>;
+}
+
 export default function FactorGraphLab({ mode = 'fusion' }) {
-  return <section className="fg-lab" aria-label="因子图交互实验">{mode === 'messages' ? <Messages /> : mode === 'trajectory' ? <Trajectory /> : <Fusion />}<noscript><p>当前展示默认参数的计算结果。启用 JavaScript 后可调整参数；下方正文也提供完整手算过程。</p></noscript></section>;
+  return <section className="fg-lab" aria-label="因子图交互实验">{mode === 'messages' ? <Messages /> : mode === 'trajectory' ? <Trajectory /> : mode === 'slam' ? <Slam /> : <Fusion />}<noscript><p>当前展示默认参数的计算结果。启用 JavaScript 后可调整参数；下方正文也提供完整手算过程。</p></noscript></section>;
 }

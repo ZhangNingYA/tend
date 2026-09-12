@@ -33,7 +33,7 @@ const sections = headings.filter((heading) => (heading.depth === 2 || heading.de
         <h1>{title}</h1>
         <p class="paper-bibliography">{authors?.join('、')}{venue && <span>{venue}</span>}{year && <span>{year}</span>}</p>
         <p class="paper-cover-description">{description}</p>
-        {series && <a class="fg-course-home" href="/papers/factor-graphs/">因子图入门系列 · {part === 0 ? '学习路线' : `第 ${part} / 8 篇`} · 返回学习地图 ↗</a>}
+        {series && <a class="fg-course-home" href="/papers/factor-graphs/">因子图入门系列 · {part === 0 ? '学习路线' : `第 ${part} / 9 篇`} · 返回学习地图 ↗</a>}
         <div class="paper-cover-bottom">
           <span>Noted <FormattedDate date={pubDate} />{updatedDate && <> · Updated <FormattedDate date={updatedDate} /></>}</span>
           {questions.length > 0 && <span>{String(questions.length).padStart(2, '0')} questions & answers</span>}

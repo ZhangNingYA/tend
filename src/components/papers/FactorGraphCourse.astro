@@ -17,7 +17,7 @@ const totalMinutes = lessons.reduce((total, entry) => total + (entry.data.estima
 {mode === 'feature' ? (
   <section class="fg-feature" lang="zh-CN" aria-labelledby="fg-feature-title">
     <div>
-      <p class="papers-eyebrow">一条可以跟着走的学习路线 · 08 LESSONS</p>
+      <p class="papers-eyebrow">一条可以跟着走的学习路线 · 09 LESSONS</p>
       <h2 id="fg-feature-title">因子图，<br /><em>从第一条边开始。</em></h2>
       <p>从两个传感器的一次分歧，到一条轨迹的联合估计。用图解、手算和交互实验，走通概率建模、消息传递与优化。</p>
       <a class="fg-start" href="/papers/factor-graphs/">打开学习地图 <span aria-hidden="true">↗</span></a>
@@ -25,11 +25,11 @@ const totalMinutes = lessons.reduce((total, entry) => total + (entry.data.estima
     <aside>
       <span class="fg-feature-label">你的入门路径</span>
       <ol><li>看懂图 <span>直觉 · 概率 · 建模</span></li><li>算出结果 <span>消息 · 最小二乘 · 优化</span></li><li>连接研究 <span>滤波 · SLAM · 小项目</span></li></ol>
-      <p>8 篇正文 · 3 类交互实验 · 可运行的 Python 项目</p>
+      <p>9 篇正文 · 4 类交互实验 · 可运行的 Python 项目</p>
     </aside>
   </section>
 ) : mode === 'roadmap' ? (
-  <section class="fg-roadmap" aria-label="因子图学习路线" data-fg-progress>
+  <section class="fg-roadmap" aria-label="因子图学习路线" data-fg-progress data-fg-total={lessons.length}>
     <p class="fg-progress-summary" role="status" data-fg-summary>已完成 0 / {lessons.length} 篇 · 按自己的节奏学习</p>
     <progress data-fg-meter max={lessons.length} value="0" aria-label="因子图系列学习进度" />
     <ol>
@@ -46,7 +46,7 @@ const totalMinutes = lessons.reduce((total, entry) => total + (entry.data.estima
     <p class="fg-fine">正文与练习合计约 {totalMinutes} 分钟。完成标记保存在当前浏览器；它记录你的自评，不自动判断掌握程度。</p>
   </section>
 ) : (
-  <nav class="fg-navigation" aria-label="因子图系列篇章导航" data-fg-progress>
+  <nav class="fg-navigation" aria-label="因子图系列篇章导航" data-fg-progress data-fg-total={lessons.length}>
     {currentPart > 0 && <div class="fg-completion">
       <p>能独立回答本篇的自检题后，再标记完成。</p>
       <button type="button" data-fg-complete={currentPart} aria-pressed="false" hidden>标记本篇已完成</button>
@@ -66,11 +66,13 @@ const totalMinutes = lessons.reduce((total, entry) => total + (entry.data.estima
   let persistent = true;
   try {
     const saved = JSON.parse(localStorage.getItem(key) || '[]');
-    if (Array.isArray(saved)) completed = [...new Set(saved.filter((n) => Number.isInteger(n) && n >= 1 && n <= 8))];
+    const lessonCount = Number(document.querySelector<HTMLElement>('[data-fg-total]')?.dataset.fgTotal || 9);
+    if (Array.isArray(saved)) completed = [...new Set(saved.filter((n) => Number.isInteger(n) && n >= 1 && n <= lessonCount))];
   } catch { persistent = false; }
   const refresh = () => {
     document.querySelectorAll<HTMLElement>('[data-fg-summary]').forEach((node) => {
-      node.textContent = `已完成 ${completed.length} / 8 篇${persistent ? ' · 按自己的节奏学习' : ' · 浏览器存储不可用，本次页面内有效'}`;
+      const lessonCount = Number(document.querySelector<HTMLElement>('[data-fg-total]')?.dataset.fgTotal || 9);
+      node.textContent = `已完成 ${completed.length} / ${lessonCount} 篇${persistent ? ' · 按自己的节奏学习' : ' · 浏览器存储不可用，本次页面内有效'}`;
     });
     document.querySelectorAll<HTMLProgressElement>('[data-fg-meter]').forEach((node) => { node.value = completed.length; });
     document.querySelectorAll<HTMLElement>('[data-fg-lesson]').forEach((node) => {

@@ -54,7 +54,7 @@ $$
 
 ## 04. 工具与论文的下一站
 
-**工具顺序：**先用 NumPy/SciPy 写一维残差与 QR；再用 GTSAM 熟悉 `Values`、`NonlinearFactorGraph`、噪声模型和 `LevenbergMarquardtOptimizer`；需要在线增量更新时阅读 iSAM2。工具会替你管理稀疏结构，但不会替你决定坐标系、数据关联和噪声是否合理。
+**工具顺序：**先运行[一维项目源码与测试](/downloads/factor-graph-1d/README.md)，再用 NumPy/SciPy 写一维残差与 QR；然后用 GTSAM 熟悉 `Values`、`NonlinearFactorGraph`、噪声模型和 `LevenbergMarquardtOptimizer`；需要在线增量更新时阅读 iSAM2。工具会替你管理稀疏结构，但不会替你决定坐标系、数据关联和噪声是否合理。
 
 **阅读顺序：**先读 Kschischang、Frey、Loeliger 的 *Factor Graphs and the Sum-Product Algorithm*，建立消息传递的统一语言；再读 Dellaert 与 Kaess 的 *Factor Graphs for Robot Perception*，看机器人系统怎样落地；接着读 Kaess 等人的 iSAM2，理解增量平滑与 Bayes tree；最后根据方向进入 Forster 等人的 IMU 预积分、视觉惯性估计或鲁棒估计论文。
 
@@ -73,4 +73,4 @@ $$
 
 <FactorGraphCourse mode="roadmap" />
 
-你可以回到路线中的任意一篇重做实验。下一步最有价值的练习，是把一维位置换成二维位姿，再为一个真实传感器写出坐标系、残差和雅可比；每加一个因子，都先问它到底增加了哪一种可观测性。
+你可以回到路线中的任意一篇重做实验。下一步请进入[第 9 篇：二维位姿与小型 SLAM](/papers/factor-graphs-09-2d-slam/)，把一维位置换成二维位姿，再为一个真实传感器写出坐标系、残差和雅可比；每加一个因子，都先问它到底增加了哪一种可观测性。

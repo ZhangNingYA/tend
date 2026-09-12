@@ -5,11 +5,12 @@ import { ArrowLeft } from 'lucide-astro';
 import BaseHead from '../components/BaseHead.astro';
 import BlogHeader from '../components/blog/BlogHeader.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import FactorGraphCourse from '../components/papers/FactorGraphCourse.astro';
 import 'katex/dist/katex.min.css';
 import '../styles/papers.css';
 
 type Props = CollectionEntry<'papers'>['data'] & { headings: MarkdownHeading[] };
-const { title, description, pubDate, updatedDate, authors, venue, year, topic, headings } = Astro.props;
+const { title, description, pubDate, updatedDate, authors, venue, year, topic, headings, series, part, estimatedMinutes } = Astro.props;
 const questions = headings.filter((heading) => heading.depth === 2 && heading.text.startsWith('问：'));
 const reference = headings.find((heading) => heading.depth === 2 && heading.text === '原论文');
 const sections = headings.filter((heading) => (heading.depth === 2 || heading.depth === 3) && heading.text !== '原论文');
@@ -32,9 +33,11 @@ const sections = headings.filter((heading) => (heading.depth === 2 || heading.de
         <h1>{title}</h1>
         <p class="paper-bibliography">{authors?.join('、')}{venue && <span>{venue}</span>}{year && <span>{year}</span>}</p>
         <p class="paper-cover-description">{description}</p>
+        {series && <a class="fg-course-home" href="/papers/factor-graphs/">因子图入门系列 · {part === 0 ? '学习路线' : `第 ${part} / 8 篇`} · 返回学习地图 ↗</a>}
         <div class="paper-cover-bottom">
           <span>Noted <FormattedDate date={pubDate} />{updatedDate && <> · Updated <FormattedDate date={updatedDate} /></>}</span>
           {questions.length > 0 && <span>{String(questions.length).padStart(2, '0')} questions & answers</span>}
+          {estimatedMinutes && <span>建议学习 {estimatedMinutes} 分钟 · 含练习</span>}
         </div>
       </header>
 
@@ -64,6 +67,7 @@ const sections = headings.filter((heading) => (heading.depth === 2 || heading.de
 
         <article class="paper-prose" aria-label="论文笔记">
           <slot />
+          {series && <FactorGraphCourse mode="navigation" currentPart={part} />}
         </article>
       </div>
     </main>

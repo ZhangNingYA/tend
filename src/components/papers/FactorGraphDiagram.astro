@@ -1,0 +1,25 @@
+---
+interface Props { variant?: 'fusion' | 'chain' | 'loop'; }
+const { variant = 'chain' } = Astro.props;
+const fusion = variant === 'fusion';
+const loop = variant === 'loop';
+const description = fusion
+  ? '一个圆形未知位置 x，分别连接三个方形因子：先验、传感器 A、传感器 B。因子之间没有直接连边。'
+  : `三个圆形位置 x₀、x₁、x₂，通过两个方形运动因子连接。x₀ 连接先验，x₂ 连接绝对位置观测。${loop ? '额外的回环因子同时连接 x₀ 和 x₂，形成环。' : ''}`;
+---
+<figure class="fg-diagram">
+  <svg viewBox="0 0 640 260" role="img" aria-label={description}>
+    {fusion ? <>
+      <g class="fg-edges"><path d="M130 85L320 170L510 85M320 55V170" /></g>
+      <g class="fg-factors"><rect x="116" y="71" width="28" height="28" rx="3" /><rect x="306" y="41" width="28" height="28" rx="3" /><rect x="496" y="71" width="28" height="28" rx="3" /></g>
+      <circle class="fg-variable" cx="320" cy="170" r="28" />
+      <g class="fg-svg-text"><text x="320" y="176">x</text><text x="130" y="53">先验 f₀</text><text x="320" y="25">测量 f₁</text><text x="510" y="53">测量 f₂</text><text x="130" y="127">0 ± 2 m</text><text x="350" y="100" text-anchor="start">2 ± 1 m</text><text x="510" y="127">4 ± 2 m</text><text x="320" y="226">所有证据共同约束同一个未知位置</text></g>
+    </> : <>
+      <g class="fg-edges"><path d="M45 145H585M100 145V55H540V145" visibility={loop ? 'visible' : 'hidden'} /><path d="M45 145H585" /></g>
+      <g class="fg-factors"><rect x="31" y="131" width="28" height="28" rx="3" /><rect x="196" y="131" width="28" height="28" rx="3" /><rect x="416" y="131" width="28" height="28" rx="3" /><rect x="571" y="131" width="28" height="28" rx="3" />{loop && <rect x="306" y="41" width="28" height="28" rx="3" />}</g>
+      {[100, 320, 540].map((x, i) => <><circle class="fg-variable" cx={x} cy="145" r="27" /><text class="fg-svg-text" x={x} y="151">{['x₀', 'x₁', 'x₂'][i]}</text></>)}
+      <g class="fg-svg-text"><text x="45" y="198">先验</text><text x="210" y="198">运动 u₁</text><text x="430" y="198">运动 u₂</text><text x="585" y="198">观测 z₂</text>{loop && <text x="320" y="28">回环：x₂ − x₀ ≈ d</text>}</g>
+    </>}
+  </svg>
+  <figcaption>{description} 圆形＝待估变量；方形＝局部函数；边＝这个函数用到了这个变量。± 表示一倍标准差。</figcaption>
+</figure>

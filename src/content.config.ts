@@ -62,6 +62,9 @@ const papers = defineCollection({
         venue: z.string().optional(),
         year: z.number().optional(),
         doi: z.string().optional(),
+        series: z.literal('factor-graphs').optional(),
+        part: z.number().int().min(0).max(8).optional(),
+        estimatedMinutes: z.number().int().positive().optional(),
     }),
 });
 

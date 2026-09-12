@@ -1,0 +1,75 @@
+---
+title: '第 6 篇：非线性因子图——线性化、阻尼与鲁棒核'
+description: '从非线性残差的一阶近似走到 Gauss–Newton 与 Levenberg–Marquardt，并看异常值为何需要鲁棒损失。'
+indexTitle: '图画对了还不够：非线性问题怎样真正求解'
+indexDescription: '雅可比是局部地图；阻尼控制步长；鲁棒核降低坏观测的破坏力。'
+topic: 'Factor graphs / 06 optimization'
+pubDate: '2026-09-12'
+series: 'factor-graphs'
+part: 6
+estimatedMinutes: 60
+---
+
+import FactorGraphDiagram from '../../components/papers/FactorGraphDiagram.astro';
+import FactorGraphLab from '../../components/papers/FactorGraphLab.jsx';
+import StudyCheckpoint from '../../components/study/StudyCheckpoint.jsx';
+
+## 01. 为什么出现非线性
+
+一维位置的残差是减法，二维位姿的旋转、相机投影、IMU 预积分都包含非线性函数。设当前猜测为 $x$，残差为 $r(x)$。在增量 $\delta$ 足够小时，一阶泰勒展开是：
+
+$$
+r(x\oplus\delta)\approx r(x)+J\delta,
+$$
+
+其中 $J=\partial r/\partial\delta$ 是雅可比，$\oplus$ 表示按变量所在空间更新；欧氏位置是加法，旋转不能随意把角度坐标当矩阵相加。
+
+代入平方目标后，解线性子问题：
+
+$$
+(J^T\Omega J)\delta=-J^T\Omega r.
+$$
+
+更新 $x\leftarrow x\oplus\delta$，重新计算残差和雅可比，再重复。Gauss–Newton 假定当前点已经足够接近；初值很差或曲率很强时，大步可能走向更坏的区域。
+
+## 02. 阻尼与接受准则
+
+Levenberg–Marquardt 在法方程中加入阻尼：
+
+$$
+(H+\lambda D)\delta=g.
+$$
+
+$\lambda$ 大时近似梯度下降，步子保守；$\lambda$ 小时接近 Gauss–Newton，收敛快。实际求解器会比较新旧目标：若下降就减小阻尼、接受更新；若上升就回滚并增大阻尼。只写“迭代 20 次”而不看目标变化，是无法诊断的。
+
+## 03. 雅可比必须能被检查
+
+解析导数速度快，但容易有符号、单位或坐标系错误。有限差分可以做小规模检查：
+
+$$
+J_{:,j}\approx\frac{r(x+\epsilon e_j)-r(x-\epsilon e_j)}{2\epsilon}.
+$$
+
+它不是生产环境的最终导数（步长选择和计算成本都有问题），却是很有价值的单元测试。自动微分减少手写错误，仍需确认变量更新规则和残差定义正确。
+
+## 04. 一条坏观测会发生什么
+
+普通平方损失对大残差使用 $r^2$，一个离群点的影响会随残差平方增长。鲁棒核把目标改为 $\rho(r)$，等价于给大残差一个更小的权重：
+
+$$
+F=\frac12\sum_i\rho\left(\|r_i\|^2\right).
+$$
+
+Huber 核在小残差区保持平方，在大残差区近似线性；Cauchy 核衰减得更强。鲁棒核不会凭空识别语义错误，尺度参数也必须和白化后的残差匹配。应同时报告原始残差、白化残差、核权重和被降权的因子。
+
+<FactorGraphDiagram variant="loop" />
+
+<FactorGraphLab mode="trajectory" client:load />
+
+先把末端观测改成 5 m。普通最小二乘会让三个状态一起移动；这体现了共享变量的联合优化。勾选回环后，再观察约束如何把轨迹拉回相对一致的位置。实验故意没有自动鲁棒核，便于看出“模型相信了错误数据”时的后果。
+
+<StudyCheckpoint client:visible id="fg06-jacobian" question="当前点远离真实解时，增大 LM 阻尼通常带来什么效果？" options={['让线性近似变得全局精确。', '让步子更保守，减少一次糟糕线性化造成的跳跃。', '删除所有残差，只保留先验。']} answer={1} hint="阻尼改变子问题的步长偏好，不会改变原始测量。" explanation="阻尼不能修复错误模型，但能在局部近似不可靠时降低更新幅度。" />
+
+## 05. 收敛报告应该包含什么
+
+至少记录初始值、每次目标值、最大白化残差、步长范数、阻尼参数和停止原因。还要说明是否固定了 gauge、使用哪种线性求解器、是否做了重线性化。一个“成功返回”只说明数值过程停止，不说明地图尺度、数据关联或噪声模型正确。

@@ -1,0 +1,98 @@
+---
+import { getCollection } from 'astro:content';
+import '../../styles/factor-graphs.css';
+interface Props {
+  mode?: 'feature' | 'roadmap' | 'navigation';
+  currentPart?: number;
+}
+const { mode = 'roadmap', currentPart = 0 } = Astro.props;
+const entries = (await getCollection('papers', ({ data }) => data.series === 'factor-graphs'))
+  .sort((a, b) => (a.data.part ?? 0) - (b.data.part ?? 0));
+const lessons = entries.filter((entry) => (entry.data.part ?? 0) > 0);
+const previous = entries.find((entry) => entry.data.part === currentPart - 1);
+const next = entries.find((entry) => entry.data.part === currentPart + 1);
+const totalMinutes = lessons.reduce((total, entry) => total + (entry.data.estimatedMinutes ?? 0), 0);
+---
+
+{mode === 'feature' ? (
+  <section class="fg-feature" lang="zh-CN" aria-labelledby="fg-feature-title">
+    <div>
+      <p class="papers-eyebrow">一条可以跟着走的学习路线 · 08 LESSONS</p>
+      <h2 id="fg-feature-title">因子图，<br /><em>从第一条边开始。</em></h2>
+      <p>从两个传感器的一次分歧，到一条轨迹的联合估计。用图解、手算和交互实验，走通概率建模、消息传递与优化。</p>
+      <a class="fg-start" href="/papers/factor-graphs/">打开学习地图 <span aria-hidden="true">↗</span></a>
+    </div>
+    <aside>
+      <span class="fg-feature-label">你的入门路径</span>
+      <ol><li>看懂图 <span>直觉 · 概率 · 建模</span></li><li>算出结果 <span>消息 · 最小二乘 · 优化</span></li><li>连接研究 <span>滤波 · SLAM · 小项目</span></li></ol>
+      <p>8 篇正文 · 3 类交互实验 · 可运行的 Python 项目</p>
+    </aside>
+  </section>
+) : mode === 'roadmap' ? (
+  <section class="fg-roadmap" aria-label="因子图学习路线" data-fg-progress>
+    <p class="fg-progress-summary" role="status" data-fg-summary>已完成 0 / {lessons.length} 篇 · 按自己的节奏学习</p>
+    <progress data-fg-meter max={lessons.length} value="0" aria-label="因子图系列学习进度" />
+    <ol>
+      {lessons.map((entry) => (
+        <li data-fg-lesson={entry.data.part}>
+          <a href={`/papers/${entry.id}/`}>
+            <span class="fg-lesson-number">{String(entry.data.part).padStart(2, '0')}</span>
+            <span><strong>{entry.data.indexTitle}</strong><span>{entry.data.indexDescription}</span></span>
+            <span class="fg-lesson-time">{entry.data.estimatedMinutes} 分钟<span data-fg-state>未标记</span></span>
+          </a>
+        </li>
+      ))}
+    </ol>
+    <p class="fg-fine">正文与练习合计约 {totalMinutes} 分钟。完成标记保存在当前浏览器；它记录你的自评，不自动判断掌握程度。</p>
+  </section>
+) : (
+  <nav class="fg-navigation" aria-label="因子图系列篇章导航" data-fg-progress>
+    {currentPart > 0 && <div class="fg-completion">
+      <p>能独立回答本篇的自检题后，再标记完成。</p>
+      <button type="button" data-fg-complete={currentPart} aria-pressed="false" hidden>标记本篇已完成</button>
+      <span class="fg-fine" data-fg-summary role="status">已完成 0 / {lessons.length} 篇</span>
+    </div>}
+    <div class="fg-page-links">
+      {previous ? <a href={`/papers/${previous.id}/`}><small>← 上一篇</small>{previous.data.indexTitle}</a> : <a href="/papers/">← 返回论文笔记</a>}
+      {next ? <a href={`/papers/${next.id}/`}><small>下一篇 →</small>{next.data.indexTitle}</a> : <a href="/papers/factor-graphs/"><small>回顾与查漏补缺 →</small>返回学习地图</a>}
+    </div>
+    <noscript><p class="fg-fine">正文、图解和练习解析可直接阅读。启用 JavaScript 后可记录进度和操作实验。</p></noscript>
+  </nav>
+)}
+
+<script>
+  const key = 'tend:factor-graphs:v1';
+  let completed: number[] = [];
+  let persistent = true;
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || '[]');
+    if (Array.isArray(saved)) completed = [...new Set(saved.filter((n) => Number.isInteger(n) && n >= 1 && n <= 8))];
+  } catch { persistent = false; }
+  const refresh = () => {
+    document.querySelectorAll<HTMLElement>('[data-fg-summary]').forEach((node) => {
+      node.textContent = `已完成 ${completed.length} / 8 篇${persistent ? ' · 按自己的节奏学习' : ' · 浏览器存储不可用，本次页面内有效'}`;
+    });
+    document.querySelectorAll<HTMLProgressElement>('[data-fg-meter]').forEach((node) => { node.value = completed.length; });
+    document.querySelectorAll<HTMLElement>('[data-fg-lesson]').forEach((node) => {
+      const done = completed.includes(Number(node.dataset.fgLesson));
+      node.dataset.completed = String(done);
+      const state = node.querySelector('[data-fg-state]');
+      if (state) state.textContent = done ? '已完成 ✓' : '未标记';
+    });
+    document.querySelectorAll<HTMLButtonElement>('[data-fg-complete]').forEach((button) => {
+      const done = completed.includes(Number(button.dataset.fgComplete));
+      button.hidden = false;
+      button.setAttribute('aria-pressed', String(done));
+      button.textContent = done ? '已完成 ✓ · 点击撤销' : '标记本篇已完成';
+    });
+  };
+  document.querySelectorAll<HTMLButtonElement>('[data-fg-complete]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const part = Number(button.dataset.fgComplete);
+      completed = completed.includes(part) ? completed.filter((n) => n !== part) : [...completed, part];
+      try { localStorage.setItem(key, JSON.stringify(completed)); } catch { persistent = false; }
+      refresh();
+    });
+  });
+  refresh();
+</script>

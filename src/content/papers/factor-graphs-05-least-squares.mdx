@@ -1,0 +1,76 @@
+---
+title: '第 5 篇：高斯因子如何变成加权最小二乘与信息矩阵'
+description: '从高斯似然的负对数推导白化残差、精度权重、正规方程和稀疏结构。'
+indexTitle: '概率与最小二乘是同一个问题的两种写法'
+indexDescription: '手算三个高斯证据的后验，再把它写成 JᵀΩJ 与 JᵀΩr。'
+topic: 'Factor graphs / 05 least squares'
+pubDate: '2026-09-12'
+series: 'factor-graphs'
+part: 5
+estimatedMinutes: 55
+---
+
+import FactorGraphLab from '../../components/papers/FactorGraphLab.jsx';
+import StudyCheckpoint from '../../components/study/StudyCheckpoint.jsx';
+
+## 01. 从一个高斯因子开始
+
+设测量 $z$ 认为状态 $x$ 接近 $\mu$，噪声标准差为 $\sigma$：
+
+$$
+f(x)=\mathcal N(x;\mu,\sigma^2)\propto\exp\left[-\frac12\frac{(x-\mu)^2}{\sigma^2}\right].
+$$
+
+取负对数并去掉与 $x$ 无关的常数：
+
+$$
+-\log f(x)=\frac12\left(\frac{x-\mu}{\sigma}\right)^2.
+$$
+
+因此最大化高斯后验等价于最小化白化残差的平方和。**白化**就是用协方差的平方根把残差除以噪声尺度，使每一项都以“多少个标准差”为单位。
+
+## 02. 三条证据的精确答案
+
+第 1 篇的先验、A、B 分别为 $0\pm2$、$2\pm1$、$4\pm2$。目标函数：
+
+$$
+F(x)=\frac12\left[\frac{(x-0)^2}{2^2}+\frac{(x-2)^2}{1^2}+\frac{(x-4)^2}{2^2}\right].
+$$
+
+对 $x$ 求导并令零：
+
+$$
+(0.25+1+0.25)x=0.25(0)+1(2)+0.25(4),
+$$
+
+得到 $x=2$。总精度是 $1.5$，所以后验方差是 $1/1.5=0.6667\,\mathrm m^2$，标准差约 $0.8165\,\mathrm m$。这里“权重”是精度 $1/\sigma^2$，不是随手填的置信分数。
+
+<FactorGraphLab mode="fusion" client:load />
+
+## 03. 矩阵形式与信息形式
+
+线性残差写为 $r_i(x)=A_i x-b_i$，协方差为 $\Sigma_i$，精度为 $\Omega_i=\Sigma_i^{-1}$：
+
+$$
+F(x)=\frac12\sum_i r_i(x)^T\Omega_i r_i(x).
+$$
+
+把所有因子堆起来，正规方程是：
+
+$$
+H\,\delta=g,\qquad H=J^T\Omega J,\qquad g=-J^T\Omega r.
+$$
+
+在线性模型里一步就得到解；在非线性模型里，$J$ 和 $r$ 来自当前线性化点，每次解出增量再更新。$H$ 也叫信息矩阵，因为它描述后验曲率；协方差近似为 $H^{-1}$（有 gauge 或未观测方向时不能直接求逆）。
+
+## 04. 稀疏性从哪里来
+
+一个因子只连接少数变量，所以它对 $H$ 的贡献只填这些变量对应的行列。轨迹的运动因子只填相邻块，信息矩阵呈块带状；SLAM 的观测因子又形成稀疏连接。求解器利用稀疏 Cholesky、QR 或 Schur 补，避免构造一个稠密逆矩阵。
+
+变量消元会产生填充（fill-in）：消掉一个变量后，它的邻居可能互相连接。消元顺序决定填充量，也决定内存和速度。图论中的树宽、最小度数启发式和 AMD 排序，都是在管理这一件事。
+
+<StudyCheckpoint client:visible id="fg05-variance" question="测量标准差从 $1$ 增大到 $2$，这个测量的精度 $\Omega=1/\sigma^2$ 会怎样？" options={['从 1 增大到 4', '从 1 减小到 0.25', '保持 1，因为均值没有变']} answer={1} hint="精度与方差成倒数，而方差是标准差的平方。" explanation="标准差变为两倍，方差变为四倍，精度变为原来的四分之一。" />
+
+## 05. 何时不能直接套正规方程
+
+正规方程会平方条件数；病态问题更适合 QR 或带阻尼的 Cholesky。相关噪声不能把协方差只取对角线，否则会错误地重复或忽略信息。非高斯噪声也不一定能写成普通平方损失。第 6 篇会处理非线性和异常值，并说明“收敛”不等于“找到正确模型”。

@@ -5,12 +5,13 @@ import BaseHead from '../../components/BaseHead.astro';
 import BlogHeader from '../../components/blog/BlogHeader.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SITE_TITLE } from '../../consts';
+import FactorGraphCourse from '../../components/papers/FactorGraphCourse.astro';
 import '../../styles/papers.css';
 
 const papers = (await getCollection('papers')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
-const notes = await Promise.all(papers.map(async (paper) => {
+const notes = await Promise.all(papers.filter((paper) => !paper.data.series).map(async (paper) => {
   const { headings } = await render(paper);
   return {
     ...paper,
@@ -45,6 +46,8 @@ const notes = await Promise.all(papers.map(async (paper) => {
           <span class="notebook-total"><strong>{String(notes.length).padStart(2, '0')}</strong> {notes.length === 1 ? 'paper in the notebook' : 'papers in the notebook'}</span>
         </aside>
       </header>
+
+      <FactorGraphCourse mode="feature" />
 
       <section id="notes" class="notebook-collection" aria-labelledby="notes-heading">
         <div class="notebook-section-title">

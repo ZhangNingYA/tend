@@ -1,0 +1,63 @@
+---
+title: 'GVINS：间歇性 GNSS 降级下的图优化自适应融合'
+description: '以 IMU 预积分估计 VIO 深度不确定度，用 15 自由度过参数化状态和双阶段交替最小化同时维护局部 VIO 与全球地理坐标，在 GNSS 质量起伏时避免反复重置地图。'
+indexTitle: 'GVINS：间歇性 GNSS 降级下的图优化自适应融合'
+indexDescription: '把 VIO 不确定度显式带入 GNSS 因子图；保留局部坐标、优化全球偏置，并用交替优化抑制间歇性错误 GNSS 对轨迹的拉扯。'
+topic: 'GNSS/VIO · 全球因子图'
+pubDate: '2026-09-13'
+authors: ['Zheng Gong', 'Peilin Liu', 'Fei Wen', 'Rendong Ying', 'Xingwu Ji', 'Ruihang Miao', 'Wuyang Xue']
+venue: 'IEEE Transactions on Instrumentation and Measurement · 70'
+year: 2021
+---
+
+## 重点内容概况
+
+原文题名为 *Graph-Based Adaptive Fusion of GNSS and VIO Under Intermittent GNSS-Degraded Environment*。问题不是简单的“有 GNSS 就融合、没 GNSS 就停用”：城市峡谷、室内外切换会让 GNSS 质量连续变化，硬阈值剔除又浪费了仍有用的观测。GVINS 用 IMU 预积分估计 VIO 的深度不确定度，并在后端按不确定度调节 GNSS/VIO 权重。
+
+其核心思路是：**VIO 在局部坐标持续运动，GNSS 在出现时提供全球锚点；把全球坐标变换和偏置作为显式变量，历史 GNSS 共同决定它，而不是每次收到更好样本就重置局部原点。**
+
+### 1. 局部 VIO 与软同步
+
+局部状态含位置、速度、姿态、加速度偏置、陀螺偏置及特征逆深度。IMU 预积分给出相邻关键帧的位置、速度和旋转约束，视觉残差是特征重投影误差。相机约 30 Hz、IMU 约 100 Hz、GNSS 约 1 Hz，因此系统先按时间戳做软同步：GNSS 不强行改写最近图像，而是在对应时间附近以插值/预积分状态建立因子。同步误差若达到毫秒至厘米级运动量，后端不确定度模型也无法自动修复。
+
+### 2. 用深度不确定度评估 VIO 可信度
+
+对图像特征的深度，作者利用 IMU 预积分传播其不确定度；相邻帧的像素观测和 IMU 约束共同决定深度方差。这样得到的不是 VIO 输出一个经验常数，而是随运动激励、视差和 IMU 噪声变化的权重。GNSS 质量则通过 HDOP 等指标和测量协方差表达。论文强调：连续变差的 GNSS 不能简单等同于“完全拒绝”，应该让图优化根据协方差逐渐降低其作用。
+
+### 3. 15 自由度全球注册
+
+VIO 局部系 $F_M$ 与地理 LTP 系 $F_L$、ECEF 系 $F_E$ 之间的关系包含旋转和平移。作者把状态拆成每帧局部位姿 $x_{M_k}$，以及全局辅助状态
+
+$$x_{global}=(q_{LM},t_{LM},t_{bias}),$$
+
+总计 6 个局部运动自由度、6 个局部到 LTP 变换自由度和 3 个全球偏置自由度，即 15 DoF。GNSS 稳定时，$t_{bias}$ 可趋近零；质量变化时，它允许轨迹整体平移而不破坏已经建立的局部运动。
+
+### 4. 为什么选择优化偏置而不是重置原点
+
+首次可用 GNSS 到来时建立 LTP。若后来收到更准确 GNSS，朴素策略会重新初始化 LTP，导致整条轨迹坐标跳变；而用最新一帧的局部位姿直接对齐，也会把一条错误 GNSS 作为下一轮初值。GVINS 在原 LTP 中加入 $t_{bias}$：
+
+$$t_{EB}=R_{EL}R_{LM}t_{MB}+t_{LM}+t_{bias}+t_{EL}.$$
+
+历史所有 GNSS 共同约束偏置，避免单次异常把起点拉走，同时固定 $R_{EL},t_{EL}$ 可省去反复重算复杂地理变换。
+
+### 5. 双阶段交替优化
+
+完整 MLE 目标把局部相对 VIO 残差和 ECEF GNSS 残差放在一起：
+
+$$\min_X\sum_t\|r^M_t\|_{\Sigma^M_t}^2+\|r^E_t\|_{\Sigma^E_t}^2.$$
+
+但 $q_{LM}$ 与局部平移耦合，且 GNSS 降级时全球观测明显弱于 VIO。作者采用 alternating minimization：阶段 I 固定 $q_{LM},t_{LM}$，优化全部局部位姿和 $t_{bias}$；阶段 II 固定局部结果和偏置，只优化 $q_{LM},t_{LM}$。两阶段交替在每个新 GNSS 到来时运行，图由 Ceres 求解。
+
+### 6. 仿真与实测结果
+
+KITTI 原始数据用 10 Hz 双目、100 Hz 插值 IMU 和高精度 GNSS 作为真值，再在人为选定区段加入噪声模拟间歇降级。对照包括纯 VIO、VINS-Fusion、基于阈值切换的方法和其他图融合方法。GVINS 在全球坐标下保持连续轨迹，质量较差区段不会因为一次坏 GNSS 重新定义局部原点。
+
+室内—室外切换实测进一步验证了这一点：室内没有 GNSS 时局部 VIO 继续运行，重新见到 GNSS 后历史因子帮助恢复全球位置；相比直接重置 LTP，轨迹跳变和错误对齐更小。论文报告在公开和自建数据上同时改善精度与稳定性，但结果依赖 GNSS 降级模拟、时间同步、外参和协方差标定。
+
+### 7. 适用边界
+
+GVINS 的“自适应”主要来自不确定度和状态参数化，而不是一个能识别所有欺骗攻击的故障检测器。VIO 深度协方差若过度自信，GNSS 仍可能被错误压低；GNSS 协方差若没有反映多径和延迟，图优化会得到看似平滑却有偏的全球轨迹。15 DoF 分解减少了坐标跳变和计算量，却没有消除初始化、可观性和局部最小值问题。
+
+## 原论文
+
+[Graph-Based Adaptive Fusion ↗（PDF）](</papers/Gong 等 - 2021 - Graph-Based Adaptive Fusion of GNSS and VIO Under Intermittent GNSS-Degraded Environment.pdf>)

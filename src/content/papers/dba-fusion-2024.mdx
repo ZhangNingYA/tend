@@ -1,0 +1,73 @@
+---
+title: 'DBA-Fusion：深度稠密视觉 BA 与多传感器紧耦合融合'
+description: '把 DROID-SLAM 风格的可训练稠密束调整写成因子图视觉因子，再与 IMU、GNSS 和轮速计共同优化，在大尺度场景中同时提供低漂移定位和稠密建图。'
+indexTitle: 'DBA-Fusion：深度稠密视觉 BA 与多传感器紧耦合融合'
+indexDescription: '从循环光流和 Schur 补得到 Hessian 视觉因子，再接入滑动窗口因子图；通过 IMU、GNSS、轮速计实现有尺度、可地理配准的实时建图。'
+topic: '深度 VSLAM · 因子图融合'
+pubDate: '2026-09-13'
+authors: ['Yuxuan Zhou', 'Xingxing Li', 'Shengyu Li', 'Xuanbin Wang', 'Shaoquan Feng', 'Yuxuan Tan']
+affiliation: '武汉大学测绘学院'
+venue: 'IEEE Robotics and Automation Letters · 9(7): 6138–6145'
+year: 2024
+doi: '10.1109/LRA.2024.3400156'
+---
+
+## 重点内容概况
+
+原文题名为 *DBA-Fusion: Tightly Integrating Deep Dense Visual Bundle Adjustment With Multiple Sensors for Large-Scale Localization and Mapping*。论文的核心不是用神经网络直接回归位姿，而是把网络产生的稠密对应和不确定度转成标准二次型视觉因子，再与惯性和其他传感器在同一个概率图中优化。作者公开了 [DBA-Fusion 代码](https://github.com/GREAT-WHU/DBA-Fusion)。
+
+视觉单独运行会遇到尺度、漂移、弱纹理和光照问题；GNSS 可提供全球约束，轮速计可补足车辆运动约束，IMU 则提供高频尺度和姿态信息。论文的闭环是：**循环光流 → 稠密 BA → 消去深度 → Hessian 视觉因子 → 滑动窗口多传感器图优化 → 优化结果反馈给光流和深度。**
+
+### 1. 循环光流：网络不断重看同一对图像
+
+对共视图像对 $(i,j)$，网络先由逆深度和相对位姿重投影像素：
+
+$$u_{ij}=\Pi_c(T_{ij}\circ\Pi_c^{-1}(u_i,\lambda_i)),\qquad T_{ij}=T_jT_i^{-1}.$$
+
+相关体查找结果输入卷积 GRU，得到光流修正 $\delta u_{ij}$ 和像素权重 $w_{ij}$。权重可理解为学习得到的几何/外观不确定度倒数；实际只在步长为 8 的像素网格计算，以控制显存和时间。网络只用 TartanAir 合成数据预训练，测试时没有针对每个数据集重新训练。
+
+### 2. 从稠密 BA 到可复用视觉因子
+
+线性化一条边的重投影约束可写成
+
+$$\delta u_{ij}=[J_i\ J_j\ J_{\lambda_i}]\begin{bmatrix}\xi_i\\\xi_j\\\delta\lambda_i\end{bmatrix}.$$
+
+加权正规方程为 $J^\mathsf TWJx=J^\mathsf TWr$。同一源帧挂接多个目标帧后，深度只出现在对应块中，因此可作 Schur 补：
+
+$$H_{c,i}=B_i-E_iC_i^{-1}E_i^\mathsf T,\qquad v_{c,i}=v_i-E_iC_i^{-1}z_i.$$
+
+这一步把高维深度变量消掉，留下只作用于相机位姿的 Hessian 和向量。它是“深度网络输出”进入 GTSAM 因子图的接口，不是把深度估计丢弃：位姿更新后仍用底行恢复 $\delta\lambda_i=C_i^{-1}(z_i-E_i^\mathsf T\xi)$。
+
+### 3. 滑动窗口与边管理
+
+所有视觉 Hessian 叠加成 $H_{c,all},v_{c,all}$。窗口滑出旧帧时，将相关视觉信息、IMU 和其他传感器因子一起边缘化，形成新的先验因子。为保持稀疏性，新边只在最近 5 个关键帧中添加；同时对约第 $-8,-9,-10$ 帧尝试稀疏中程边。实现中 DBA 窗口为 15，活动光流边最多 48；成熟边停止光流更新，但其重投影仍保留到边缘化。
+
+### 4. 多传感器状态与因子
+
+每个 IMU 时刻的状态是 $x_k=(T_{wb_k},v_{wb_k},b_{a,k},b_{g,k})$。视觉因子先用相机—IMU 外参的伴随变换转入 IMU 的右扰动坐标。IMU 因子使用标准预积分，残差包含位置、速度、旋转和两种偏置随机游走。
+
+GNSS 因子为
+
+$$r_g=T_{nw}\circ T_{wb_k}\circ t_{bg}-\tilde p_{ng},$$
+
+其中 $T_{nw}$ 是初始化得到的世界到导航系四自由度变换；轮速因子采用简化的杆臂模型 $r_s=R_{b_k}^wv_{wb_k}+\omega_{wb}^b\times t_{bs}\,y-\tilde v_s$。因此，换用 GNSS、多普勒、磁力计或车辆运动模型时，图的核心结构仍可复用。
+
+### 5. 初始化和尺度
+
+作者用 VINS-Mono 的视觉—惯性初始化，但把其中的视觉 SfM 换成视觉 DBA；第一次迭代后才纳入视觉—惯性平移外参。GNSS 对齐使用距离超过约 10 m 后的轨迹，估计导航系原点平移和航向。这个策略避免把局部系到 ECEF 的完整变换作为每个窗口的状态，但其准确性依赖初始对齐和杆臂标定。
+
+### 6. 实验：VIO、建图和实时性
+
+TUM-VI 手持数据的“magistrale”和“outdoors”序列显示，DBA-VIO 在多数序列上优于单目 VINS-Fusion、ORB-SLAM3、DM-VIO 等，且比无 IMU 的 DROID-SLAM 更少漂移；KITTI-360 上，单目方法中 DBA-VIO 的相对位姿误差最好，长基线双目 VINS-Fusion 仍是总体最强参照。图中 DROID-SLAM 点云弯曲或重影，而 IMU 辅助后的局部地图保持一致。
+
+自采武汉城市数据使用 RGB 相机、ADIS16470、Septentrio AsterRx4 和差分 GNSS 参考。仅 DBA-VIO 在开始约 100 s 因激励不足而漂移；加入轮速后尺度更平滑；加入 GNSS 的 DBA-Fusion(G) 达到分米级水平，并优于 VINS-Fusion(G)。GNSS 遮挡时 RTK 会出现大误差，说明“全球无漂移”并不等于每个 GNSS 样本都可靠。
+
+运行评估在 RTX 3090 上进行，视觉输入为 5 Hz、缩放到约 $384\times512$；论文将实时输出用于评估，跳帧时可用 IMU 预测姿态。多帧深度检查会过滤动态物体和离群点，但重复区域仍可能留下黑色空洞，作者将多相机列为改进方向。
+
+### 7. 贡献与边界
+
+DBA-Fusion 的贡献是一个可扩展的“学习前端—概率后端”接口：学习模块给出对应和权重，后端保留 BA 的不确定度和边缘化语义。局限也很清楚：预训练域与部署域的差异、单目初始化、GNSS 对齐和传感器外参都会影响结果；动态物体主要靠事后深度检查，尚非完整的动态场景模型。表中优势属于 TUM-VI、KITTI-360 和武汉数据的具体设置，不能直接推广成对所有 VIO 的普遍优越性。
+
+## 原论文
+
+[DBA-Fusion ↗（PDF）](</papers/DBA-Fusion_Tightly_Integrating_Deep_Dense_Visual_Bundle_Adjustment_With_Multiple_Sensors_for_Large-Scale_Localization_and_Mapping.pdf>)

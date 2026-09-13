@@ -6,9 +6,10 @@ indexDescription: '不依赖 GNSS，把雷达的速度和雷达散射截面信�
 topic: '雷达 · 惯性 SLAM'
 pubDate: '2026-09-13'
 authors: ['Daniel Casado Herraez', 'Matthias Zeller', 'Dong Wang', 'Jens Behley', 'Michael Heidingsfeld', 'Cyrill Stachniss']
-affiliation: 'CARIAD SE · University of Bonn'
+affiliation: 'CARIAD SE · University of Bonn · Julius-Maximilians-Universität Würzburg · Lamarr Institute'
 venue: 'IEEE Robotics and Automation Letters · 10(6): 5257–5264'
 year: 2025
+doi: '10.1109/LRA.2025.3557296'
 ---
 
 ## 重点内容概况
@@ -35,13 +36,27 @@ year: 2025
 
 实验结论支持的是“将雷达属性和模块化图优化结合有效”，而不是雷达在每种环境都优于相机或 LiDAR。点云极稀疏、场景重复、动态目标占主导时，回环候选可能不足；没有 GNSS 也意味着全球绝对坐标和地图基准需要额外来源。
 
-### 5. 工程取舍与局限
+原文表 I 的 RaI-SLAM 平均结果为 RTE $0.210\,\mathrm m$、RRE $0.134^\circ$、ATE $5.6\,\mathrm m$（SNAIL-Radar 五条序列）；表 II 的平均结果为 RTE $0.018\,\mathrm m$、RRE $0.021^\circ$、ATE $6.2\,\mathrm m$（HeRCULES 五条序列）。这里的 RTE/RRE 是短期相对误差，ATE 是全程绝对误差；不能用 RTE 的厘米量级表述成整条地图的绝对精度。论文在平面上评估，舍弃竖直运动，且除与 4DRadarSLAM 对比外统一使用 ARS548 雷达。
+
+### 5. 三道回环检查的具体含义
+
+地点识别使用 SPR 编码 $X\in\mathbb R^{256}$，候选条件为
+
+$$\|X_{query}-X_{match}\|<\delta_{PR}.$$
+
+随后检查两节点的里程计距离 $\|t_{query}-t_{match}\|/d_{length}<\delta_{odom}$。最后对 ICP 对应集合 $C$ 计算半径 $r$ 内的对应比例：
+
+$$\frac1{|C|}\sum_{(q,m)\in C}\mathbf 1\{\|q-m\|<r\}>\delta_d.$$
+
+只有三项均通过，ICP 变换才形成全局回环因子。作者指出稀疏雷达中平均 ICP 距离会受反射离群点和点数变化影响，因此用“足够多的近邻对应”作为第三项。阈值 $\delta_{PR},\delta_{odom},r,\delta_d$ 是实现参数，论文没有给出对所有雷达型号都适用的标定规则。
+
+### 6. 工程取舍与局限
 
 系统的优点是传感器价格和环境适应性：雷达不依赖光照，IMU 提供高频连续性，回环提供长期一致性。代价是雷达测量模型更复杂，RCS 和多普勒的标定、时间同步、外参以及动态目标处理都会影响图边质量。论文重点是自动驾驶车载雷达，不能直接把参数和阈值移植到毫米波室内雷达或成像雷达。
 
-RaI-SLAM 的模块化结构也便于与已有因子图课程联系：相邻边是里程计因子，IMU 预积分是运动因子，回环是稀疏全局因子；局部求解负责实时性，全局求解负责一致性。理解这一分工比记住某一个匹配器名称更有复用价值。
+RaI-SLAM 的模块化结构也便于与已有因子图课程联系：相邻边是里程计因子，IMU 预积分是运动因子，回环是稀疏全局因子；局部求解负责实时性，全局求解负责一致性。实现采用 ROS2、GTSAM 和 fixed-lag smoother，局部/全局图假定固定的里程计和回环协方差。论文最后明确指出，估计真实协方差而不是固定协方差是后续方向；因此在动态场景中应把表中结果视为固定噪声假设下的实证。
 
-### 6. 多普勒初值和 IMU 因子推导
+### 7. 多普勒初值和 IMU 因子推导
 
 对方位角为 $\theta_i$、径向速度为 $v_i$ 的回波，作者先解二维雷达速度：
 
@@ -55,7 +70,7 @@ $$T_{init}=\begin{bmatrix}\exp([\omega_c]_\times\Delta t)&J(\omega_c\Delta t)v_c
 
 IMU 原始模型为 $\tilde\omega=\omega+b_g+\eta_g$、$\tilde a=R^\mathsf T(a-g)+b_a+\eta_a$。在两帧雷达扫描之间预积分得到 $\Delta R,\Delta v,\Delta p$，分别形成旋转、速度和位置因子。局部图只保留窗口内节点，窗口外信息边缘化，因此运行内存有界但会丢失被边缘化变量的显式可回溯性。
 
-### 7. 回环判据与消融含义
+### 8. 回环判据与消融含义
 
 回环不是由单一 ICP 距离决定，而是依次通过三道检查：SPR 雷达地点识别给出候选，里程计距离检查空间可行性，点对应指标检查几何匹配。SPR 编码包含点邻域与 RCS 分布；两个 256 维编码的距离小于阈值 $\delta_{PR}$ 才继续验证。这样可以拒绝“点平均距离很小、但对应关系错误”的假回环。
 

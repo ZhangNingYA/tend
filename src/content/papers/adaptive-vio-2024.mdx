@@ -75,6 +75,10 @@ $$\text{网络参数}\rightarrow\text{对应/偏置}\rightarrow\text{预积分�
 
 联合适应在多数序列上超过单独适应，说明视觉对应和偏置误差会相互影响；但 TUM-VI 的 mag_3、mag_4 等序列仍不如 DM-VIO。这个反例很有价值：在线学习降低了域偏移，却没有替代更稳健的初始化和长期尺度管理。
 
+为了避免只写“优于”，摘录两张原表的可核对数字。EuRoC 表 2 中 Ours 的 MH1–MH5 为 0.050、0.055、0.069、0.092、0.124 m，V11–V22 为 0.035、0.045、0.073、0.052、0.086 m，平均栏 0.07 m；这些结果与 DM-VIO 的 0.06 m 平均值接近。TUM-VI 表 3 中 Ours 的 corridor1–5 为 0.14、0.28、0.50、0.27、0.21 m，magistrale1–6 为 1.18、1.17、3.74、2.49、1.43、3.12 m，room1–6 为 0.05、0.04、0.02、0.04、0.04、0.04 m，平均栏 0.867 m。表 3 的 magistrale 序列误差明显较大，不能用 room 序列的结果代表整个 TUM-VI。
+
+表 1 的百分比是相对本文基线 $V_{PT}+I_{RW}$ 的改善：EuRoC MH1–MH5 联合适应为 54%、40%、30%、24%、31%，TUM-VI room1–room6 为 49%、28%、10%、11%、36%、24%。它们来自五次试验的 metric-scaled RMSE ATE；不是跨论文的统计显著性检验，也不是把在线训练的 epoch 当作独立测试集。
+
 ## 原论文
 
 [Adaptive VIO ↗（PDF）](</papers/Pan 等 - 2024 - Adaptive VIO Deep Visual-Inertial Odometry with Online Continual Learning.pdf>)

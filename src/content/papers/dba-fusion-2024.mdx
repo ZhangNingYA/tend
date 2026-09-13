@@ -68,6 +68,18 @@ TUM-VI 手持数据的“magistrale”和“outdoors”序列显示，DBA-VIO �
 
 DBA-Fusion 的贡献是一个可扩展的“学习前端—概率后端”接口：学习模块给出对应和权重，后端保留 BA 的不确定度和边缘化语义。局限也很清楚：预训练域与部署域的差异、单目初始化、GNSS 对齐和传感器外参都会影响结果；动态物体主要靠事后深度检查，尚非完整的动态场景模型。表中优势属于 TUM-VI、KITTI-360 和武汉数据的具体设置，不能直接推广成对所有 VIO 的普遍优越性。
 
+### 8. 计算结构：为什么先在 GPU、再在 CPU
+
+每条视觉边的相关体查找和稠密 Jacobian 计算适合 GPU 并行；消去深度后，位姿中心的稀疏 Hessian 交给 CPU 上的 GTSAM。这个拆分保留了 DBA 的信息，同时避免把数十万深度变量送入通用图优化器。Schur 补要求 $C_i$ 可逆；纹理缺失、深度无效或权重退化时，需要阻尼或剔除边，论文的正常实验流程并未把所有数值失败情况展开。
+
+### 9. 指标和实验设置的区别
+
+TUM-VI 使用起止动捕真值计算 ATE，DROID-SLAM 单目轨迹先用开头真值恢复尺度；KITTI-360 使用高精度多传感器轨迹并评估相对位姿误差，DROID-SLAM 则做整段 SIM(3) 对齐。前者强调累计漂移，后者强调局部相对运动，不能把两张表的米制数字直接排列比较。自采数据的 DBA-Fusion(G) 使用 DGNSS/INS 参考，WSS 噪声由参考轨迹模拟，GNSS 遮挡区段的误差取决于该模拟方式。
+
+### 10. 复现检查
+
+复现结果至少应记录：输入图像是否为 5 Hz、缩放尺寸、最大活动边 48、DBA 窗口 15、关键帧和中程边规则、IMU—相机外参、GNSS 杆臂、初始化距离阈值、边缘化顺序、GPU 型号及是否使用跳帧 IMU 预测。改变其中任一项都可能改变实时性和轨迹误差；“公开代码”降低了实现门槛，却不等于论文表格可由默认参数无条件复现。
+
 ## 原论文
 
 [DBA-Fusion ↗（PDF）](</papers/DBA-Fusion_Tightly_Integrating_Deep_Dense_Visual_Bundle_Adjustment_With_Multiple_Sensors_for_Large-Scale_Localization_and_Mapping.pdf>)

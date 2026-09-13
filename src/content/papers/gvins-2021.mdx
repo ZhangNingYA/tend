@@ -58,6 +58,22 @@ KITTI 原始数据用 10 Hz 双目、100 Hz 插值 IMU 和高精度 GNSS 作为�
 
 GVINS 的“自适应”主要来自不确定度和状态参数化，而不是一个能识别所有欺骗攻击的故障检测器。VIO 深度协方差若过度自信，GNSS 仍可能被错误压低；GNSS 协方差若没有反映多径和延迟，图优化会得到看似平滑却有偏的全球轨迹。15 DoF 分解减少了坐标跳变和计算量，却没有消除初始化、可观性和局部最小值问题。
 
+### 8. 残差、协方差与实现细节
+
+局部相对残差可写成相邻 VIO 位姿之差：
+
+$$r^M_t=z^M_t-h^M_t(x_{t-1},x_t),$$
+
+全球残差则把局部位姿变换到 ECEF：
+
+$$r^E_t=C(p_t)-R_{EL}R_{LM}t_{MB_t}-t_{LM}-t_{bias}-t_{EL}.$$
+
+二者都按各自协方差加权。GNSS 质量阈值只决定 LTP 何时可初始化；初始化后，质量变化通过协方差和全局因子进入优化，不应把阈值误读成所有坏样本都被硬删除。实现每收到一条 GNSS 就更新图，阶段 I、II 交替求解；这与只在固定时间批量重算的离线图不同。
+
+### 9. 仿真边界和可复现清单
+
+KITTI 的原始 GNSS 在开阔住宅区约 0.1 m，被人为添加噪声来模拟降级；它不是自然采集的欺骗或多径数据。图像为 10 Hz，IMU 插值到 100 Hz，并使用公开 KITTI-interp 工具处理时间对齐。室内—室外实验验证坐标连续性，但没有覆盖长时间无视觉纹理、剧烈动态或真实 GNSS 欺骗。复现时至少要固定 HDOP 门限、GNSS 噪声时段、LTP 初始化点、外参、同步方式、Ceres 求解停止条件和评估坐标系。
+
 ## 原论文
 
 [Graph-Based Adaptive Fusion ↗（PDF）](</papers/Gong 等 - 2021 - Graph-Based Adaptive Fusion of GNSS and VIO Under Intermittent GNSS-Degraded Environment.pdf>)

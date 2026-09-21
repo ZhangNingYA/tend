@@ -5,9 +5,16 @@ interface Props {
   timerId: string;
   label: string;
   wordCount?: number;
+  variant?: 'default' | 'focus';
 }
 
-const { timerId, label, wordCount: providedWordCount } = Astro.props;
+const {
+  timerId,
+  label,
+  wordCount: providedWordCount,
+  variant = 'default',
+} = Astro.props;
+const isFocusVariant = variant === 'focus';
 const initialWordCount = typeof providedWordCount === 'number' && Number.isFinite(providedWordCount)
   ? Math.max(0, providedWordCount)
   : null;
@@ -39,17 +46,18 @@ const sectionName = timerId === 'cloze'
 ---
 
 <section
-  class="reading-timer"
+  class:list={['reading-timer', isFocusVariant && 'reading-timer--focus']}
   data-reading-timer
   data-timer-id={timerId}
   data-timer-label={label}
+  data-timer-variant={variant}
   data-timer-word-count-provided={providedWordCount}
   data-timer-state="idle"
   aria-label={`${label} 阅读计时器`}
 >
   <div class="reading-timer-head">
     <div>
-      <span class="reading-timer-kicker">Reading timer</span>
+      <span class="reading-timer-kicker">{isFocusVariant ? 'First pass · 首次通读' : 'Reading timer'}</span>
       <strong>{label}</strong>
     </div>
     <span class="reading-timer-word-count"><b data-timer-word-count>{initialWordCount ?? '—'}</b> words</span>
@@ -62,12 +70,12 @@ const sectionName = timerId === 'cloze'
       <small>词汇与句法估算</small>
     </div>
     <div>
-      <span>美国成年人推荐用时</span>
+      <span>{isFocusVariant ? '熟练读者参考' : '美国成年人推荐用时'}</span>
       <strong data-timer-native-guide>{nativeGuideInitial}</strong>
       <small>通读理解参考</small>
     </div>
     <div>
-      <span>普通学习者推荐用时</span>
+      <span>{isFocusVariant ? '普通学习者参考' : '普通学习者推荐用时'}</span>
       <strong data-timer-learner-guide>{learnerGuideInitial}</strong>
       <small>通读理解参考</small>
     </div>
@@ -106,13 +114,15 @@ const sectionName = timerId === 'cloze'
 
   <div class="reading-timer-progress" aria-label="推荐阅读进度">
     <div class="reading-timer-progress-legend">
-      <span class="native">美：美国成年人</span>
-      <span class="learner">学：普通学习者</span>
+      <span class="native">{isFocusVariant ? '熟练读者参考' : '美：美国成年人'}</span>
+      <span class="learner">{isFocusVariant ? '普通学习者参考' : '学：普通学习者'}</span>
     </div>
     <span class="reading-timer-progress-track"><i data-timer-progress-marker></i></span>
   </div>
 
-  <div class="reading-timer-hint" data-timer-message>绿色区代表美国成年人推荐用时，红色区代表普通学习者推荐用时，白色指针代表当前进度。</div>
+  <div class="reading-timer-hint" data-timer-message>
+    {isFocusVariant ? '绿色区是熟练读者参考，暖色区是普通学习者参考；白色指针显示本次用时。' : '绿色区代表美国成年人推荐用时，红色区代表普通学习者推荐用时，白色指针代表当前进度。'}
+  </div>
 
   <div class="reading-timer-floating" data-timer-floating aria-hidden="true">
     <span class="reading-timer-floating-pulse" aria-hidden="true"></span>
@@ -209,6 +219,7 @@ const sectionName = timerId === 'cloze'
   timerRoots.forEach((root) => {
     root.dataset.timerReady = 'true';
     const timerId = root.dataset.timerId ?? 'reading';
+    const isFocusVariant = root.dataset.timerVariant === 'focus';
     const sentences = timerSentences(root);
     const providedWordCount = Number(root.dataset.timerWordCountProvided);
     const wordCount = Number.isFinite(providedWordCount)
@@ -216,7 +227,7 @@ const sectionName = timerId === 'cloze'
       : timerWordCount(root);
     const difficultyScore = estimateDifficulty(sentences, wordCount);
     const difficultyFactor = 1 + (difficultyScore - 3) * 0.1;
-    // These are practical CET-6 "first pass" benchmarks rather than
+    // These are practical first-pass benchmarks rather than
     // speed-reading targets: a fluent native reader around 200 WPM and a
     // typical Chinese English learner around 100 WPM.  Keeping the result
     // rounded to 15-second increments makes the guide easy to use while
@@ -292,11 +303,17 @@ const sectionName = timerId === 'cloze'
       if (completed) {
         messageNode.textContent = '本次已完成，可点击“重新开始”再练一次。';
       } else if (current >= learnerGuideMs) {
-        messageNode.textContent = '已超过普通学习者推荐用时，先完成理解，再逐步提速。';
+        messageNode.textContent = isFocusVariant
+          ? '已超过普通学习者参考时间，先完成理解，再逐步提速。'
+          : '已超过普通学习者推荐用时，先完成理解，再逐步提速。';
       } else if (current >= nativeGuideMs) {
-        messageNode.textContent = '已达到美国成年人推荐用时，继续读完即可。';
+        messageNode.textContent = isFocusVariant
+          ? '已达到熟练读者参考时间，继续读完即可。'
+          : '已达到美国成年人推荐用时，继续读完即可。';
       } else {
-        messageNode.textContent = '绿色区代表美国成年人推荐用时，红色区代表普通学习者推荐用时，白色指针代表当前进度。';
+        messageNode.textContent = isFocusVariant
+          ? '绿色区是熟练读者参考，暖色区是普通学习者参考；白色指针显示本次用时。'
+          : '绿色区代表美国成年人推荐用时，红色区代表普通学习者推荐用时，白色指针代表当前进度。';
       }
     };
 
@@ -763,6 +780,127 @@ const sectionName = timerId === 'cloze'
   [data-timer-state='running'] .floating-pause-icon { display: block; }
   [data-floating-over-learner-guide] .reading-timer-floating-pulse { background: #d28b55; }
 
+  /* The passage timer is intentionally calmer than the older blog timer:
+     one clear reading target, one clock, and no dashboard-like clutter. */
+  .reading-timer--focus {
+    --timer-accent: #286b52;
+    margin: 20px 0 34px;
+    border-color: #cbded2;
+    border-radius: 18px;
+    background: #f9fcfa;
+    box-shadow: 0 14px 34px rgba(30, 68, 48, 0.07);
+  }
+
+  .reading-timer--focus .reading-timer-head {
+    padding: 17px 20px 15px;
+    border-bottom-color: #dce9df;
+    background: linear-gradient(110deg, #edf7f0, #f9fcfa 72%);
+  }
+
+  .reading-timer--focus .reading-timer-kicker {
+    color: #4d8469;
+    letter-spacing: 0.08em;
+  }
+
+  .reading-timer--focus .reading-timer-head strong {
+    font-size: 1.08rem;
+  }
+
+  .reading-timer--focus .reading-timer-word-count {
+    color: #52705f;
+    background: #e7f2ea;
+  }
+
+  .reading-timer--focus .reading-timer-guides {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin: 14px 20px 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .reading-timer--focus .reading-timer-guides > div {
+    min-height: 55px;
+    padding: 9px 12px;
+    border: 1px solid #dce9df;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .reading-timer--focus .reading-timer-guides > div:first-child { display: none; }
+
+  .reading-timer--focus .reading-timer-guides span {
+    color: #688072;
+    font-size: 0.64rem;
+  }
+
+  .reading-timer--focus .reading-timer-guides strong {
+    color: #2f5d47;
+    font-size: 0.98rem;
+  }
+
+  .reading-timer--focus .reading-timer-guides small { color: #9aaea0; }
+
+  .reading-timer--focus .reading-timer-method {
+    padding: 9px 20px 0;
+    color: #788d7f;
+  }
+
+  .reading-timer--focus .reading-timer-main {
+    grid-template-columns: minmax(170px, 0.72fr) minmax(300px, 1.28fr);
+    gap: 20px;
+    padding: 17px 20px 16px;
+  }
+
+  .reading-timer--focus .reading-timer-clock {
+    padding: 12px 14px 13px;
+    border: 1px solid #dce9df;
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  .reading-timer--focus .reading-timer-clock time {
+    font-size: clamp(2rem, 4.5vw, 2.55rem);
+  }
+
+  .reading-timer--focus .reading-timer-actions button {
+    min-height: 35px;
+    border-radius: 8px;
+  }
+
+  .reading-timer--focus .reading-timer-progress {
+    gap: 6px;
+    padding: 0 20px 11px;
+  }
+
+  .reading-timer--focus .reading-timer-progress-track {
+    height: 7px;
+    background: linear-gradient(90deg, #67a983 0 var(--reading-native-stop, 50%), #d99b68 var(--reading-native-stop, 50%) 100%);
+  }
+
+  .reading-timer--focus .reading-timer-progress-legend {
+    color: #789082;
+  }
+
+  .reading-timer--focus .reading-timer-progress-legend .native { color: #3f8462; }
+  .reading-timer--focus .reading-timer-progress-legend .learner { color: #b6784d; }
+
+  .reading-timer--focus .reading-timer-hint {
+    padding: 9px 20px 12px;
+    border-top-color: #e0ebe3;
+    color: #708478;
+    background: #f2f8f3;
+  }
+
+  .reading-timer--focus .reading-timer-floating {
+    border-color: #c9dfd0;
+    background: rgba(248, 253, 249, 0.96);
+  }
+
+  .reading-timer--focus .reading-timer-floating-track {
+    background: linear-gradient(90deg, #67a983 0 var(--reading-native-stop, 50%), #d99b68 var(--reading-native-stop, 50%) 100%);
+  }
+
   @media (max-width: 640px) {
     .reading-timer { margin: 16px 0 26px; border-radius: 14px; }
     .reading-timer-head { padding: 15px 16px 13px; }
@@ -794,6 +932,20 @@ const sectionName = timerId === 'cloze'
 
     .reading-timer-floating-label { flex: 1 1 auto; }
     .reading-timer-floating-progress { width: 84px; flex-basis: 84px; }
+
+    .reading-timer--focus .reading-timer-guides {
+      margin-right: 16px;
+      margin-left: 16px;
+    }
+
+    .reading-timer--focus .reading-timer-main {
+      gap: 12px;
+      padding: 15px 16px;
+    }
+
+    .reading-timer--focus .reading-timer-progress,
+    .reading-timer--focus .reading-timer-hint,
+    .reading-timer--focus .reading-timer-method { padding-right: 16px; padding-left: 16px; }
   }
 
   @media (max-width: 420px) {

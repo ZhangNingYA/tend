@@ -62,8 +62,8 @@ export const cet4Set3PassageTwoCloseReadings = {
     '但真正有意思的发现，是研究人员走出实验室开展实地实验时得到的。',
     [['step out of', '走出'], ['conduct', '实施；开展'], ['field experiment', '实地实验；现场实验']],
     '主语 + 谓语 + 时间状语从句（SV）',
-    'the really interesting finding 是主语，came 表示“出现、产生”；when 从句说明这一发现何时产生，to conduct... 表示走出实验室的目的。原卷在 lab 后保留了逗号，这不改变不定式的目的含义。',
-    [['subject', 'the really interesting finding'], ['predicate', 'came'], ['adverbial', 'when the researchers stepped out of the lab, to conduct a field experiment']],
+    'the really interesting finding 是主语，came 表示“出现、产生”；when 从句说明这一发现何时产生，to conduct... 表示走出实验室的目的。',
+    [['subject', 'the really interesting finding'], ['predicate', 'came'], ['adverbial', 'when the researchers stepped out of the lab to conduct a field experiment']],
   ),
   'R2-10': cr(
     '研究团队制作了传单，内容是当地社区警员的一些普通信息，例如他们最喜欢的食物、爱好或加入警队的原因。',

@@ -257,7 +257,7 @@ export const cet4InlineGlossary202606Set3 = {
     { term: 'phone interview', explanation: '电话面试' },
     { term: 'physical disgust', explanation: '生理厌恶' },
     { term: 'moral disgust', explanation: '道德厌恶' },
-    { term: 'parents-children conversations', explanation: '父母与子女之间的谈话（原卷写法）' },
+    { term: 'parent-child conversations', explanation: '父母与子女之间的谈话' },
     { term: 'social relationships', explanation: '社会关系；人际关系' },
     { term: 'housing developments', explanation: '住宅区；住宅开发项目' },
   ],

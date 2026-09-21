@@ -67,13 +67,13 @@ export const cet4Set3PassageOneCloseReadings = {
   ),
   'R1-10': cr(
     '父母与子女之间关于情绪的谈话尤其重要。',
-    [['of special relevance', '尤其相关；尤其重要'], ['parents-children', '父母与子女之间的；原卷写法'], ['conversation', '谈话；对话']],
+    [['of special relevance', '尤其相关；尤其重要'], ['parent-child', '父母与子女之间的'], ['conversation', '谈话；对话']],
     '表语前置的倒装句（SVC）',
-    '正常语序是 Parents-children conversations... are of special relevance。为突出重要性，表语 Of special relevance 被移到句首，系动词 are 随之前置。原卷写作 parents-children，常规复合形容词更常写成 parent-child。',
-    [['complement', 'Of special relevance'], ['predicate', 'are'], ['subject', 'parents-children conversations about emotions']],
+    '正常语序是 Parent-child conversations... are of special relevance。为突出重要性，表语 Of special relevance 被移到句首，系动词 are 随之前置。parent-child 是这里更自然的复合形容词。',
+    [['complement', 'Of special relevance'], ['predicate', 'are'], ['subject', 'parent-child conversations about emotions']],
   ),
   'R1-11': cr(
-    '的确，父母会和他们谈论情绪的孩子，往往比父母不常讨论情绪的孩子拥有更好的情绪理解力。',
+    '的确，当父母经常和孩子谈论情绪时，孩子往往比那些父母不常讨论情绪的孩子具备更好的情绪理解力。',
     [['emotional understanding', '情绪理解能力'], ['talk about', '谈论'], ['better ... than', '比……更好']],
     '状语 + 主谓宾 + 比较结构',
     'children 是主语中心，whose parents... 是定语从句；have 是谓语。than 后引出另一类 children，并再次用 whose 从句限定。',
@@ -88,10 +88,10 @@ export const cet4Set3PassageOneCloseReadings = {
   ),
   'R1-13': cr(
     '这正是我们在研究中着手考察的问题。',
-    [['set up to', '着手；安排去做'], ['examine', '考察'], ['in our study', '在我们的研究中']],
+    [['set out to', '着手；开始努力做'], ['examine', '考察'], ['in our study', '在我们的研究中']],
     '主语 + 系动词 + 表语从句（SVC）',
-    'This 是主语，is 后的 what 从句作表语；what 同时在从句中作 examine 的宾语，不能再另加 it。',
-    [['subject', 'This'], ['predicate', 'is'], ['complement', 'what we set up to examine in our study']],
+    'This 是主语，is 后的 what 从句作表语；what 同时在从句中作 examine 的宾语，不能再另加 it。set out to do 表示“着手做某事”。',
+    [['subject', 'This'], ['predicate', 'is'], ['complement', 'what we set out to examine in our study']],
   ),
   'R1-14': cr(
     '我们请了 68 位说英语的母亲及她们四岁、六岁或八岁的孩子，讨论一些有关道德厌恶和生理厌恶的故事。',

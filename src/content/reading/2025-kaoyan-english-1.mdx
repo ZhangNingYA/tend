@@ -1,0 +1,22 @@
+---
+title: '2025 考研英语（一）精读'
+description: '2025 年全国硕士研究生招生考试英语（一）英文材料，排除 Part C 翻译，按句提供阅读、词汇与结构精读。'
+pubDate: '2025-12-01'
+---
+
+import ReadingPractice from '../../components/reading/ReadingPractice.astro';
+import paper from '../../data/reading/2025-kaoyan-english-1.json';
+import { kaoyanEnglishOneCloseReadings2025 } from '../../data/closeReading/2025KaoyanEnglishOne';
+
+<ReadingPractice
+  cloze={paper.sections.cloze}
+  matching={paper.sections.matching}
+  passages={[
+    paper.sections.passageOne,
+    paper.sections.passageTwo,
+    paper.sections.passageThree,
+    paper.sections.passageFour,
+    paper.sections.passageFive,
+  ]}
+  closeReadings={kaoyanEnglishOneCloseReadings2025}
+/>

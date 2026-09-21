@@ -306,11 +306,13 @@ const readingSentenceMap = (reading) => {
       result[`M-${paragraph.label}${pad(index)}`] = sentence;
     });
   });
-  ['passageOne', 'passageTwo'].forEach((name, passageIndex) => {
-    sections[name].sentences.forEach((sentence, index) => {
-      result[`R${passageIndex + 1}-${pad(index)}`] = sentence;
+  Object.keys(sections)
+    .filter((name) => /^passage[A-Z]/.test(name))
+    .forEach((name, passageIndex) => {
+      sections[name].sentences.forEach((sentence, index) => {
+        result[`R${passageIndex + 1}-${pad(index)}`] = sentence;
+      });
     });
-  });
   return result;
 };
 
@@ -439,6 +441,14 @@ const blogSpecifications = [
     semantic: true,
     vocabularyQuality: true,
   })),
+  {
+    paper: '2025 Kaoyan English I',
+    module: path.join(projectRoot, 'src/data/closeReading/2025KaoyanEnglishOne.ts'),
+    exportName: 'kaoyanEnglishOneCloseReadings2025',
+    reading: path.join(projectRoot, 'src/data/reading/2025-kaoyan-english-1.json'),
+    semantic: false,
+    vocabularyQuality: false,
+  },
 ];
 
 // Keep future CET6 papers from silently skipping validation. As long as a new

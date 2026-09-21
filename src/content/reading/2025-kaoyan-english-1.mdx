@@ -7,15 +7,16 @@ pubDate: '2025-12-01'
 import ReadingPractice from '../../components/reading/ReadingPractice.astro';
 import paper from '../../data/reading/2025-kaoyan-english-1.json';
 import { kaoyanEnglishOneCloseReadings2025 } from '../../data/closeReading/2025KaoyanEnglishOne';
+import { kaoyanEnglishOneQuestions2025 } from '../../data/reading/2025KaoyanEnglishQuestions';
 
 <ReadingPractice
   cloze={paper.sections.cloze}
   matching={paper.sections.matching}
   passages={[
-    paper.sections.passageOne,
-    paper.sections.passageTwo,
-    paper.sections.passageThree,
-    paper.sections.passageFour,
+    { ...paper.sections.passageOne, questions: kaoyanEnglishOneQuestions2025[0] },
+    { ...paper.sections.passageTwo, questions: kaoyanEnglishOneQuestions2025[1] },
+    { ...paper.sections.passageThree, questions: kaoyanEnglishOneQuestions2025[2] },
+    { ...paper.sections.passageFour, questions: kaoyanEnglishOneQuestions2025[3] },
     paper.sections.passageFive,
   ]}
   closeReadings={kaoyanEnglishOneCloseReadings2025}

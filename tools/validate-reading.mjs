@@ -377,6 +377,52 @@ for (const file of files) {
     else seenSentences.set(normalized, key);
   }
 
+  if (/^cet4Reading202512Set\d+$/.test(paper)) {
+    const wordBank = reading.cloze?.wordBank ?? [];
+    const clozeAnswers = reading.cloze?.answers ?? [];
+    const bankByKey = new Map(wordBank.map((item) => [item.key, item.word]));
+    const clozeText = normalizeQuotes(reading.cloze.sentences.join(' ')).toLowerCase();
+    if (wordBank.length !== 15 || new Set(wordBank.map((item) => item.key)).size !== 15) {
+      fail(paper, '选词填空必须包含 15 个不重复词库选项');
+    }
+    if (clozeAnswers.length !== 10) fail(paper, '选词填空必须包含 26–35 共 10 个答案');
+    clozeAnswers.forEach((item, index) => {
+      const expectedNumber = 26 + index;
+      if (item.number !== expectedNumber) fail(paper, `选词填空答案编号应为 ${expectedNumber}`);
+      if (bankByKey.get(item.key) !== item.word) {
+        fail(paper, `选词填空第 ${item.number} 题答案 ${item.key} 与词库单词 ${item.word} 不一致`);
+      }
+      if (!item.evidence?.trim() || !clozeText.includes(normalizeQuotes(item.evidence).toLowerCase())) {
+        fail(paper, `选词填空第 ${item.number} 题依据不在原文中`);
+      }
+      if (!item.analysis?.trim()) fail(paper, `选词填空第 ${item.number} 题缺少解析`);
+    });
+
+    const matchingQuestions = reading.matching?.questions ?? [];
+    const paragraphByLabel = new Map(reading.matching.paragraphs.map((paragraph) => [
+      paragraph.label,
+      normalizeQuotes(paragraph.sentences.join(' ')).toLowerCase(),
+    ]));
+    if (matchingQuestions.length !== 10) fail(paper, '信息匹配必须包含 36–45 共 10 道题');
+    matchingQuestions.forEach((item, index) => {
+      const expectedNumber = 36 + index;
+      if (item.number !== expectedNumber) fail(paper, `信息匹配答案编号应为 ${expectedNumber}`);
+      const paragraphText = paragraphByLabel.get(item.answer);
+      if (!paragraphText) fail(paper, `信息匹配第 ${item.number} 题答案段落 ${item.answer} 不存在`);
+      const evidenceFragments = normalizeQuotes(item.evidence ?? '')
+        .toLowerCase()
+        .split(/\s*(?:\.{3}|…)\s*/)
+        .filter((fragment) => fragment.length >= 8);
+      if (evidenceFragments.length === 0
+        || evidenceFragments.some((fragment) => !paragraphText?.includes(fragment))) {
+        fail(paper, `信息匹配第 ${item.number} 题依据不在答案段落 ${item.answer} 中`);
+      }
+      if (!item.prompt?.trim() || !item.analysis?.trim()) {
+        fail(paper, `信息匹配第 ${item.number} 题缺少题干或解析`);
+      }
+    });
+  }
+
   const questionNumbers = new Set();
   let questionCount = 0;
   reading.passages.forEach((passage, passageIndex) => {
@@ -397,9 +443,15 @@ for (const file of files) {
         fail(paper, `${questionKey} 的原文依据不在 Passage ${passageIndex + 1} 中`);
       }
       if (!question.analysis?.trim()) fail(paper, `${questionKey} 缺少解题分析`);
+      if (/定位原文后比较选项|与原文信息一致|原文没有该信息或与原文不符/.test(question.analysis)) {
+        fail(paper, `${questionKey} 仍在使用通用占位解析`);
+      }
       question.options.forEach((option) => {
         if (!option.text?.trim() || !option.explanation?.trim()) {
           fail(paper, `${questionKey} 的 ${option.key} 选项缺少文本或解析`);
+        }
+        if (/^正确：与原文信息一致|^错误：原文没有该信息或与原文不符/.test(option.explanation)) {
+          fail(paper, `${questionKey} 的 ${option.key} 选项仍在使用通用占位解析`);
         }
       });
     }

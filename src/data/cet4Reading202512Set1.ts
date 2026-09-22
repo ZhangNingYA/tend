@@ -2,6 +2,10 @@ import type { CloseReading, InlineGlossary } from '../types/closeReading';
 import type { ReadingQuestion } from '../types/readingQuestion';
 import { cet4InlineGlossary202606Set2 } from './cet4InlineGlossary202606Set2';
 import { describeReadingStructure } from './describeReadingStructure';
+import {
+  cet4ClozeExercise202512Set1,
+  cet4MatchingQuestions202512Set1,
+} from './cet4Reading202512Exercises';
 
 type Role = 'subject' | 'predicate' | 'object' | 'complement' | 'adverbial';
 type Highlight = { role: Role; text: string; label?: string };
@@ -85,8 +89,8 @@ const clozeCloseReadings: Readonly<Record<string, CloseReading>> = {
   ),
   C05: note(
     '为什么会发生这种情况？',
-    [h('adverbial', 'Why'), h('predicate', 'happen')],
-    [sub('subject', 'this', '指示代词主语')],
+    [h('adverbial', 'Why'), h('subject', 'this'), h('predicate', 'happen')],
+    [],
     [['happen', '发生']],
     '疑问副词 + 助动词 + 主语 + 谓语',
   ),
@@ -613,6 +617,17 @@ Object.entries(matchingSentences).forEach(([label, sentences]) => {
   });
 });
 
+Object.assign(matchingCloseReadings, {
+  'M-E05': note('在如此混乱的局面下，围绕自行车道的政治争斗究竟能否结束？', [h('adverbial', 'Given that sort of mess'), h('predicate', 'can', '情态助动词'), h('subject', 'political fights over bike lanes'), h('adverbial', 'ever'), h('predicate', 'end', '实义谓语')], [], [['given', '考虑到；鉴于']], '状语 + 情态助动词 + 主语 + 实义谓语'),
+  'M-E04': note('但即便自己街区的经营表现已经改善，当地商户仍然不相信自行车道有益。', [h('subject', 'the folks who run local businesses'), h('adverbial', 'simply'), h('predicate', 'aren’t convinced'), sub('adverbial', 'even when their own street performs', '让步状语从句')], [], [['be convinced', '相信；确信']], '主句 + 让步状语从句'),
+  'M-I02': note('那么，为什么人们在这件事上存在认知盲区？', [h('adverbial', 'why', '原因疑问'), h('subject', 'the blind spot'), h('adverbial', 'here')], [], [['blind spot', '认知盲区；未察觉的问题']], '省略式疑问（省略 is）', '这是省略了系动词 is 的口语问句，完整理解为“why is there a blind spot here”。'),
+  'M-J05': note('因此，尽管 Hughes 支持自行车道——“骑车者理应安全”——她仍把停车位减少视为关乎生存的风险。', [h('adverbial', 'while Hughes supports bike lanes—“cyclists deserve to be safe”', '让步状语从句'), h('subject', 'she'), h('predicate', 'sees'), h('object', 'the parking loss'), h('complement', 'as an existential risk')], [], [['existential risk', '关乎生存的风险']], '让步状语从句 + 主语 + 谓语 + 宾语 + 补语'),
+  'M-J07': note('“对我们店来说，自行车道造成的影响比新冠疫情还糟。”', [h('adverbial', 'For our business'), h('subject', 'the bike lanes'), h('predicate', 'are'), h('complement', 'way worse than Covid was')], [], [['way worse than', '比……糟糕得多']], '状语 + 主语 + 系动词 + 表语'),
+  'M-M02': note('她讽刺地指出，如今车道里活动太多，反对者反而声称问题变成了骑车人太多、妨碍汽车通行。', [h('subject', 'the lanes'), h('predicate', 'are'), h('complement', 'so full of activity')], [h('adverbial', 'Now'), h('subject', 'she', '引述者'), h('predicate', 'notes', '引述动词'), h('adverbial', 'ironically'), sub('adverbial', 'that opponents have turned to claiming the problem is the opposite: There are too many cyclists getting in the way of cars', '结果状语从句')], [['turn to doing', '转而开始做'], ['get in the way of', '妨碍；挡住']], '内容主句 + 结果状语从句', '核心判断是“the lanes are so full of activity”；she notes ironically 只说明说话者和语气。'),
+  'M-O05': note('如果数据无法改变想法，顾客也许能做到。', [sub('adverbial', 'If data won’t change minds', '条件状语从句'), h('subject', 'customers'), h('predicate', 'might')], [], [['change minds', '改变看法']], '条件状语从句 + 省略主句', '主句省略了 change minds；完整意思是“customers might change minds”。'),
+  'M-O01': note('毕竟，危机往往会让人们看到新的可能性。', [h('subject', 'Crises'), h('adverbial', 'after all'), h('predicate', 'have'), h('object', 'a way of opening people’s eyes to possibilities')], [], [['have a way of doing', '往往会做某事'], ['open one’s eyes to', '使某人认识到']], '主语 + 插入状语 + 谓语 + 宾语'),
+});
+
 const passageCloseReadings: Record<string, CloseReading> = {
   'R1-01': simple('地球上的所有生物都暴露在 24 小时的昼夜循环中。', 'All living organisms on Earth', 'are exposed', ['complement', 'to a 24-hour day-night cycle'], [['be exposed to', '暴露于；处于……影响下']], '主语 + 被动谓语 + 补语'),
   'R1-02': note('这种循环是人们晚上休息、白天活动的原因。', [h('subject', 'This cycle'), h('predicate', 'is'), h('complement', 'the reason')], [sub('object', 'why people rest at night and are active during the day', '原因从句')], [['day-night cycle', '昼夜循环']], '主语 + 系动词 + 表语 + 原因从句'),
@@ -628,7 +643,7 @@ const passageCloseReadings: Record<string, CloseReading> = {
   'R1-12': simple('因此，为了确保依从性，患者通常被要求在早上或晚上服用大多数药物。', 'patients', 'are directed', ['complement', 'to take most drugs during the morning or evening'], [['compliance', '遵从；依从']], '主语 + 被动谓语 + 不定式补语'),
   'R1-13': note('五十多年前，研究人员发现，降胆固醇药物辛伐他汀在夜间服用比白天服用更能有效降低胆固醇水平。', [h('adverbial', 'Over 50 years ago'), h('subject', 'researchers'), h('predicate', 'found')], [sub('object', 'that the cholesterol drug simvastatin is more effective at lowering cholesterol levels when taken at night rather than during the day', '宾语从句（整体）')], [['cholesterol', '胆固醇'], ['effective', '有效的']], '时间状语 + 主句 + 宾语从句'),
   'R1-14': note('这是因为这些药物所针对的肝酶在夜间更加活跃。', [h('subject', 'This'), h('predicate', 'is')], [sub('complement', 'because the liver enzyme these drugs target is more active at night', '原因表语从句')], [['liver enzyme', '肝酶'], ['target', '目标；靶向']], '主语 + 系动词 + 原因表语从句'),
-  'R1-15': simple('在错误的时间服药甚至可能造成伤害。', 'Taking medicine at the wrong time', 'can', ['object', 'cause harm'], [['at the wrong time', '在错误的时间']], '动名词短语主语 + 情态动词谓语 + 宾语'),
+  'R1-15': simple('在错误的时间服药甚至可能造成伤害。', 'Taking medicine at the wrong time', 'can even cause', ['object', 'harm'], [['at the wrong time', '在错误的时间']], '动名词短语主语 + 情态谓语 + 宾语'),
   'R1-16': note('我和同事想知道，咪达唑仑这种全球外科手术中最常用的镇静剂，是否可能干扰夜间保护心脏的内部时钟。', [h('subject', 'My colleagues and I'), h('predicate', 'wondered')], [sub('object', 'whether midazolam', '宾语从句·主语'), sub('predicate', 'might interfere', '宾语从句·谓语'), sub('complement', 'with the internal clock that protects the heart at night', '宾语从句·补充')], [['sedative', '镇静剂'], ['interfere with', '干扰']], '主语 + 谓语 + whether 宾语从句'),
   'R1-17': simple('目前，没有关于应该何时使用咪达唑仑的指南。', 'there', 'are', ['complement', 'no guidelines regarding when midazolam should be administered'], [['administer', '施用；给予']], 'There be 句型 + 后置修饰'),
   'R1-18': simple('还需要更多研究来确定治疗不同疾病的最佳时间。', 'More research', 'is needed', ['complement', 'to determine the best times to administer treatments for different diseases'], [['determine', '确定']], '主语 + 被动谓语 + 不定式目的补语'),
@@ -638,9 +653,9 @@ const passageCloseReadings: Record<string, CloseReading> = {
   'R2-03': note('理发师表示同意，但理由不同：她需要这笔钱。', [h('subject', 'The hairdresser'), h('predicate', 'agreed')], [sub('complement', 'but for a different reason: She needs the money', '转折补充')], [['for a different reason', '出于不同原因']], '主句 + 转折补充'),
   'R2-04': simple('这两种情况共同导致美国工作到 70 多岁的人数大幅增加。', 'Both scenarios', 'are contributing to', ['object', 'a big increase in the number of people in the US working into their 70s'], [['contribute to', '促成；导致']], '主语 + 谓语 + 宾语'),
   'R2-05': simple('过去 20 年间，美国工作到 70 多岁的人所占比例从不到 10% 上升到接近 15%。', 'the share of Americans working in their 70s', 'has risen', ['complement', 'from less than 10% to nearly 15%'], [['share', '份额；比例']], '主语 + 现在完成时 + 数量变化'),
-  'R2-06': note('经济学家说，除了人们更健康、寿命更长之外，实际工资多年增长缓慢以及私人部门逐渐远离传统养老金等经济因素，也是人们推迟退休的原因。', [h('subject', 'economists'), h('predicate', 'say')], [sub('object', 'that a combination of financial considerations such as years of slow rise in real wages and a shift away from traditional pensions in the private sector are some of the reasons people delay retirement', '宾语从句（整体）')], [['financial consideration', '经济因素'], ['delay retirement', '推迟退休']], '主语 + 谓语 + 宾语从句'),
+  'R2-06': note('经济学家说，除了人们更健康、寿命更长之外，实际工资多年增长缓慢以及私人部门逐渐远离传统养老金等经济因素，也是人们推迟退休的原因。', [h('adverbial', 'In addition to people being healthier and living much longer'), h('subject', 'a combination of financial considerations such as years of slow rise in real wages and a shift away from traditional pensions in the private sector'), h('predicate', 'are'), h('complement', 'some of the reasons people delay retirement')], [sub('subject', 'economists', '引述者'), sub('predicate', 'say', '引述动词')], [['financial consideration', '经济因素'], ['delay retirement', '推迟退休']], '状语 + 内容主句 + 引述说明', '核心判断是“多种经济因素也是延迟退休的原因”；economists say 只说明信息来源。'),
   'R2-07': note('Abraham 说，制造业衰退以及从事劳动强度较低职业的人数增加，也促成了这一趋势；她研究老年人的工作和退休决定。', [h('subject', 'The decline of manufacturing and the increase in the number of people working in less labor-intensive occupations'), h('predicate', 'has contributed'), h('object', 'to the trend')], [sub('complement', 'who researches work and retirement decisions of older Americans', '定语从句')], [['labor-intensive', '劳动密集型的']], '并列主语 + 谓语 + 定语从句'),
-  'R2-08': note('Abraham 说：“哪一个因素更重要，取决于到那时为止你从事的工作经历。”', [h('subject', 'Which'), h('predicate', 'matters more'), h('complement', 'depends')], [sub('object', 'on what your history up until that point has been in the type of work you’re doing', '宾语从句')], [['depend on', '取决于']], '主语从句 + 谓语 + 介词 + 宾语从句'),
+  'R2-08': note('Abraham 说：“哪一个因素更重要，取决于到那时为止你从事的工作经历。”', [h('subject', 'Which matters more', '主语从句（整体）'), h('predicate', 'depends'), h('complement', 'on what your history up until that point has been in the type of work you’re doing')], [sub('predicate', 'Abraham says', '引述说明')], [['depend on', '取决于']], '主语从句 + 谓语 + 介词宾语', '核心结构是“Which matters more depends on ...”；句末 Abraham says 只标明说话者。'),
   'R2-09': note('总体趋势影响着不同教育程度的美国人，尽管各类别的比例有所不同。', [h('subject', 'The overall trend'), h('predicate', 'is hitting'), h('object', 'Americans of all different levels of educational attainment')], [sub('adverbial', 'although the percentages vary by category', '让步状语从句')], [['attainment', '获得；成就（此处指教育程度）']], '主句 + 让步状语从句'),
   'R2-10': simple('2018 年，拥有学士学位、工作到 70 多岁的美国人比例接近 20%。', 'The share of Americans with bachelor’s degrees', 'reached', ['object', 'nearly 20%'], [['bachelor’s degree', '学士学位']], '主语 + 谓语 + 宾语'),
   'R2-11': note('高中学历或以下的人中，工作到 70 多岁的比例上升到约 10%；有过大学教育的人则处于中间水平，约为 15%。', [h('subject', 'the proportion of those working in their 70s'), h('predicate', 'had risen'), h('complement', 'to around 10%')], [sub('adverbial', 'while those with some college education were in the middle at around 15%', '对比状语从句')], [['proportion', '比例']], '主句 + while 对比从句'),
@@ -659,6 +674,7 @@ const allCloseReadings: Record<string, CloseReading> = {
 export const cet4Reading202512Set1 = {
   cloze: {
     title: 'The paradox of too many choices',
+    ...cet4ClozeExercise202512Set1,
     sentences: [
       'People tend to want as many choices as possible.',
       'They believe this will maximize their chance of making the best decision.',
@@ -677,6 +693,7 @@ export const cet4Reading202512Set1 = {
   matching: {
     title: 'The battle over bike lanes needs a mindset shift',
     paragraphs: matching,
+    questions: cet4MatchingQuestions202512Set1,
   },
   passages: [passageOne, passageTwo],
 };
@@ -719,6 +736,10 @@ export const cet4InlineGlossary202512Set1: InlineGlossary = {
     isolation: { partOfSpeech: 'n', meaning: '孤立；隔离' },
     financial: { partOfSpeech: 'adj', meaning: '金融的；经济的' },
     physical: { partOfSpeech: 'adj', meaning: '身体的；体力的' },
+    making: { partOfSpeech: 'v', meaning: '作出（决定）；制作；使得' },
+    work: { partOfSpeech: 'v / n', meaning: '奏效；起作用；工作' },
+    works: { partOfSpeech: 'v', meaning: '奏效；起作用（work 的第三人称单数）' },
+    matter: { partOfSpeech: 'v / n', meaning: '要紧；有影响；事情' },
   },
   phrases: [
     { term: 'when it comes to', explanation: '当涉及；说到' },
@@ -727,5 +748,19 @@ export const cet4InlineGlossary202512Set1: InlineGlossary = {
     { term: 'bottom line', explanation: '最终结果；利润底线' },
     { term: 'look forward to', explanation: '期待；盼望' },
     { term: 'take ... into account', explanation: '把……考虑在内' },
+    { term: 'make a decision', explanation: '作出决定' },
+    { term: 'make a selection', explanation: '作出选择' },
+    { term: 'a done deal', explanation: '已成定局的事情' },
+    { term: 'economic fortunes', explanation: '经济状况；经济收益' },
+    { term: 'run hot', explanation: '情绪激烈；气氛紧张' },
+    { term: 'have a way of doing', explanation: '往往会做某事' },
+    { term: 'see no way around', explanation: '看不到其他办法' },
+    { term: 'a stretch of road', explanation: '一段道路' },
+    { term: 'fare well', explanation: '经营良好；进展顺利' },
+    { term: 'net loss', explanation: '净减少；净亏损' },
+    { term: 'be charged with emotion', explanation: '带有强烈情绪色彩' },
+    { term: 'deep roots', explanation: '深厚根基' },
+    { term: 'stay on', explanation: '继续工作；继续留下' },
+    { term: 'work into one’s 70s', explanation: '一直工作到七十多岁' },
   ],
 };

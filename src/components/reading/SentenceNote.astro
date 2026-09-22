@@ -678,9 +678,12 @@ const segmentGuide = closeReading?.segments
   ? closeReading.segments
   : [];
 const hasSegmentGuide = segmentGuide.length > 0;
+const hasVocabulary = (closeReading?.vocabulary.length ?? 0) > 0;
 const translationStep = hasSegmentGuide ? '03' : '02';
 const vocabularyStep = hasSegmentGuide ? '04' : '03';
-const structureStep = hasSegmentGuide ? '05' : '04';
+const structureStep = hasSegmentGuide
+  ? hasVocabulary ? '05' : '04'
+  : hasVocabulary ? '04' : '03';
 
 interface LocatedStructureComponent {
   role: SentenceRole;
@@ -1038,14 +1041,16 @@ const structureExplanation = reportedQuoteAnalysis?.explanation
             <p lang="zh-CN">{closeReading.translation}</p>
           </section>
 
-          <section class="close-reading-block vocabulary-block">
-            <p class="close-reading-label"><span>{vocabularyStep}</span>重点单词短语</p>
-            <ul lang="zh-CN">
-              {closeReading.vocabulary.map((item) => (
-                <li><strong>{item.term}</strong><span>{item.explanation}</span></li>
-              ))}
-            </ul>
-          </section>
+          {closeReading.vocabulary.length > 0 && (
+            <section class="close-reading-block vocabulary-block">
+              <p class="close-reading-label"><span>{vocabularyStep}</span>重点单词短语</p>
+              <ul lang="zh-CN">
+                {closeReading.vocabulary.map((item) => (
+                  <li><strong>{item.term}</strong><span>{item.explanation}</span></li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section class="close-reading-block structure-block">
             <p class="close-reading-label"><span>{structureStep}</span>完整句子结构</p>

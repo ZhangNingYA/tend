@@ -2,6 +2,10 @@ import type { CloseReading, InlineGlossary } from '../types/closeReading';
 import type { ReadingQuestion } from '../types/readingQuestion';
 import { cet4InlineGlossary202606Set2 } from './cet4InlineGlossary202606Set2';
 import { describeReadingStructure, readingStructurePattern } from './describeReadingStructure';
+import {
+  cet4ClozeExercise202512Set3,
+  cet4MatchingQuestions202512Set3,
+} from './cet4Reading202512Exercises';
 
 type Role = 'subject' | 'predicate' | 'object' | 'complement' | 'adverbial';
 type Highlight = { role: Role; text: string; label?: string };
@@ -31,6 +35,7 @@ const verbPattern = /\b(?:am|is|are|was|were|be|been|being|has|have|had|can|coul
 const compoundVerbPattern = /\b(?:am|is|are|was|were|has|have|had|can|could|may|might|will|would|should|must|do|does|did)(?:\s+(?:not|never|also|still|just|probably|actually|already|rarely|usually|often))*\s+(?:(?:been|being)\s+)?(?:[A-Za-z]+(?:ed|en|ing)|be|do|feel|make|get|put|come|go|take|bring|learn|serve|allow|help|show|say|see|find|think|look|become|remain|appear|matter|depend|provide|claim|reveal|reflect|identify|account|predict|offer|receive|acknowledge|call|tell|validate|award|read|rise|rate|choose|seem|raise|protect|organize|support|pursue|face|hire|argue|admit|worry|try|switch|enable|satisfy|cost|want|need|know|travel|participate|give|benefit|test|detect|interpret|involve|interact|follow|push|believe|remove|cite|prevent|base|compare|describe|recall|vary|continue|upset|affect|left)\b/i;
 const auto = (sentence: string, translation = '句意：' + sentence): CloseReading => {
   const leadingMatch = sentence.match(/^(?:Unfortunately,\s+while\b[^,]+,\s*|(?:(?:But|And|So),?\s+)(?:if|when|while|although|because|since|as)\b[^,]+,\s*|(?:Earlier this year|Two years ago|Many years ago),\s*|Now,?\s+)/i)
+    ?? sentence.match(/^(?:And,\s+yes,\s+|(?:But|And|So|Importantly|Basically|Apparently),?\s+)/i)
     ?? sentence.match(/^(?:(?:Although|Though|While|When|If|Since|Because|As|With|After|Before|According to|In|On|At|For|By|Instead|However|Unfortunately|Importantly|Apparently|Basically|Eventually)\b[^,]{2,},\s*)/i)
     ?? sentence.match(/^(?:Attended|Based|Compared|Given|Supported|Driven|Located|Founded|Born)\b[^,]{2,},\s*/i);
   const leading = leadingMatch?.[0] ?? '';
@@ -78,10 +83,21 @@ const auto = (sentence: string, translation = '句意：' + sentence): CloseRead
   }
   return note(translation, highlights, highlights.filter((item) => !item.label?.includes('从句')), vocabularyFor(sentence));
 };
-const qNote = (prompt: string) => {
-  const words = firstWords(prompt);
-  return note('题干：' + prompt, [h('subject', words[0] ?? prompt.slice(0, 10)), h('predicate', words[1] ?? 'asks')]);
+const questionNotes: Record<string, CloseReading> = {
+  "What do we learn about New York's Eleven Madison Park?": note('关于纽约的 Eleven Madison Park 餐厅，我们能了解到什么？', [h('object', 'What', '疑问宾语'), h('predicate', 'do', '助动词'), h('subject', 'we'), h('predicate', 'learn', '实义谓语'), h('complement', "about New York's Eleven Madison Park")]),
+  'Why did Daniel Humm decide to remove meat from the menu of his restaurant?': note('Daniel Humm 为什么决定从餐厅菜单中去掉肉类？', [h('adverbial', 'Why', '原因疑问'), h('predicate', 'did', '助动词'), h('subject', 'Daniel Humm'), h('predicate', 'decide', '实义谓语'), h('object', 'to remove meat from the menu of his restaurant')]),
+  'What did Daniel Humm think of his move to a meat-free menu?': note('Daniel Humm 如何看待改用无肉菜单这一举措？', [h('object', 'What', '疑问宾语'), h('predicate', 'did', '助动词'), h('subject', 'Daniel Humm'), h('predicate', 'think', '实义谓语'), h('complement', 'of his move to a meat-free menu')]),
+  "What does Michelin's 2022 New York guide say about Eleven Madison Park's decision?": note('米其林 2022 纽约指南如何评价 Eleven Madison Park 的决定？', [h('object', 'What', '疑问宾语'), h('predicate', 'does', '助动词'), h('subject', "Michelin's 2022 New York guide"), h('predicate', 'say', '实义谓语'), h('complement', "about Eleven Madison Park's decision")]),
+  'What does the awarding of three Michelin stars to Eleven Madison Park indicate?': note('Eleven Madison Park 获得米其林三星说明了什么？', [h('object', 'What', '疑问宾语'), h('predicate', 'does', '助动词'), h('subject', 'the awarding of three Michelin stars to Eleven Madison Park'), h('predicate', 'indicate', '实义谓语')]),
+  'What does the passage say is of importance regarding genetic tests?': note('文章认为，关于基因检测，什么是重要的？', [h('object', 'What', '疑问宾语'), h('predicate', 'does', '助动词'), h('subject', 'the passage'), h('predicate', 'say', '实义谓语'), h('complement', 'is of importance regarding genetic tests', '宾语从句（整体）')], [h('object', 'What', '疑问宾语'), h('predicate', 'does', '助动词'), h('subject', 'the passage'), h('predicate', 'say', '实义谓语')]),
+  'What kind of genetic tests tend to be comparatively reliable?': note('哪类基因检测往往相对可靠？', [h('subject', 'What kind of genetic tests'), h('predicate', 'tend to be'), h('complement', 'comparatively reliable')]),
+  'What do we learn about genetic health tests from the passage?': note('关于基因健康检测，我们能从文章中了解到什么？', [h('object', 'What', '疑问宾语'), h('predicate', 'do', '助动词'), h('subject', 'we'), h('predicate', 'learn', '实义谓语'), h('complement', 'about genetic health tests from the passage')]),
+  'What makes genetic tests for multi-factorial traits tricky to interpret?': note('是什么使多因素性状的基因检测难以解释？', [h('subject', 'What'), h('predicate', 'makes'), h('object', 'genetic tests for multi-factorial traits'), h('complement', 'tricky to interpret')]),
+  'What does the passage say about DNA tests to predict personality or talents?': note('文章如何评价预测性格或天赋的 DNA 检测？', [h('object', 'What', '疑问宾语'), h('predicate', 'does', '助动词'), h('subject', 'the passage'), h('predicate', 'say', '实义谓语'), h('complement', 'about DNA tests to predict personality or talents')]),
 };
+
+const qNote = (prompt: string) => questionNotes[prompt]
+  ?? note('题干：' + prompt, [h('subject', firstWords(prompt)[0] ?? prompt), h('predicate', firstWords(prompt)[1] ?? 'asks')]);
 
 const clozeSentences = [
   'Earth Day is an annual celebration that honors the achievements of the environmental movement and raises awareness of the need to protect Earth’s natural resources for future generations.',
@@ -225,25 +241,124 @@ const passageTwoSentences = [
   'At the moment, the scientific bases for these applications are non-existent or incredibly weak.',
 ];
 
+const questionGuidance: Record<number, {
+  analysis: string;
+  options: readonly [string, string, string, string];
+}> = {
+  46: {
+    analysis: '首句指出 Eleven Madison Park 是首家获得米其林三星的纯素餐厅；三星是米其林最高评级，因此选 A。',
+    options: [
+      '正确：three Michelin stars 对应 the highest Michelin rating，first vegan restaurant 为原文直接信息。',
+      '错误：文章只说它成为首家获三星的纯素餐厅，没有说它是纽约首家去掉肉类的餐厅。',
+      '错误：原文说菜单曾以精致的动物性菜肴闻名，不是美国各地的地方菜。',
+      '错误：2011 年是它首次获得三星的年份，不是餐厅成立年份。',
+    ],
+  },
+  47: {
+    analysis: 'Humm 去掉肉类时援引的是不可持续的食品体系和气候危机，目标是推动更可持续的饮食方式，B 最符合。',
+    options: [
+      '错误：文章没有把说服更多顾客成为纯素者作为直接目的。',
+      '正确：sustainable food system 与原文 unsustainable food system 构成正反同义转换。',
+      '错误：展示植物性菜单的可能性是决定之后的示范意义，不是最初原因。',
+      '错误：他在冒险改变已有三星餐厅，并不是为了争取首次三星。',
+    ],
+  },
+  48: {
+    analysis: 'Humm 承认顾客是否会来并不确定，却仍称这是值得承担的风险；A 同时保留“不确定”和“值得”两层意思。',
+    options: [
+      '正确：unsure of success 对应 it wasn’t clear if guests would come，worthwhile 对应 a risk worth taking。',
+      '错误：为其他餐厅树立榜样是文章谈到的潜在影响，不是他对风险本身的评价。',
+      '错误：他称其值得冒险，并没有说这是疯狂且无人愿意尝试的赌博。',
+      '错误：当时他并不知道这一举措是否会被市场证明正确。',
+    ],
+  },
+  49: {
+    analysis: '指南把这一决定称为 a bold vision of luxury dining；bold 对应 daring，vision 对应 foresight，因此选 C。',
+    options: [
+      '错误：elevated to an art form 是米其林网站对三星厨艺的一般说明，不是指南对该决定的评价。',
+      '错误：指南在评价餐厅愿景，并非证明米其林评级体系有效。',
+      '正确：daring foresight 准确改写 bold vision。',
+      '错误：餐厅本来就是高级餐厅，决定的重点是转向植物性菜单。',
+    ],
+  },
+  50: {
+    analysis: '米其林再次授予三星，被作者解释为对植物性食品在餐饮界日益重要的明确认可，D 直接对应结尾。',
+    options: [
+      '错误：文章说重要性正在上升，但没有断言纯素食品一定会成为主流。',
+      '错误：责任来自 Humm 对奢侈品牌角色的看法，不是三星奖项本身表明的内容。',
+      '错误：文章没有把三星描述成促使更多餐厅提供健康食品的激励措施。',
+      '正确：explicit recognition 对应 a clear nod，rising importance 对应 growing significance。',
+    ],
+  },
+  51: {
+    analysis: '第二句明确说，理解基因检测到底有多准确、哪些信息可信非常重要；A 提取了其中最核心的一点。',
+    options: [
+      '正确：Knowing their accuracy 直接对应 understand how accurate genetic tests are。',
+      '错误：文章讨论不同检测的可靠性，没有把“评估适用范围”列为该句重点。',
+      '错误：利用检测信息不是作者此处强调的前提，先要判断信息是否可靠。',
+      '错误：文章没有要求权衡检测造成的后果。',
+    ],
+  },
+  52: {
+    analysis: '只由单个基因决定的性状变量少、结果更明确，因此这类检测 comparatively reliable，选 D。',
+    options: [
+      '错误：遗传机制越复杂，检测越难解释，不会更可靠。',
+      '错误：是否与疾病有关不是可靠性的决定条件，关键是是否由单一基因决定。',
+      '错误：具体问题会影响准确性，但定位句明确给出的可靠类别是单基因性状。',
+      '正确：determined by a single gene 对应 depend on a single gene。',
+    ],
+  },
+  53: {
+    analysis: '文章说大多数潜在健康问题不能仅凭基因检测识别，C 用 independently 改写 alone，并保留 majority。',
+    options: [
+      '错误：某些罕见遗传病恰恰可以较容易识别。',
+      '错误：文章说健康受遗传与非遗传因素共同影响，不是检测无法把两类因素分开。',
+      '正确：cannot independently identify 对应 cannot be identified by genetic testing alone。',
+      '错误：生活方式与环境都属于非遗传因素，但文章没有说检测任务是区分二者。',
+    ],
+  },
+  54: {
+    analysis: '多因素性状涉及许多基因，而难点在于预测这些基因会怎样共同作用；B 准确改写 play together。',
+    options: [
+      '错误：文章强调多个基因之间的共同作用，不是逐个确定每个基因的角色。',
+      '正确：foretelling how the various genes will interact 对应 predict how they will play together。',
+      '错误：还需考虑环境因素，但定位句指出的核心解释难点是基因间相互作用。',
+      '错误：问题不只是识别基因工作量大，而是无法可靠预测组合效果。',
+    ],
+  },
+  55: {
+    analysis: '作者把用 DNA 预测性格、天赋或完美伴侣的检测称为 pure nonsense，并说科学基础极弱或不存在，因此选 D。',
+    options: [
+      '错误：原文恰恰说这些应用的科学基础不存在或极其薄弱。',
+      '错误：寻找完美伴侣的测试也被归入 pure nonsense。',
+      '错误：do not look promising 语气仍偏保留，弱于作者明确的 pure nonsense。',
+      '正确：do not make any sense 是 pure nonsense 的直接同义表达。',
+    ],
+  },
+};
+
 const makeQuestion = (
   number: number,
   prompt: string,
   answer: 'A' | 'B' | 'C' | 'D',
   evidence: string,
   options: readonly [string, string, string, string],
-): ReadingQuestion => ({
-  number,
-  prompt,
-  answer,
-  evidence,
-  analysis: '定位原文后比较选项与原文的同义表达，正确项与证据句相符。',
-  closeReading: qNote(prompt),
-  options: options.map((text, index) => ({
-    key: String.fromCharCode(65 + index) as 'A' | 'B' | 'C' | 'D',
-    text,
-    explanation: index === answer.charCodeAt(0) - 65 ? '正确：与原文信息一致。' : '错误：原文没有该信息或与原文不符。',
-  })),
-});
+): ReadingQuestion => {
+  const guidance = questionGuidance[number];
+  return {
+    number,
+    prompt,
+    answer,
+    evidence,
+    analysis: guidance.analysis,
+    closeReading: qNote(prompt),
+    options: options.map((text, index) => ({
+      key: String.fromCharCode(65 + index) as 'A' | 'B' | 'C' | 'D',
+      text,
+      explanation: guidance.options[index],
+    })),
+  };
+};
 
 const passageOne = {
   title: 'Passage One · A three-star vegan restaurant',
@@ -333,8 +448,8 @@ passageOneSentences.forEach((sentence, index) => { closeReadings[`R1-${String(in
 passageTwoSentences.forEach((sentence, index) => { closeReadings[`R2-${String(index + 1).padStart(2, '0')}`] = auto(sentence); });
 
 export const cet4Reading202512Set3 = {
-  cloze: { title: 'Earth Day and the environmental movement', sentences: clozeSentences },
-  matching: { title: 'Looking for a job after 45', paragraphs: matching },
+  cloze: { title: 'Earth Day and the environmental movement', sentences: clozeSentences, ...cet4ClozeExercise202512Set3 },
+  matching: { title: 'Looking for a job after 45', paragraphs: matching, questions: cet4MatchingQuestions202512Set3 },
   passages: [passageOne, passageTwo],
 };
 
@@ -363,6 +478,16 @@ export const cet4InlineGlossary202512Set3: InlineGlossary = {
     ancestry: { partOfSpeech: 'n', meaning: '祖先；血统' },
     hereditary: { partOfSpeech: 'adj', meaning: '遗传的' },
     trait: { partOfSpeech: 'n', meaning: '特征；性状' },
+    rest: { partOfSpeech: 'n / v', meaning: '其余部分；剩余的人或事物；休息' },
+    fit: { partOfSpeech: 'n / adj / v', meaning: '合适的人选；合适的；适合' },
+    gamble: { partOfSpeech: 'n / v', meaning: '冒险之举；冒险' },
+    nowhere: { partOfSpeech: 'adv / n', meaning: '毫无进展；无处' },
+    setting: { partOfSpeech: 'n', meaning: '环境；场合；背景' },
+    branding: { partOfSpeech: 'v', meaning: '称为；给……贴上标签' },
+    reads: { partOfSpeech: 'v', meaning: '写道；内容是；阅读' },
+    application: { partOfSpeech: 'n', meaning: '用途；应用；申请' },
+    applications: { partOfSpeech: 'n', meaning: '用途；应用（application 的复数）' },
+    bases: { partOfSpeech: 'n', meaning: '依据；基础（basis 的复数）' },
   },
   phrases: [
     { term: 'Earth Day', explanation: '地球日' },
@@ -379,6 +504,26 @@ export const cet4InlineGlossary202512Set3: InlineGlossary = {
     { term: 'at the moment', explanation: '目前；此刻' },
     { term: 'play together', explanation: '共同发挥作用；相互作用' },
     { term: 'based on', explanation: '基于；根据' },
+    { term: 'the rest of', explanation: '其余的；剩下的' },
+    { term: 'get back into work', explanation: '重返职场' },
+    { term: 'make a difference', explanation: '带来改变；产生作用' },
+    { term: 'out of work', explanation: '失业' },
+    { term: 'turn out to be', explanation: '结果是；事实证明是' },
+    { term: 'on its own', explanation: '本身；单独地' },
+    { term: 'get nowhere', explanation: '毫无进展；于事无补' },
+    { term: 'go to waste', explanation: '被浪费；白白损失' },
+    { term: 'a risk worth taking', explanation: '值得承担的风险' },
+    { term: 'open doors for', explanation: '为……创造机会' },
+    { term: 'the more ... the more', explanation: '越……，就越……' },
+    { term: 'pure nonsense', explanation: '纯属无稽之谈' },
+    { term: 'written in the DNA', explanation: '由 DNA 所决定；写在遗传信息中' },
+    { term: 'sweet deals', explanation: '很划算的优惠' },
+    { term: 'take the jump', explanation: '毅然冒险一试' },
+    { term: 'in this setting', explanation: '在这种环境或场合中' },
+    { term: 'a nod to', explanation: '对……的认可；向……致意' },
+    { term: 'have a role to play', explanation: '可以发挥作用；负有职责' },
+    { term: 'family tree', explanation: '家谱' },
+    { term: 'at once', explanation: '同时；立刻' },
   ],
 };
 const autoTranslations: Record<string, string> = {
@@ -402,14 +547,14 @@ const autoTranslations: Record<string, string> = {
   "They've just published a global survey on midcareer employment, based on surveys of over 5,000 workers and managers in seven countries.": "他们刚刚发布了一项关于职业中期就业的全球调查，该调查基于对七个国家 5,000 多名工人和管理人员的调查。",
   "Older midcareer workers make up the bulk of the long-term unemployed in many countries, Generation’s analysts write in their report.": "Generation 的分析师在报告中写道，在许多国家，年长的职业中期工人占长期失业人口的大部分。",
   "Those over 45 comprise over 40% of the long-term unemployed, for example.": "例如，45 岁以上的人占长期失业者的 40% 以上。",
-  "And if you're out of work past the age of 45, there's nearly a two in three chance you'll be out of work for over a year, they find.": "他们发现，如果您超过 45 岁就失业，那么您有近三分之二的机会会失业超过一年。",
+  "And if you're out of work past the age of 45, there's nearly a two in three chance you'll be out of work for over a year, they find.": "他们发现，如果你在 45 岁以后失业，失业超过一年的可能性接近三分之二。",
   "Midcareer individuals are finding it harder to get jobs, they write.": "他们写道，职业中期的人发现找到工作越来越难。",
   "People age 45+ face persistent and rising pressure in the global job market.": "45 岁以上的人群在全球就业市场面临持续且不断上升的压力。",
   "They are unemployed for much longer than the average, and their age is indeed one of the greatest barriers to their finding a job.": "他们失业的时间比平均水平长得多，而且年龄确实是他们找工作的最大障碍之一。",
   "A substantial part of this, they report, is widespread ageism on the part of hiring managers.": "他们报告说，其中很大一部分原因是招聘经理普遍存在年龄歧视。",
   "Although such managers admit that post-45 hires turn out on average to be just as good as or better than younger workers, they still do not want to hire them.": "尽管这些经理承认，45 岁以后的员工平均表现与年轻员工一样好，甚至更好，但他们仍然不想雇用他们。",
   "Hiring managers have a strong perception bias against 45+ job candidates—they believe that members of this age group have poor skills and low adaptability, Generation’s analysts report.": "Generation 的分析师报告称，招聘经理对 45 岁以上的求职者有强烈的认知偏见，他们认为这个年龄段的员工技能较差，适应性较差。",
-  "The survey results are remarkable.": "调查结果显着。",
+  "The survey results are remarkable.": "调查结果十分引人注目。",
   "Hiring managers are three times as likely to rate job applicants age 35–44 as a better “fit” than those over 45.": "招聘经理认为 35 至 44 岁的求职者更“适合”的可能性是 45 岁以上求职者的三倍。",
   "They rate the post-45 job seekers lower on average on all three measures—even experience—than those ages 18 to 34.": "他们对 45 岁以后求职者的所有三项指标（甚至是经验）的平均评分低于 18 至 34 岁的求职者。",
   "This is true even though nearly nine managers in 10 also said their post-45 workers were as good as or better than younger employees in the same jobs.": "尽管十分之九的经理也表示，他们的 45 岁以后的员工与从事相同工作的年轻员工一样好，甚至更好，但情况确实如此。",
@@ -428,7 +573,7 @@ const autoTranslations: Record<string, string> = {
   "And, yes, managers are most likely to be impressed by industry qualifications you get in school.": "是的，经理们最有可能会对你在学校获得的行业资格印象深刻。",
   "These things cost money, and time.": "这些事情需要金钱和时间。",
   "But these aren’t the only things helpful.": "但这些并不是唯一有用的东西。",
-  "Those who had successfully changed careers after 45 told Generation that education and training had been a big help—and that included in-person, on-the-job training, informal learning, and online courses—with or without certification.": "那些在 45 岁之后成功转行的人告诉《一代》，教育和培训提供了很大帮助，其中包括现场培训、在职培训、非正式学习和在线课程（无论是否有认证）。",
+  "Those who had successfully changed careers after 45 told Generation that education and training had been a big help—and that included in-person, on-the-job training, informal learning, and online courses—with or without certification.": "那些在 45 岁以后成功转行的人告诉非营利组织 Generation，教育和培训帮了大忙；这既包括面授和在职培训，也包括非正式学习以及有无证书均可的在线课程。",
   "If they think we’re too old to learn new skills after we’re 45, just learning some new skills may have an effect on its own.": "如果他们认为 45 岁以后我们太老了，无法学习新技能，那么仅仅学习一些新技能可能会产生效果。",
   "There’s a downside to this.": "这有一个缺点。",
   "The people least interested in retraining are more likely to come from historically disadvantaged communities, more likely to have low incomes, and are more likely to have the least schooling after getting their high-school diploma or earlier.": "对再培训最不感兴趣的人更有可能来自历史上处于不利地位的社区，更有可能收入较低，并且更有可能在获得高中文凭或更早之后受的教育最少。",
@@ -436,16 +581,16 @@ const autoTranslations: Record<string, string> = {
   "Those with lower incomes: 0.9 programs on average.": "收入较低者：平均 0.9 个项目。",
   "Many years ago, I wrote about a study which found that employers are much more likely to hire a college graduate who has some work experience in the industry than a college graduate who took the “right” degree.": "许多年前，我写过一项研究，发现雇主更有可能雇用在该行业有一定工作经验的大学毕业生，而不是获得“正确”学位的大学毕业生。",
   "A bank is more likely to hire a literature graduate who spent their summers working in their local bank than a finance or economics graduate who spent their summers surfing or traveling around Italy.": "银行更有可能雇用暑假在当地银行工作的文学毕业生，而不是暑假在意大利冲浪或旅行的金融或经济学毕业生。",
-  "They’ve learned through long experience.": "他们通过长期的经验学到了东西。",
+  "They’ve learned through long experience.": "长期经验让雇主明白了这一点。",
   "The person who worked in the bank is more likely ready, willing and able to be part of the team and do the job from day 1.": "在银行工作的人更有可能准备好、愿意并且能够成为团队的一员并从第一天开始完成工作。",
   "We can rail against ageism all we like.": "我们可以随心所欲地反对年龄歧视。",
-  "It gets us nowhere.": "它让我们无处可去。",
+  "It gets us nowhere.": "但这于事无补。",
   "And it’s easy to forget that employers, like everyone else, are under time pressure and are just trying to solve problems.": "人们很容易忘记，雇主和其他人一样，也面临着时间压力，只是想解决问题。",
   "Any and all training, including inexpensive and informal training, is going to help resolve their worries about hiring someone over 45.": "任何和所有培训，包括廉价和非正式的培训，都将有助于解决他们对雇用 45 岁以上员工的担忧。",
   "And it has never been easier or cheaper to gain instruction in new skills, thanks to the internet.": "借助互联网，获得新技能的指导从未如此简单或便宜。",
   "Online schools like Udemy and Lynda.com offer sweet deals at sign-up.": "Udemy 和 Lynda.com 等在线学校在注册时提供超值优惠。",
   "And courses on YouTube are free.": "YouTube 上的课程是免费的。",
-  "Bottom line? Yes, it really can be difficult getting a new job after age 45, let alone changing careers.": "底线？是的，45 岁之后找新工作确实很困难，更不用说转行了。",
+  "Bottom line? Yes, it really can be difficult getting a new job after age 45, let alone changing careers.": "说到底，45 岁以后重新找工作确实很难，更不用说转行了。",
   "One of the best things we can do to help ourselves is to go online and learn new, relevant skills.": "我们能做的最好的帮助自己的事情之一就是上网学习新的相关技能。",
   "Sadly, the people who most need the help are least likely to take it—which raises a challenge for society as a whole.": "可悲的是，最需要帮助的人却最不可能接受帮助——这给整个社会带来了挑战。",
   "Not only do we not want to see lives go to waste, but we all benefit if more people are working and fewer are unemployed.": "我们不仅不想看到生命被浪费，而且如果更多的人工作、更少的失业者，我们都会受益。",
@@ -453,7 +598,7 @@ const autoTranslations: Record<string, string> = {
   "The fine dining establishment received its first three-star Michelin rating in 2011 when the menu was famed for its fancy animal-based dishes.": "这家高级餐厅于 2011 年首次获得米其林三星级评级，当时的菜单以其精美的动物菜肴而闻名。",
   "However, last year, the restaurant's co-owner and famous chef, Daniel Humm, made the bold decision to remove meat from the menu, citing our unsustainable food system.": "然而，去年，该餐厅的合伙人兼著名厨师丹尼尔·哈姆 (Daniel Humm) 做出了大胆的决定，将肉类从菜单中删除，理由是我们的食品系统不可持续。",
   "While cow milk is still served for tea and coffee, the menu is almost 100 percent vegan.": "虽然茶和咖啡仍然使用牛奶，但菜单几乎是 100% 纯素食。",
-  "At the time, Humm acknowledged the move was risky, admitting that “it wasn’t clear if guests would come”, but called the gamble “a risk worth taking.”": "当时，胡姆承认此举有风险，并承认“尚不清楚客人是否会来”，但称这次赌博“值得冒险”。",
+  "At the time, Humm acknowledged the move was risky, admitting that “it wasn’t clear if guests would come”, but called the gamble “a risk worth taking.”": "当时，Humm 承认此举风险不小，也不确定顾客是否还会光顾，但他认为这次冒险值得一试。",
   "“In view of the climate crisis, I didn’t want to open the same restaurant,” Humm told the Financial Times in an interview.": "“鉴于气候危机，我不想再开同一家餐厅，”胡姆在接受英国《金融时报》采访时表示。",
   "“If we can show the possibilities of eating plant-based food in this setting, it can open a lot of doors” for others to follow.": "“如果我们能够展示在这种情况下食用植物性食品的可能性，它可以为其他人效仿打开很多大门”。",
   "Now, this impressive new accomplishment validates Eleven Madison Park's decision to take meat off the menu and embrace plant-based foods, with Michelin's 2022 New York guide branding it a ‘bold vision of luxury dining’.": "现在，这一令人印象深刻的新成就证实了麦迪逊公园十一号将肉类从菜单上剔除并采用植物性食品的决定，米其林 2022 年纽约指南将其称为“奢华餐饮的大胆愿景”。",
@@ -466,14 +611,14 @@ const autoTranslations: Record<string, string> = {
   "“I think luxury companies have a real role to play and a responsibility,” says Humm.": "“我认为奢侈品公司可以发挥真正的作用并承担责任，”胡姆说。",
   "“The more creative we are, the more beautiful and delicious our future will be.”": "“我们越有创意，我们的未来就会越美丽、越美味。”",
   "With genetic testing becoming increasingly popular, many people are left wondering exactly how accurate it is.": "随着基因测试变得越来越流行，许多人都想知道它的准确性到底有多高。",
-  "Whether you are taking a DNA test to build your extended DNA family tree, or want precise information on inborn health conditions, it is important to understand how accurate genetic tests are, and what information we can rely upon.": "无论您是通过 DNA 测试来构建扩展的 DNA 家谱，还是想要了解先天健康状况的精确信息，了解基因测试的准确性以及我们可以依赖哪些信息都非常重要。",
-  "How accurate DNA tests are relies greatly upon the kind of test being taken, on the specific question you ask, and on how complex the genetics behind a trait is.": "DNA 测试的准确性在很大程度上取决于所进行的测试类型、您提出的具体问题以及性状背后的遗传学有多复杂。",
-  "For example, tests for traits that depend on a single gene provide much more reliable results, because you can see whether a disease-causing trait is present.": "例如，对依赖于单个基因的性状进行测试可以提供更可靠的结果，因为您可以查看是否存在致病性状。",
-  "Ancestry tests claim to reveal our genetic identities.": "祖先测试声称可以揭示我们的遗传身份。",
+  "Whether you are taking a DNA test to build your extended DNA family tree, or want precise information on inborn health conditions, it is important to understand how accurate genetic tests are, and what information we can rely upon.": "无论是想用 DNA 检测扩展家谱，还是想准确了解先天健康状况，都必须先弄清基因检测有多准确、哪些信息值得信赖。",
+  "How accurate DNA tests are relies greatly upon the kind of test being taken, on the specific question you ask, and on how complex the genetics behind a trait is.": "DNA 检测的准确程度，很大程度上取决于检测类型、所问的具体问题，以及某种性状背后的遗传机制有多复杂。",
+  "For example, tests for traits that depend on a single gene provide much more reliable results, because you can see whether a disease-causing trait is present.": "例如，由单个基因决定的性状检测要可靠得多，因为可以直接判断致病性状是否存在。",
+  "Ancestry tests claim to reveal our genetic identities.": "祖源检测声称能够揭示我们的遗传身份。",
   "But saying you are 30 percent East Asian or American hardly reflects your real ancestry.": "但说你有 30% 的东亚人或美国人血统并不能反映你的真实血统。",
-  "What about using DNA tests to discover distant family members?": "使用 DNA 测试来发现远方家庭成员怎么样？",
+  "What about using DNA tests to discover distant family members?": "那么，用 DNA 检测寻找远亲是否可靠呢？",
   "There are tools to compare one's DNA with others' to find distant relatives based on their genetic identification.": "有一些工具可以将一个人的 DNA 与他人的 DNA 进行比较，从而根据基因鉴定来寻找远亲。",
-  "These kinds of applications are generally accurate.": "这类应用程序通常是准确的。",
+  "These kinds of applications are generally accurate.": "这类用途通常比较准确。",
   "It's relatively easy to tell whether two DNA samples belong to close relatives.": "判断两个 DNA 样本是否属于近亲相对容易。",
   "With distant relatives, results become hazier.": "对于远房亲戚，结果变得更加模糊。",
   "Genetic health tests claim to be able to detect certain hereditary diseases, or other health conditions.": "基因健康测试声称能够检测某些遗传性疾病或其他健康状况。",
@@ -482,9 +627,9 @@ const autoTranslations: Record<string, string> = {
   "Genetic tests for multi-factorial traits are often very tricky to interpret.": "多因素性状的基因测试通常很难解释。",
   "Height, for example, depends on hundreds of genes, each contributing a little to the outcome, together with a bunch of environmental factors.": "例如，身高取决于数百个基因，每个基因都对结果有一点贡献，再加上一系列环境因素。",
   "A test can look at many genes at once, but it's difficult to predict how they will play together.": "测试可以同时检查许多基因，但很难预测它们将如何共同发挥作用。",
-  "Then you should also account for non-genetic factors that are not written in the DNA.": "然后，您还应该考虑未写入 DNA 的非遗传因素。",
+  "Then you should also account for non-genetic factors that are not written in the DNA.": "此外，还必须考虑那些不会写在 DNA 里的非遗传因素。",
   "Tests that offer to find your perfect romantic match and those claiming to predict personality or talents based on your DNA are pure nonsense.": "那些旨在寻找完美爱情伴侣的测试以及那些声称根据 DNA 预测性格或才能的测试纯粹是无稽之谈。",
-  "At the moment, the scientific bases for these applications are non-existent or incredibly weak.": "目前，这些应用的科学基础不存在或非常薄弱。"
+  "At the moment, the scientific bases for these applications are non-existent or incredibly weak.": "目前，这些用途要么毫无科学依据，要么依据极其薄弱。"
 };
 clozeSentences.forEach((sentence, index) => { const key = `C${String(index + 1).padStart(2, '0')}`; closeReadings[key].translation = autoTranslations[sentence] ?? closeReadings[key].translation; });
 matching.forEach((paragraph) => paragraph.sentences.forEach((sentence, index) => { const key = `M-${paragraph.label}${String(index + 1).padStart(2, '0')}`; closeReadings[key].translation = autoTranslations[sentence] ?? closeReadings[key].translation; }));
@@ -492,16 +637,45 @@ passageOneSentences.forEach((sentence, index) => { const key = `R1-${String(inde
 passageTwoSentences.forEach((sentence, index) => { const key = `R2-${String(index + 1).padStart(2, '0')}`; closeReadings[key].translation = autoTranslations[sentence] ?? closeReadings[key].translation; });
 
 Object.assign(closeReadings, {
+  C08: note('如今，地球日网络在 190 个国家联合两万多个合作伙伴和组织，全年持续推动地球日使命。', [h('adverbial', 'Today'), h('subject', 'the Earth Day Network'), h('complement', 'which rallies more than 20,000 partners and organizations in 190 countries', '定语从句（整体）'), h('predicate', 'supports'), h('object', 'the Earth Day mission'), h('adverbial', 'year-round')], [h('subject', 'the Earth Day Network'), h('predicate', 'supports'), h('object', 'the Earth Day mission'), h('adverbial', 'year-round')], [['rally', '召集；联合'], ['year-round', '全年；一年到头']]),
   'M-A03': note('被裁员后重返职场更加困难。', [h('subject', "Getting back into work after you've been laid off"), h('predicate', 'is'), h('complement', 'even harder')]),
+  'M-B01': note('但真正能改变局面的关键是什么？更多的教育和培训。', [h('adverbial', 'But'), h('subject', 'the one thing that can really make a difference'), h('complement', 'More education and training', '省略式回答')], undefined, [['make a difference', '带来改变；产生作用']]),
   'M-C03': note('如果 45 岁以后失业，你有将近三分之二的可能会失业超过一年。', [h('adverbial', "And if you're out of work past the age of 45", '条件状语从句'), h('subject', 'there'), h('predicate', "'s"), h('complement', "nearly a two in three chance you'll be out of work for over a year")], [h('subject', 'there'), h('predicate', "'s"), h('complement', "nearly a two in three chance you'll be out of work for over a year")]),
   'M-C02': note('例如，45 岁以上的人占长期失业者的 40% 以上。', [h('subject', 'Those over 45'), h('predicate', 'comprise'), h('object', 'over 40% of the long-term unemployed')]),
+  'M-D01': note('他们报告称，这一现象很大程度上源于招聘经理普遍存在的年龄歧视。', [h('subject', 'A substantial part of this'), h('complement', 'they report', '插入说明'), h('predicate', 'is'), h('complement', 'widespread ageism on the part of hiring managers')], [h('subject', 'A substantial part of this'), h('predicate', 'is'), h('complement', 'widespread ageism on the part of hiring managers')], [['on the part of', '就……而言；来自……一方']]),
+  'M-D02': note('尽管经理们承认，45 岁以上的新员工平均表现不逊于、甚至优于年轻员工，他们仍不愿雇用这些人。', [h('adverbial', 'Although such managers admit that post-45 hires turn out on average to be just as good as or better than younger workers', '让步状语从句'), h('subject', 'they'), h('predicate', 'still do not want'), h('object', 'to hire them')], [h('subject', 'they'), h('predicate', 'still do not want'), h('object', 'to hire them')], [['turn out to be', '结果是；事实证明是']]),
   'M-F01': note('他们在雇用 45 岁以上的人时最大的担忧是什么？', [h('subject', 'Their biggest fears about hiring those over 45')]),
   'M-G01': note('但这里有个好消息。', [h('adverbial', 'But'), h('subject', 'the good news'), h('predicate', 'here’s')]),
+  'M-G04': note('在 45 岁以后成功转行的人中，74% 表示培训帮助他们获得了新工作。', [h('adverbial', 'Among those over 45 who’d successfully switched careers'), h('subject', '74%'), h('predicate', 'said'), h('object', 'training helped them get their new job', '宾语从句（整体）')], [h('subject', '74%'), h('predicate', 'said')], [['switch careers', '转行；转换职业']]),
+  'M-I02': note('这里所说的培训究竟是什么？', [h('object', 'What training', '疑问宾语'), h('predicate', 'are'), h('subject', 'we'), h('predicate', 'talking about')], undefined, [['talk about', '谈论；所指的是']]),
   'M-I06': note('但这些并不是唯一有帮助的东西。', [h('adverbial', 'But'), h('subject', 'these'), h('predicate', 'aren’t'), h('complement', 'the only things helpful')]),
+  'M-I07': note('那些在 45 岁以后成功转行的人告诉非营利组织 Generation，教育和培训帮了大忙；其中既包括面授和在职培训，也包括非正式学习和在线课程。', [h('subject', 'Those who had successfully changed careers after 45'), h('predicate', 'told'), h('object', 'Generation'), h('object', 'that education and training had been a big help', '宾语从句（整体）'), h('complement', 'and that included in-person, on-the-job training, informal learning, and online courses—with or without certification', '并列补充')], [h('subject', 'Those who had successfully changed careers after 45'), h('predicate', 'told'), h('object', 'Generation')], [['Generation', '非营利组织 Generation'], ['on-the-job training', '在职培训'], ['with or without', '无论有无']]),
+  'M-J01': note('如果他们认为我们 45 岁以后太老、学不会新技能，那么单是学会一些新技能本身就可能改变他们的看法。', [h('adverbial', 'If they think we’re too old to learn new skills after we’re 45', '条件状语从句'), h('subject', 'just learning some new skills'), h('predicate', 'may have'), h('object', 'an effect'), h('adverbial', 'on its own')], [h('subject', 'just learning some new skills'), h('predicate', 'may have'), h('object', 'an effect')], [['on its own', '单独地；本身']]),
   'M-J02': note('这也有一个缺点。', [h('subject', 'There'), h('predicate', 'is'), h('complement', 'a downside to this')]),
   'M-J05': note('收入较低的人平均参加 0.9 个培训项目。', [h('subject', 'Those with lower incomes'), h('complement', '0.9 programs on average', '省略式回答')]),
-  'M-K03': note('他们通过长期经验学到了东西。', [h('subject', 'They'), h('predicate', 'learned'), h('complement', 'through long experience')]),
+  'M-K03': note('长期经验让雇主明白了这一点。', [h('subject', 'They'), h('predicate', 'learned'), h('complement', 'through long experience')], undefined, [['through long experience', '通过长期经验']]),
+  'M-L03': note('人们很容易忘记，雇主和其他人一样面临时间压力，也只是想解决问题。', [h('subject', 'it'), h('predicate', "'s easy"), h('object', 'to forget that employers, like everyone else, are under time pressure and are just trying to solve problems', '真正主语及宾语从句（整体）')], [h('subject', 'it'), h('predicate', "'s easy")], [['under time pressure', '面临时间压力']]),
+  'M-L01': note('我们尽可以大力抨击年龄歧视。', [h('subject', 'We'), h('predicate', 'can rail'), h('complement', 'against ageism'), h('adverbial', 'all we like')], undefined, [['rail against', '强烈抨击；抱怨']]),
   'M-L05': note('借助互联网，获得新技能的指导从未如此简单或便宜。', [h('adverbial', 'thanks to the internet'), h('subject', 'it'), h('predicate', 'has never been easier or cheaper'), h('complement', 'to gain instruction in new skills')], [h('subject', 'it'), h('predicate', 'has never been easier or cheaper')]),
+  'M-M01': note('说到底，45 岁以后重新找工作确实可能很难，更不用说转行了。', [h('complement', 'Bottom line', '话题提示'), h('subject', 'it'), h('predicate', 'really can be'), h('complement', 'difficult'), h('subject', 'getting a new job after age 45'), h('complement', 'let alone changing careers')], [h('subject', 'it'), h('predicate', 'really can be'), h('complement', 'difficult'), h('subject', 'getting a new job after age 45')], [['bottom line', '归根结底；说到底'], ['let alone', '更不用说']]),
+  'M-M03': note('遗憾的是，最需要帮助的人反而最不可能接受帮助，这给整个社会提出了挑战。', [h('adverbial', 'Sadly'), h('subject', 'the people'), h('complement', 'who most need the help', '定语从句（整体）'), h('predicate', 'are least likely'), h('complement', 'to take it'), h('complement', 'which raises a challenge for society as a whole', '非限制性定语从句（整体）')], [h('subject', 'the people'), h('predicate', 'are least likely'), h('complement', 'to take it')], [['be likely to', '可能做某事'], ['as a whole', '作为一个整体']]),
+  'M-M04': note('我们不仅不愿看到人生被白白浪费；如果就业者更多、失业者更少，所有人都会受益。', [h('predicate', 'do', '倒装助动词'), h('subject', 'we'), h('predicate', 'not want', '实义谓语'), h('object', 'to see lives go to waste'), h('subject', 'we'), h('predicate', 'benefit'), h('adverbial', 'if more people are working and fewer are unemployed', '条件状语从句')], [h('predicate', 'do', '倒装助动词'), h('subject', 'we'), h('predicate', 'not want', '实义谓语'), h('object', 'to see lives go to waste'), h('subject', 'we'), h('predicate', 'benefit')], [['not only ... but', '不仅……而且……'], ['go to waste', '被浪费；白白损失']]),
+  'R1-03': note('然而，餐厅合伙人兼名厨 Daniel Humm 去年作出大胆决定，以食品体系不可持续为由，从菜单中撤下肉类。', [h('adverbial', 'However, last year'), h('subject', "the restaurant's co-owner and famous chef, Daniel Humm"), h('predicate', 'made'), h('object', 'the bold decision to remove meat from the menu'), h('complement', 'citing our unsustainable food system', '分词原因补充')], [h('subject', "the restaurant's co-owner and famous chef, Daniel Humm"), h('predicate', 'made'), h('object', 'the bold decision to remove meat from the menu')], [['cite', '援引；以……为理由']]),
+  'R1-05': note('当时，Humm 承认此举风险不小，也不确定顾客是否还会光顾，但他认为这次冒险值得一试。', [h('adverbial', 'At the time'), h('subject', 'Humm'), h('predicate', 'acknowledged'), h('object', 'the move was risky', '宾语从句（整体）'), h('complement', 'admitting that “it wasn’t clear if guests would come”', '分词补充'), h('predicate', 'called'), h('object', 'the gamble'), h('complement', '“a risk worth taking.”')], [h('subject', 'Humm'), h('predicate', 'acknowledged'), h('predicate', 'called'), h('object', 'the gamble'), h('complement', '“a risk worth taking.”')], [['a risk worth taking', '值得承担的风险']]),
+  'R1-06': note('Humm 接受《金融时报》采访时说：“鉴于气候危机，我不想继续经营原来那样的餐厅。”', [h('adverbial', 'In view of the climate crisis'), h('subject', 'I'), h('predicate', 'didn’t want'), h('object', 'to open the same restaurant'), h('subject', 'Humm'), h('predicate', 'told'), h('object', 'the Financial Times'), h('adverbial', 'in an interview')], [h('subject', 'I'), h('predicate', 'didn’t want'), h('object', 'to open the same restaurant')], [['in view of', '鉴于；考虑到']]),
+  'R1-07': note('“如果我们能在这样的高级餐饮环境中展示植物性饮食的可能性，就能为其他人打开许多扇门，让他们跟进。”', [h('adverbial', 'If we can show the possibilities of eating plant-based food in this setting', '条件状语从句'), h('subject', 'it'), h('predicate', 'can open'), h('object', 'a lot of doors'), h('complement', 'for others to follow')], [h('subject', 'it'), h('predicate', 'can open'), h('object', 'a lot of doors'), h('complement', 'for others to follow')], [['open doors for', '为……创造机会']]),
+  'R1-16': note('我们越有创造力，未来就会越美好、越可口。', [h('adverbial', 'The more creative we are', '比较状语从句'), h('subject', 'our future'), h('predicate', 'will be'), h('complement', 'the more beautiful and delicious')], [h('subject', 'our future'), h('predicate', 'will be'), h('complement', 'the more beautiful and delicious')], [['the more ..., the more ...', '越……，就越……']]),
+  'R2-02': note('无论是想用 DNA 检测扩展家谱，还是想准确了解先天健康状况，都必须先弄清基因检测有多准确、哪些信息值得信赖。', [h('adverbial', 'Whether you are taking a DNA test to build your extended DNA family tree, or want precise information on inborn health conditions', '让步选择从句'), h('subject', 'it'), h('predicate', 'is'), h('complement', 'important'), h('object', 'to understand how accurate genetic tests are, and what information we can rely upon', '真正主语（整体）')], [h('subject', 'it'), h('predicate', 'is'), h('complement', 'important')], [['rely upon', '依赖；信赖']]),
+  'R2-03': note('DNA 检测的准确程度，很大程度上取决于检测类型、所问的具体问题，以及性状背后的遗传机制有多复杂。', [h('subject', 'How accurate DNA tests are', '主语从句（整体）'), h('predicate', 'relies'), h('complement', 'greatly upon the kind of test being taken, on the specific question you ask, and on how complex the genetics behind a trait is')], [h('subject', 'How accurate DNA tests are', '主语从句（整体）'), h('predicate', 'relies'), h('complement', 'greatly upon the kind of test being taken, on the specific question you ask, and on how complex the genetics behind a trait is')], [['rely upon', '取决于；依赖于']]),
   'R2-04': note('例如，对由单个基因决定的性状进行测试，可以提供更可靠的结果，因为你能看出致病性状是否存在。', [h('subject', 'tests for traits that depend on a single gene'), h('predicate', 'provide'), h('complement', 'much more reliable results'), h('adverbial', 'because you can see whether a disease-causing trait is present', '原因状语从句')], [h('subject', 'tests for traits that depend on a single gene'), h('predicate', 'provide'), h('complement', 'much more reliable results')]),
+  'R2-06': note('但声称自己有 30% 的东亚或美洲血统，很难真实反映祖源。', [h('subject', 'saying you are 30 percent East Asian or American'), h('predicate', 'hardly reflects'), h('object', 'your real ancestry')], undefined, [['hardly', '几乎不'], ['ancestry', '祖源；血统']]),
+  'R2-07': note('那么，用 DNA 检测寻找远亲是否可靠呢？', [h('complement', 'What about using DNA tests to discover distant family members', '省略式疑问')], undefined, [['what about doing', '做……怎么样；那么……呢']]),
+  'R2-13': note('虽然某些罕见疾病很容易识别，但大多数潜在健康问题不能仅凭基因检测确定。', [h('adverbial', 'While certain rare diseases can be easily identified', '让步状语从句'), h('subject', 'most potential health conditions'), h('predicate', 'cannot be identified'), h('complement', 'by genetic testing alone')], [h('subject', 'most potential health conditions'), h('predicate', 'cannot be identified'), h('complement', 'by genetic testing alone')], [['by ... alone', '仅凭……']]),
+  'R2-17': note('一项检测可以同时查看许多基因，但很难预测它们会如何共同作用。', [h('subject', 'A test'), h('predicate', 'can look'), h('complement', 'at many genes at once'), h('subject', 'it'), h('predicate', "'s difficult"), h('object', 'to predict how they will play together', '真正主语及宾语从句（整体）')], [h('subject', 'A test'), h('predicate', 'can look'), h('complement', 'at many genes at once'), h('subject', 'it'), h('predicate', "'s difficult")], [['at once', '同时'], ['play together', '共同作用；相互作用']]),
+  'R2-18': note('此外，还必须考虑那些不会写在 DNA 里的非遗传因素。', [h('adverbial', 'Then'), h('subject', 'you'), h('predicate', 'should also account'), h('complement', 'for non-genetic factors that are not written in the DNA')], undefined, [['account for', '把……考虑在内']]),
   'R2-19': note('那些声称能寻找完美恋爱对象、或根据 DNA 预测性格和才能的检测，纯粹是无稽之谈。', [h('subject', 'Tests that offer to find your perfect romantic match and those claiming to predict personality or talents based on your DNA'), h('predicate', 'are'), h('complement', 'pure nonsense')]),
 });
+
+for (const key of ['M-B02', 'M-C01', 'M-D03']) {
+  closeReadings[key].vocabulary.unshift({ term: 'Generation', explanation: '非营利组织 Generation' });
+}

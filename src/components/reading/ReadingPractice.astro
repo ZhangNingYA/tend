@@ -2,6 +2,7 @@
 import { BookOpenText } from 'lucide-astro';
 import SentenceNote from './SentenceNote.astro';
 import ReadingQuestions from './ReadingQuestions.astro';
+import ReadingSectionAnswers from './ReadingSectionAnswers.astro';
 import ReadingTimer from './ReadingTimer.astro';
 import type { CloseReading, InlineGlossary } from '../../types/closeReading';
 import type { ReadingQuestion } from '../../types/readingQuestion';
@@ -10,6 +11,14 @@ interface Passage {
   title: string;
   sentences: readonly string[];
   questions?: readonly ReadingQuestion[];
+  wordBank?: readonly { key: string; word: string }[];
+  answers?: readonly {
+    number: number;
+    key: string;
+    word: string;
+    evidence: string;
+    analysis: string;
+  }[];
 }
 
 interface MatchingParagraph {
@@ -22,6 +31,13 @@ interface Props {
   matching: {
     title: string;
     paragraphs: readonly MatchingParagraph[];
+    questions?: readonly {
+      number: number;
+      prompt: string;
+      answer: string;
+      evidence: string;
+      analysis: string;
+    }[];
   };
   passages: readonly Passage[];
   closeReadings?: Readonly<Record<string, CloseReading>>;
@@ -66,10 +82,10 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
       <span class="reading-guide-kicker">How to read</span>
       <strong>本页使用说明</strong>
     </div>
-    <p>先独立通读英文，再按需要展开提示：点击句末的书本图标查看翻译、重点词汇和句子结构；点击带下划线的词查看释义。阅读理解下方的计时器只记录首次通读用时，不是官方考试限时。</p>
+    <p>先独立通读英文，再按需要展开提示：点击句末的书本图标查看翻译、重点词汇和句子结构；点击英文词或短语查看本句释义。计时器只记录首次通读用时，不是官方考试限时。</p>
     <div class="reading-guide-items" aria-label="精读操作提示">
       <span><i class="guide-icon guide-book" aria-hidden="true"><BookOpenText size={12} stroke-width={1.8} /></i>书本图标：展开精读</span>
-      <span><i class="guide-icon guide-word" aria-hidden="true">Aa</i>下划线词：查看词义</span>
+      <span><i class="guide-icon guide-word" aria-hidden="true">Aa</i>英文词语：点击查看释义</span>
       <span><i class="guide-icon guide-clock" aria-hidden="true">◷</i>计时器：记录首读</span>
     </div>
     {experience === 'game' && hasStructureModes && (
@@ -124,8 +140,21 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
 
 <h3>{cloze.title}</h3>
 
-{experience === 'blog' && (
-  <ReadingTimer timerId="cloze" label={cloze.title} wordCount={countWords(cloze.sentences)} />
+{(experience === 'blog' || timerVariant === 'focus') && (
+  <ReadingTimer
+    timerId="cloze"
+    label={cloze.title}
+    wordCount={countWords(cloze.sentences)}
+    variant={experience === 'blog' ? 'default' : timerVariant}
+  />
+)}
+
+{cloze.wordBank && cloze.answers && (
+  <ReadingSectionAnswers
+    variant="cloze"
+    wordBank={cloze.wordBank}
+    answers={cloze.answers}
+  />
 )}
 
 {cloze.sentences.map((sentence, index) => (
@@ -143,11 +172,12 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
 
 <h3>{matching.title}</h3>
 
-{experience === 'blog' && (
+{(experience === 'blog' || timerVariant === 'focus') && (
   <ReadingTimer
     timerId="matching"
     label={matching.title}
     wordCount={countWords(matching.paragraphs.flatMap((paragraph) => paragraph.sentences))}
+    variant={experience === 'blog' ? 'default' : timerVariant}
   />
 )}
 
@@ -166,6 +196,10 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
     ))}
   </>
 ))}
+
+{matching.questions && (
+  <ReadingSectionAnswers variant="matching" questions={matching.questions} />
+)}
 
 <h2 id="reading-passages">Reading Passages</h2>
 

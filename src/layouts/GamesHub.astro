@@ -1,0 +1,173 @@
+---
+import { getCollection } from 'astro:content';
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  BookOpenText,
+  CheckCircle2,
+  Clock3,
+  ExternalLink,
+  FileQuestion,
+  Languages,
+  Layers3,
+  PlayCircle,
+  Timer,
+} from 'lucide-astro';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/source-serif-4';
+import BaseHead from '../components/BaseHead.astro';
+import '../styles/games-library.css';
+
+type Props = {
+  title: string;
+  description: string;
+  libraryKind?: 'exam-papers' | 'english-rabbit';
+};
+
+const { title, description, libraryKind = 'exam-papers' } = Astro.props;
+const allGames = await getCollection('games');
+const isExamLibrary = libraryKind === 'exam-papers';
+const entries = allGames
+  .filter((post) => post.data.pageLayout === (isExamLibrary ? 'reading' : 'grammar'))
+  .sort((a, b) => {
+    if (!isExamLibrary) {
+      return (a.data.part ?? Number.MAX_SAFE_INTEGER) - (b.data.part ?? Number.MAX_SAFE_INTEGER);
+    }
+    return b.id.localeCompare(a.id);
+  });
+
+const getPaperMeta = (id: string) => {
+  const match = id.match(/^(\d{4})-(\d{2})-cet4-reading-(\d+)$/);
+  if (!match) return { session: 'CET-4', set: 'Reading' };
+  return {
+    session: `${match[1]} 年 ${Number(match[2])} 月`,
+    set: `第 ${match[3]} 套`,
+  };
+};
+
+const sourceUrl = 'https://www.bilibili.com/video/BV1XY411J7aG/';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <BaseHead {title} {description} />
+  </head>
+  <body class="games-hub-page" data-library={libraryKind}>
+    <div class="library-ambient" aria-hidden="true"><span></span><span></span><span></span></div>
+
+    <header class="library-topbar">
+      <a class="library-brand" href="/games/">
+        <span class="library-brand-mark">T</span>
+        <span><strong>Tend Study</strong><small>Learning archive</small></span>
+      </a>
+      <nav aria-label="页面导航">
+        <a href="/games/"><ArrowLeft size={16} aria-hidden="true" />资料库</a>
+        <a href="/">首页</a>
+      </nav>
+    </header>
+
+    <main class="hub-shell">
+      <section class="hub-hero">
+        <div class="hub-copy">
+          <p class="hub-kicker">{isExamLibrary ? 'EXAM READING LAB' : 'ENGLISH RABBIT · GRAMMAR'}</p>
+          <h1>{isExamLibrary ? <>真题，拿来<em>读透</em></> : <>语法，重新<em>搭骨架</em></>}</h1>
+          <p class="hub-description">{description}</p>
+          <div class="hub-actions">
+            <a class="button button-primary" href="#library-entries">开始学习 <ArrowUpRight size={17} aria-hidden="true" /></a>
+            {!isExamLibrary && (
+              <a class="button button-quiet" href={sourceUrl} target="_blank" rel="noreferrer">
+                原视频合集 <ExternalLink size={15} aria-hidden="true" />
+              </a>
+            )}
+          </div>
+        </div>
+
+        <div class="hub-visual" aria-hidden="true">
+          {isExamLibrary ? (
+            <>
+              <span class="visual-orbit orbit-a"></span><span class="visual-orbit orbit-b"></span>
+              <div class="exam-sheet sheet-back"></div>
+              <div class="exam-sheet sheet-front">
+                <span>READING</span><strong>CET-4</strong>
+                <i></i><i></i><i></i><i></i>
+                <b>ABCD</b>
+              </div>
+            </>
+          ) : (
+            <>
+              <span class="visual-orbit orbit-a"></span><span class="visual-orbit orbit-b"></span>
+              <div class="rabbit-board">
+                <span>GRAMMAR MAP</span>
+                <strong>S <i>+</i> V</strong>
+                <div><b>T</b><b>A</b><b>M</b></div>
+              </div>
+              <div class="rabbit-dot">R</div>
+            </>
+          )}
+        </div>
+      </section>
+
+      <section class="hub-stats" aria-label="资料概况">
+        <div><strong>{String(entries.length).padStart(2, '0')}</strong><span>{isExamLibrary ? '套阅读真题' : '篇已完成笔记'}</span></div>
+        <div><strong>{isExamLibrary ? '03' : '01—03'}</strong><span>{isExamLibrary ? '种阅读题型' : '当前课程进度'}</span></div>
+        <div><strong>{isExamLibrary ? '双模' : '可回看'}</strong><span>{isExamLibrary ? '主句 / 全结构标记' : '来源与视频分 P'}</span></div>
+      </section>
+
+      <section class="hub-intro-card">
+        <div class="intro-icon">{isExamLibrary ? <FileQuestion size={24} /> : <BookOpenText size={24} />}</div>
+        <div>
+          <p>{isExamLibrary ? 'HOW TO USE' : 'NOTE POLICY'}</p>
+          <h2>{isExamLibrary ? '先做题，再把每一句拆开看' : '不是逐字稿，而是一套能复习的课程笔记'}</h2>
+          <span>
+            {isExamLibrary
+              ? '每套保留选项、答案、计时器、逐句翻译、词义和句子结构。做完后再打开精读，效果最好。'
+              : '按正式语法课编号，导学视频不计入前三讲；核心讲解来自原课，并单列必要的严谨性补充。'}
+          </span>
+        </div>
+      </section>
+
+      <section class="hub-entries" id="library-entries">
+        <header class="hub-section-heading">
+          <div><p>COLLECTION</p><h2>{isExamLibrary ? '阅读真题' : '前三讲笔记'}</h2></div>
+          <span>{entries.length} entries · 持续整理</span>
+        </header>
+
+        <div class:list={['entry-grid', !isExamLibrary && 'entry-grid--lessons']}>
+          {entries.map((post, index) => {
+            const paper = getPaperMeta(post.id);
+            const number = String(post.data.part ?? index + 1).padStart(2, '0');
+            return (
+              <a class="entry-card" href={`/games/${post.id}/`}>
+                <div class="entry-card-top">
+                  <span class="entry-number">{number}</span>
+                  <span class="entry-status"><CheckCircle2 size={14} aria-hidden="true" /> 已整理</span>
+                </div>
+                <p class="entry-overline">
+                  {isExamLibrary
+                    ? `${paper.session} · ${paper.set}`
+                    : `LESSON ${number} · 合集 P${post.data.videoPart}`}
+                </p>
+                <h3>{isExamLibrary ? `${paper.session} 四级阅读 ${paper.set}` : post.data.title}</h3>
+                <p class="entry-summary">{post.data.description}</p>
+                <div class="entry-tags">
+                  {isExamLibrary ? (
+                    <><span><Timer size={14} />计时</span><span><Languages size={14} />逐句精读</span><span><Layers3 size={14} />结构双模式</span></>
+                  ) : (
+                    <><span><PlayCircle size={14} />{post.data.videoDuration}</span><span><Clock3 size={14} />约 {post.data.estimatedMinutes} 分钟</span></>
+                  )}
+                </div>
+                {!isExamLibrary && post.data.topics && (
+                  <div class="entry-topics">{post.data.topics.slice(0, 3).map((topic) => <span>{topic}</span>)}</div>
+                )}
+                <div class="entry-open"><span>{isExamLibrary ? '进入练习' : '打开笔记'}</span><ArrowUpRight size={18} aria-hidden="true" /></div>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    </main>
+
+    <footer class="library-footer"><span>Tend Study Archive</span><span>Built for deliberate practice · {new Date().getFullYear()}</span></footer>
+  </body>
+</html>

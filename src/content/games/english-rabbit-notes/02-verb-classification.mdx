@@ -1,0 +1,205 @@
+---
+title: '动词分类：别背标签，要看它怎样工作'
+description: '把及物 / 不及物、动作 / 状态、系动词、助动词、情态动词与非谓语放进同一张分类图。'
+pubDate: '2026-09-22'
+pageLayout: 'grammar'
+series: '英语兔 · 英语语法精讲合集'
+part: 2
+videoPart: 3
+videoDuration: '04:19'
+estimatedMinutes: 12
+sourceUrl: 'https://www.bilibili.com/video/BV1XY411J7aG/?p=3'
+topics: ['及物与不及物', '动作与状态', '系动词', '限定与非限定']
+sections:
+  - id: 'classification-map'
+    label: '一张分类地图'
+  - id: 'object-patterns'
+    label: '按宾语分类'
+  - id: 'action-state'
+    label: '动作与状态'
+  - id: 'verb-jobs'
+    label: '实义、系、助、情态'
+  - id: 'finite-nonfinite'
+    label: '限定与非限定'
+  - id: 'decision-flow'
+    label: '实战判断流程'
+  - id: 'recap'
+    label: '一页复盘'
+---
+
+import StudyCard from '../../../components/games/StudyCard.astro';
+import PatternCard from '../../../components/games/PatternCard.astro';
+import GrammarTable from '../../../components/games/GrammarTable.astro';
+
+<h2 id="classification-map">一张分类地图</h2>
+
+动词分类容易乱，是因为不同标签回答的不是同一个问题。`transitive` 在问“后面要不要宾语”，`stative` 在问“表达动作还是状态”，`auxiliary` 在问“在谓语链里承担实义还是语法功能”。这些维度可以交叉，不能排成一条互斥名单。
+
+<div class="overview-grid">
+  <StudyCard eyebrow="DIMENSION 01" title="宾语结构" tone="mint">
+    不及物、单及物、双及物、复杂及物：看动词后需要哪些成分才能完整。
+  </StudyCard>
+  <StudyCard eyebrow="DIMENSION 02" title="意义类型" tone="coral">
+    动作动词描述事件或变化；状态动词描述认知、拥有、感觉、关系等相对稳定状态。
+  </StudyCard>
+  <StudyCard eyebrow="DIMENSION 03" title="谓语中的工作" tone="blue">
+    实义动词提供核心词义；系动词连接主语与补语；助动词和情态动词表达语法信息。
+  </StudyCard>
+  <StudyCard eyebrow="DIMENSION 04" title="是否限定" tone="gold">
+    限定形式承载时态 / 语气并与主语建立关系；非限定形式包括不定式、分词和动名词等。
+  </StudyCard>
+</div>
+
+> 最稳妥的问法不是“`open` 属于哪一类动词”，而是“`open` 在这一个句子里采用了什么用法”。
+
+<h2 id="object-patterns">按宾语结构分类</h2>
+
+课程先从上一讲的五种句型回看动词。这里的核心概念叫 **verb complementation / verb pattern**：一个动词允许或要求什么跟在后面。
+
+<div class="pattern-list">
+  <PatternCard index="1" name="NO OBJECT" formula="不及物用法 · S + V" example="The guests arrived." meaning="客人到了。">
+    `arrive` 后没有直接宾语。地点可以用介词短语补充：`arrived at the station`。
+  </PatternCard>
+  <PatternCard index="2" name="ONE OBJECT" formula="单及物用法 · S + V + O" example="We discussed the proposal." meaning="我们讨论了这份提案。">
+    `discuss` 直接接宾语；不能照中文习惯说 `discuss about the proposal`。
+  </PatternCard>
+  <PatternCard index="3" name="TWO OBJECTS" formula="双及物用法 · S + V + IO + DO" example="She taught us grammar." meaning="她教我们语法。">
+    `us` 是接收者，`grammar` 是传递的内容。部分动词可改成 `taught grammar to us`。
+  </PatternCard>
+  <PatternCard index="4" name="OBJECT + COMPLEMENT" formula="复杂及物 · S + V + O + OC" example="They elected Maya captain." meaning="他们选 Maya 当队长。">
+    `captain` 不是第二个宾语，而是说明 `Maya` 的新身份。
+  </PatternCard>
+  <PatternCard index="5" name="SUBJECT COMPLEMENT" formula="系动结构 · S + LV + SC" example="The soup tastes fresh." meaning="这汤尝起来很新鲜。">
+    `fresh` 描述主语，不是动作承受者，所以不是宾语。
+  </PatternCard>
+</div>
+
+<div class="term-compare">
+  <div><strong>Transitive</strong><p>及物：该用法带直接宾语。第二、三、四类都属于及物结构。</p></div>
+  <div class="term-versus">VS</div>
+  <div><strong>Intransitive</strong><p>不及物：该用法不带直接宾语。其后仍可有副词或介词短语。</p></div>
+</div>
+
+### 一个动词可以两边都站
+
+<GrammarTable
+  headers={['动词', '及物用法', '不及物用法']}
+  rows={[
+    ['open', { label: '', code: 'Liam opened the gate.' }, { label: '', code: 'The gate opened slowly.' }],
+    ['eat', { label: '', code: 'We ate the noodles.' }, { label: '', code: 'We ate at six.' }],
+    ['change', { label: '', code: 'The editor changed the title.' }, { label: '', code: 'The weather changed.' }],
+    ['start', { label: '', code: 'Nora started the meeting.' }, { label: '', code: 'The meeting started.' }],
+  ]}
+/>
+
+因此，及物 / 不及物往往是**具体用法或句型属性**，不一定是一个单词永不改变的身份证。词典会分别列出 `T`、`I` 或对应例句。
+
+<div class="note-caution">
+  <strong>介词后的名词不是动词的直接宾语</strong>
+  <p>在 <code>listen to music</code> 中，<code>music</code> 是介词 <code>to</code> 的宾语，整体是介词短语。不能仅凭“动词后面出现名词”就判定动词及物。</p>
+</div>
+
+<h2 id="action-state">按意义分：动作动词与状态动词</h2>
+
+<div class="term-compare">
+  <div><strong>Dynamic verb</strong><p>动作 / 动态动词描述可发生、可推进的事件：run、build、change、knock。</p></div>
+  <div class="term-versus">×</div>
+  <div><strong>Stative verb</strong><p>状态动词描述拥有、认知、情感、感官或关系：own、know、believe、belong。</p></div>
+</div>
+
+状态动词通常不使用进行体，因为“正在拥有”“正在知道”在普通语境中不自然：
+
+- `I know the answer.` 通常不用 `I am knowing ...`。
+- `This bag belongs to June.` 通常不用 `is belonging`。
+- `She owns two bikes.` 通常不用 `is owning`。
+
+但真正的判断仍然取决于**当下词义**。同一个拼写可以切换意义：
+
+<GrammarTable
+  headers={['形式', '状态意义', '动作意义']}
+  rows={[
+    ['think', { label: '我认为……', code: 'I think it is useful.' }, { label: '我正在思考……', code: 'I am thinking about the problem.' }],
+    ['have', { label: '她拥有……', code: 'She has a car.' }, { label: '她正在吃午饭。', code: 'She is having lunch.' }],
+    ['taste', { label: '茶尝起来……', code: 'The tea tastes bitter.' }, { label: '厨师正在品尝……', code: 'The chef is tasting the tea.' }],
+  ]}
+/>
+
+<h2 id="verb-jobs">实义、系、助、情态：在谓语里做什么</h2>
+
+<div class="taxonomy">
+  <div class="taxonomy-row"><strong>实义动词 main / lexical verb</strong><span>提供主要词义，可表示动作、事件或状态，如 write、happen、know。及物与不及物都是它的句型用法。</span></div>
+  <div class="taxonomy-row"><strong>系动词 linking / copular verb</strong><span>把主语与主语补语连接起来，如 be、seem、become、feel、look、taste。系动词后接的是主语补语，不是宾语。</span></div>
+  <div class="taxonomy-row"><strong>基本助动词 primary auxiliary</strong><span>be、have、do 在谓语链中帮助构成进行、完成、被动、否定、疑问或强调；它们也可能单独作实义 / 系动词。</span></div>
+  <div class="taxonomy-row"><strong>情态动词 modal verb</strong><span>can、may、must、will、should 等表达能力、可能、义务、推断、意愿等；后接动词原形。</span></div>
+</div>
+
+看 `have` 的三种面貌：
+
+- `I **have** a question.`：实义动词，表示“有”。
+- `I **have finished** the task.`：助动词 `have` + 过去分词，构成完成体。
+- `I **have to leave**.`：`have to` 表示必要性，常称半情态结构；分析方式因语法体系而异。
+
+同理，`be` 可作系动词（`Mina is calm.`），也可作进行体助动词（`Mina is reading.`）或被动助动词（`The door was locked.`）。标签必须服从具体结构。
+
+<h2 id="finite-nonfinite">限定动词与非限定动词</h2>
+
+课程用“谓语动词 / 非谓语动词”帮助初学者区分两类工作。更精确的术语是 **finite（限定）** 与 **non-finite（非限定）**。
+
+<div class="overview-grid">
+  <StudyCard eyebrow="FINITE" title="限定谓语链" tone="mint">
+    能定位分句的时态或情态，并在需要时体现主谓一致。例：<code>She has been waiting.</code> 整个动词链共同构成一个谓语。
+  </StudyCard>
+  <StudyCard eyebrow="NON-FINITE" title="非限定形式" tone="coral">
+    不定式 <code>(to) do</code>、<code>-ing</code> 形式和过去分词 <code>done</code>，不能独立充当普通陈述句的限定谓语。
+  </StudyCard>
+</div>
+
+分析：`Nora hopes to finish the report before leaving.`
+
+- `hopes` 是主句的限定谓语，体现一般现在时与第三人称单数。
+- `to finish` 是不定式，作 `hopes` 的补足成分。
+- `leaving` 是 `before` 后的 `-ing` 形式。
+
+<div class="note-caution">
+  <strong>准确性补充：“一个简单句只有一个动词”并不准确</strong>
+  <p>一个分句通常有一个限定谓语核心，但谓语链可以包含多个动词，如 <code>has been working</code>；也可能出现并列谓语，如 <code>She smiled and waved.</code>。非限定形式虽然不能独立标记主句时态，却仍可表达完成、进行或被动关系，如 <code>to have finished</code>、<code>being watched</code>。</p>
+</div>
+
+<h2 id="decision-flow">实战判断流程</h2>
+
+遇到句中动词时，按这个顺序问：
+
+1. **它属于哪个分句？** 先划清主句、从句或非限定结构边界。
+2. **谁承载时态 / 情态与主谓一致？** 找到限定谓语链，而不是把每个像动词的词都当谓语。
+3. **核心实义是什么？** 在 `may have been delayed` 中，核心实义来自 `delay`，前面几项提供情态、完成和被动信息。
+4. **后面需要什么才能完整？** 无宾语、一个宾语、两个宾语、宾语 + 补语，还是主语补语？
+5. **此处表达事件还是状态？** 这会影响进行体是否自然。
+6. **查词典验证 pattern。** 不确定时看完整例句，不要只看中文释义。
+
+<details class="knowledge-check">
+  <summary>自测：The flowers smell wonderful. 中 smell 是什么用法？</summary>
+  <div><code>wonderful</code> 描述主语 <code>The flowers</code> 的性质，不是“闻某物”的宾语，所以 <code>smell</code> 在此是系动词，结构为 S + LV + SC。</div>
+</details>
+
+<details class="knowledge-check">
+  <summary>自测：The child smelled the flowers. 为什么分类变了？</summary>
+  <div>这里主语主动“闻”花，<code>the flowers</code> 是直接宾语；<code>smell</code> 采用单及物的动作动词用法，结构为 S + V + O。</div>
+</details>
+
+<h2 id="recap">一页复盘</h2>
+
+- 动词可以从宾语结构、意义类型、谓语功能、限定性等不同维度分类。
+- 及物 / 不及物首先描述具体用法；同一个动词可能兼有两种用法。
+- 系动词后是主语补语，不是宾语；它建立“主语 = 某身份 / 状态”的关系。
+- 状态动词通常不用于进行体，但词义改变时，用法也可能改变。
+- 助动词提供语法信息，实义动词提供核心词义；同一个词可以切换身份。
+- 一个谓语链可以包含多个动词词项，不能机械地按单词个数判断谓语数量。
+
+<div class="source-note">
+  <strong>整理依据与可靠性说明</strong>
+  <ul>
+    <li>课程主线：英语兔《英语语法精讲合集》P3《动词分类》，页面顶部可直达原视频。</li>
+    <li>用法核对：<a href="https://dictionary.cambridge.org/grammar/british-grammar/transitive-and-intransitive-verbs" target="_blank" rel="noreferrer">Cambridge Grammar：Verbs with and without objects</a>、<a href="https://dictionary.cambridge.org/grammar/british-grammar/main" target="_blank" rel="noreferrer">Verbs: types</a>。</li>
+    <li>本页保留课程的入门路线，同时补充“分类取决于具体用法”“一个谓语链可含多个动词”等更严谨表述。</li>
+  </ul>
+</div>

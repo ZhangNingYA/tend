@@ -1,0 +1,19 @@
+---
+type Props = {
+  index: string;
+  name: string;
+  formula: string;
+  example: string;
+  meaning: string;
+};
+const { index, name, formula, example, meaning } = Astro.props;
+---
+<section class="pattern-card">
+  <div class="pattern-card-index">{index}</div>
+  <div class="pattern-card-content">
+    <p>{name}</p>
+    <h3>{formula}</h3>
+    <div class="pattern-example"><strong>{example}</strong><span>{meaning}</span></div>
+    <slot />
+  </div>
+</section>

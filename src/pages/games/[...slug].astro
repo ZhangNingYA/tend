@@ -1,6 +1,8 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import Lazy from '../../layouts/lazy.astro';
+import GamesHub from '../../layouts/GamesHub.astro';
+import GrammarNote from '../../layouts/GrammarNote.astro';
 import ReadingPost from '../../layouts/ReadingPost.astro';
 export async function getStaticPaths() {
 	const posts = await getCollection('games');
@@ -9,10 +11,17 @@ export async function getStaticPaths() {
 		.sort((a, b) => (
 			a.data.pubDate.valueOf() - b.data.pubDate.valueOf() || a.id.localeCompare(b.id)
 		));
+	const grammarPosts = posts
+		.filter((post) => post.data.pageLayout === 'grammar')
+		.sort((a, b) => (
+			(a.data.part ?? Number.MAX_SAFE_INTEGER) - (b.data.part ?? Number.MAX_SAFE_INTEGER)
+			|| a.id.localeCompare(b.id)
+		));
 	return posts.map((post) => {
-		const readingIndex = readingPosts.indexOf(post);
-		const previousPost = readingIndex > 0 ? readingPosts[readingIndex - 1] : undefined;
-		const nextPost = readingIndex >= 0 ? readingPosts[readingIndex + 1] : undefined;
+		const seriesPosts = post.data.pageLayout === 'grammar' ? grammarPosts : readingPosts;
+		const seriesIndex = seriesPosts.indexOf(post);
+		const previousPost = seriesIndex > 0 ? seriesPosts[seriesIndex - 1] : undefined;
+		const nextPost = seriesIndex >= 0 ? seriesPosts[seriesIndex + 1] : undefined;
 		return {
 			params: { slug: post.id },
 			props: {
@@ -41,9 +50,9 @@ const { Content } = await render(post);
 {post.data.pageLayout === 'reading' ? (
 	<ReadingPost
 		{...post.data}
-		archiveHref="/games/"
-		archiveLabel="Games / Reading practice"
-		allLabel="Back to games"
+		archiveHref="/games/exam-papers/"
+		archiveLabel="真题 / CET-4 Reading"
+		allLabel="返回真题目录"
 		markReadingNav={false}
 		showHeader={false}
 		metaDescription={post.data.description || '大学英语四级阅读练习，包含选词填空、段落匹配、阅读文章、逐句翻译与句子结构精读。'}
@@ -52,6 +61,12 @@ const { Content } = await render(post);
 	>
 		<Content />
 	</ReadingPost>
+) : post.data.pageLayout === 'library' ? (
+	<GamesHub {...post.data} />
+) : post.data.pageLayout === 'grammar' ? (
+	<GrammarNote {...post.data} {previous} {next}>
+		<Content />
+	</GrammarNote>
 ) : (
 	<Lazy {...post.data}>
 		<Content />

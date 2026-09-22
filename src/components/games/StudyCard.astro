@@ -1,0 +1,13 @@
+---
+type Props = {
+  eyebrow?: string;
+  title: string;
+  tone?: 'mint' | 'coral' | 'blue' | 'gold' | 'plain';
+};
+const { eyebrow, title, tone = 'plain' } = Astro.props;
+---
+<section class={`study-card study-card--${tone}`}>
+  {eyebrow && <p>{eyebrow}</p>}
+  <h3>{title}</h3>
+  <div class="study-card-body"><slot /></div>
+</section>

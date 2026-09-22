@@ -1,0 +1,148 @@
+---
+import {
+  ArrowLeft,
+  ArrowRight,
+  BookOpenText,
+  Clock3,
+  ExternalLink,
+  Library,
+  ListTree,
+  PlayCircle,
+} from 'lucide-astro';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/source-serif-4';
+import BaseHead from '../components/BaseHead.astro';
+import '../styles/grammar-notes.css';
+
+type NoteLink = { href: string; title: string };
+type Props = {
+  title: string;
+  description: string;
+  series?: string;
+  part?: number;
+  videoPart?: number;
+  videoDuration?: string;
+  estimatedMinutes?: number;
+  sourceUrl?: string;
+  topics?: string[];
+  sections?: Array<{ id: string; label: string }>;
+  previous?: NoteLink;
+  next?: NoteLink;
+};
+
+const {
+  title,
+  description,
+  series = '英语兔语法精讲',
+  part = 1,
+  videoPart,
+  videoDuration,
+  estimatedMinutes,
+  sourceUrl,
+  topics = [],
+  sections = [],
+  previous,
+  next,
+} = Astro.props;
+const partLabel = String(part).padStart(2, '0');
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head><BaseHead {title} description={description} /></head>
+  <body class="grammar-note-page" data-lesson={part}>
+    <div class="reading-progress" data-reading-progress aria-hidden="true"></div>
+    <div class="grammar-ambient" aria-hidden="true"><span></span><span></span><span></span></div>
+
+    <header class="grammar-topbar">
+      <a class="grammar-brand" href="/games/english-rabbit-notes/">
+        <span>R</span><div><strong>Rabbit Grammar</strong><small>课程结构化笔记</small></div>
+      </a>
+      <nav aria-label="页面导航">
+        <a href="/games/english-rabbit-notes/"><Library size={16} />全部笔记</a>
+        <a href="/games/">资料库</a>
+      </nav>
+    </header>
+
+    <main class="grammar-shell">
+      <header class="grammar-hero">
+        <div class="grammar-hero-copy">
+          <a class="grammar-back" href="/games/english-rabbit-notes/"><ArrowLeft size={15} />英语兔笔记</a>
+          <p class="grammar-kicker">LESSON {partLabel} <span></span> {series}</p>
+          <h1>{title}</h1>
+          <p class="grammar-lead">{description}</p>
+          <div class="grammar-meta">
+            {videoPart && <span><PlayCircle size={15} />合集 P{videoPart} · {videoDuration}</span>}
+            {estimatedMinutes && <span><Clock3 size={15} />笔记约 {estimatedMinutes} 分钟</span>}
+            <span><BookOpenText size={15} />结构化复习</span>
+          </div>
+          <div class="grammar-topics">{topics.map((topic) => <span>{topic}</span>)}</div>
+        </div>
+        <div class="grammar-hero-mark" aria-hidden="true">
+          <span>PART</span><strong>{partLabel}</strong><i>GRAMMAR<br />SYSTEM</i>
+        </div>
+      </header>
+
+      <div class="grammar-layout">
+        <aside class="grammar-rail">
+          <div class="grammar-rail-title"><ListTree size={16} /><span>本讲目录</span></div>
+          <nav aria-label="本讲目录">
+            {sections.map((section, index) => (
+              <a href={`#${section.id}`} data-section-link={section.id} aria-current={index === 0 ? 'location' : undefined}>
+                <span>{String(index + 1).padStart(2, '0')}</span>{section.label}
+              </a>
+            ))}
+          </nav>
+          {sourceUrl && (
+            <a class="grammar-source" href={sourceUrl} target="_blank" rel="noreferrer">
+              <PlayCircle size={18} /><span><small>原始课程</small>B 站观看</span><ExternalLink size={14} />
+            </a>
+          )}
+        </aside>
+
+        <article class="grammar-article">
+          <slot />
+        </article>
+      </div>
+
+      <nav class="grammar-pager" aria-label="课程章节导航">
+        {previous ? (
+          <a href={previous.href} rel="prev"><ArrowLeft size={18} /><span><small>上一讲</small>{previous.title}</span></a>
+        ) : <span></span>}
+        <a class="grammar-pager-all" href="/games/english-rabbit-notes/">课程目录</a>
+        {next ? (
+          <a href={next.href} rel="next"><span><small>下一讲</small>{next.title}</span><ArrowRight size={18} /></a>
+        ) : <span></span>}
+      </nav>
+    </main>
+
+    <footer class="grammar-footer">
+      <span>本页是学习笔记，不替代原视频。</span>
+      <span>课程观点与补充说明已分开标注。</span>
+    </footer>
+
+    <script>
+      const progress = document.querySelector<HTMLElement>('[data-reading-progress]');
+      const headings = Array.from(document.querySelectorAll<HTMLElement>('.grammar-article h2[id]'));
+      const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-section-link]'));
+
+      const updatePageState = () => {
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        if (progress) progress.style.transform = `scaleX(${scrollable > 0 ? window.scrollY / scrollable : 0})`;
+
+        let current = headings[0]?.id;
+        headings.forEach((heading) => {
+          if (heading.getBoundingClientRect().top <= 150) current = heading.id;
+        });
+        links.forEach((link) => {
+          if (link.dataset.sectionLink === current) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+      };
+
+      updatePageState();
+      window.addEventListener('scroll', updatePageState, { passive: true });
+      window.addEventListener('resize', updatePageState);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,218 @@
+---
+title: '英语语法综述：先看见整张地图'
+description: '从“语法是为了造句”出发，用五种基本句型串起句子成分、词类、从句与谓语动词的时体气。'
+pubDate: '2026-09-22'
+pageLayout: 'grammar'
+series: '英语兔 · 英语语法精讲合集'
+part: 1
+videoPart: 2
+videoDuration: '26:44'
+estimatedMinutes: 18
+sourceUrl: 'https://www.bilibili.com/video/BV1XY411J7aG/?p=2'
+topics: ['五大句型', '句子成分', '十大词类', '时体气 TAM']
+sections:
+  - id: 'purpose'
+    label: '语法到底学什么'
+  - id: 'five-patterns'
+    label: '五种基本句型'
+  - id: 'clause-elements'
+    label: '句子成分'
+  - id: 'word-classes'
+    label: '词类不是成分'
+  - id: 'sentence-building'
+    label: '句子怎样变长'
+  - id: 'verb-system'
+    label: '动词是主线'
+  - id: 'recap'
+    label: '一页复盘'
+---
+
+import StudyCard from '../../../components/games/StudyCard.astro';
+import PatternCard from '../../../components/games/PatternCard.astro';
+import GrammarTable from '../../../components/games/GrammarTable.astro';
+
+<h2 id="purpose">语法到底学什么</h2>
+
+这讲最重要的不是记住一串术语，而是换一个观察角度：**语法的实际用途是组织句子，让意思准确地成立。** 长句看起来复杂，但总能继续拆成更小的分句；先弄清最小骨架，再研究它们怎样组合，比孤立背规则更有效。
+
+<div class="overview-grid">
+  <StudyCard eyebrow="START HERE" title="先找骨架" tone="mint">
+    先问句子在说“谁 / 什么”，再问“发生了什么 / 处于什么状态”。这通常对应主语与谓语。
+  </StudyCard>
+  <StudyCard eyebrow="THEN" title="再看扩展" tone="coral">
+    宾语、补语补全动词需要的信息；定语、状语和同位语继续增加细节。
+  </StudyCard>
+  <StudyCard eyebrow="DO NOT MIX" title="成分与词类分开" tone="blue">
+    “名词、形容词”是词的类别；“主语、宾语、定语”是它在具体句子里的工作。
+  </StudyCard>
+  <StudyCard eyebrow="THE MAIN LINE" title="围绕动词学习" tone="gold">
+    句型由动词需要什么成分决定，时态、语气、助动词和非谓语也都从动词展开。
+  </StudyCard>
+</div>
+
+<div class="core-equation">
+  <div><strong>什么</strong><small>SUBJECT · 主语</small></div>
+  <span>＋</span>
+  <div><strong>怎么样</strong><small>PREDICATE · 谓语</small></div>
+</div>
+
+这里的“怎么样”包含广义的动作、事件或状态。要注意：**谓语不等于谓语动词。** 谓语是主语之外、对主语作说明的整个部分；谓语动词（更严谨地说是限定动词或动词短语）只是它的核心。
+
+> 阅读长句时，先找每个分句自己的限定谓语，再找与它对应的主语。骨架确认后，修饰信息通常就不再可怕。
+
+<h2 id="five-patterns">五种基本句型</h2>
+
+五种句型并不是五条需要硬背的口令。它们描述的是：**不同动词为了把意思说完整，要求后面接多少、接哪种成分。** 以下例句为本站重新编写，用来检验结构。
+
+<div class="pattern-list">
+  <PatternCard index="1" name="INTRANSITIVE · 不及物" formula="S + V" example="The audience laughed." meaning="观众笑了。">
+    `laugh` 不需要宾语，句意已经完整。
+  </PatternCard>
+  <PatternCard index="2" name="MONOTRANSITIVE · 单及物" formula="S + V + O" example="Lena opened the window." meaning="Lena 打开了窗户。">
+    `open` 在这里作用于一个对象 `the window`。
+  </PatternCard>
+  <PatternCard index="3" name="DITRANSITIVE · 双及物" formula="S + V + IO + DO" example="Kai sent me a photo." meaning="Kai 给我发了一张照片。">
+    `me` 是接收者（间接宾语），`a photo` 是被发送的事物（直接宾语）。
+  </PatternCard>
+  <PatternCard index="4" name="COMPLEX TRANSITIVE · 复杂及物" formula="S + V + O + OC" example="The news made everyone quiet." meaning="这消息使大家安静下来。">
+    `quiet` 说明宾语 `everyone` 的结果或状态，是宾语补语。
+  </PatternCard>
+  <PatternCard index="5" name="LINKING · 系动词" formula="S + LV + SC" example="The room feels warm." meaning="房间感觉很暖和。">
+    `warm` 说明主语 `the room`，是主语补语；国内传统教学常称“表语”。
+  </PatternCard>
+</div>
+
+<div class="note-caution note-caution--green">
+  <strong>判断关键</strong>
+  <p>不要只看某个动词的中文意思，要看它在这句话中的实际用法。同一个动词可能进入不同结构，例如 <code>The door opened.</code> 是 S + V，而 <code>Mina opened the door.</code> 是 S + V + O。</p>
+</div>
+
+<h2 id="clause-elements">句子成分：每一块在做什么</h2>
+
+<GrammarTable
+  headers={['成分', '英文', '核心作用', '快速提问']}
+  rows={[
+    ['主语', 'subject (S)', '句子所谈论的人、物、事或概念', '谁 / 什么？'],
+    ['谓语动词', 'predicator / verb (V)', '表达动作、事件或状态，是分句核心', '做什么 / 怎么样？'],
+    ['宾语', 'object (O)', '动词所涉及或作用的对象', '动作涉及谁 / 什么？'],
+    ['主语补语', 'subject complement (SC)', '补充说明主语；传统教学常叫表语', '主语是什么 / 怎么样？'],
+    ['宾语补语', 'object complement (OC)', '补充说明宾语的身份、状态或结果', '宾语变得 / 被认为怎样？'],
+    ['定语', 'attributive / modifier', '修饰名词或代词', '哪一个 / 什么样的？'],
+    ['状语', 'adverbial / adjunct', '说明时间、地点、方式、原因、程度等', '何时、何地、如何、为何？'],
+    ['同位语', 'appositive', '换一种说法重新说明名词', '它具体是谁 / 是什么？'],
+  ]}
+/>
+
+分析这个新例句：
+
+`My classmate Nora quietly handed the new student a map after lunch.`
+
+- `My classmate Nora` 是主语，其中 `My` 修饰 `classmate`，`Nora` 与 `classmate` 同位。
+- `handed` 是谓语动词。
+- `the new student` 是间接宾语，`a map` 是直接宾语。
+- `quietly` 是方式状语，`after lunch` 是时间状语。
+
+<div class="note-caution">
+  <strong>术语提醒</strong>
+  <p>不同语法体系对“定语 / 修饰语”“状语 / 附加语”等术语的边界不完全一致。学习阶段应优先判断功能：它补全了谁的信息、是否是动词必需的成分，而不是纠结唯一标签。</p>
+</div>
+
+<h2 id="word-classes">词类不是句子成分</h2>
+
+<div class="term-compare">
+  <div><strong>词类</strong><p>一个词或短语在语言系统里的类别倾向，例如 noun、verb、adjective。</p></div>
+  <div class="term-versus">≠</div>
+  <div><strong>句子成分</strong><p>它进入某个具体句子后承担的工作，例如 subject、object、complement。</p></div>
+</div>
+
+课程采用国内常见的“十大词类”框架：
+
+<div class="taxonomy">
+  <div class="taxonomy-row"><strong>名词 noun</strong><span>表示人、物、地点、事件或概念；常作主语、宾语、补语。</span></div>
+  <div class="taxonomy-row"><strong>代词 pronoun</strong><span>代替名词短语，如 I、they、this、someone。</span></div>
+  <div class="taxonomy-row"><strong>数词 numeral</strong><span>表达数量或顺序；不同现代语法体系可能把它分析为限定词或形容词的一部分。</span></div>
+  <div class="taxonomy-row"><strong>动词 verb</strong><span>表达动作、事件、过程或状态；限定动词构成分句谓语核心。</span></div>
+  <div class="taxonomy-row"><strong>形容词 adjective</strong><span>描述名词或主语 / 宾语的性质状态。</span></div>
+  <div class="taxonomy-row"><strong>副词 adverb</strong><span>常修饰动词、形容词、副词或整句。</span></div>
+  <div class="taxonomy-row"><strong>冠词 article</strong><span>a、an、the；现代语法通常把冠词归入 determiner（限定词）。</span></div>
+  <div class="taxonomy-row"><strong>介词 preposition</strong><span>引出介词短语，表达空间、时间及抽象关系。</span></div>
+  <div class="taxonomy-row"><strong>连词 conjunction</strong><span>连接词、短语或分句，如 and、but、because。</span></div>
+  <div class="taxonomy-row"><strong>叹词 interjection</strong><span>独立表达反应或情绪，如 oh、wow。</span></div>
+</div>
+
+例如 `Swimming is relaxing.` 中，`swimming` 来自动词 `swim`，但整个 `Swimming` 在这里构成主语。由此可见，“来自什么词类”与“承担什么成分”不能混为一谈。
+
+<h2 id="sentence-building">句子怎样变长</h2>
+
+简单分句掌握之后，句子主要通过两条路线扩展：
+
+<div class="overview-grid">
+  <StudyCard eyebrow="COORDINATION" title="并列：同级相连" tone="blue">
+    两个地位相当的分句用 `and`、`but`、`or` 等连接。例：**I called, but nobody answered.**
+  </StudyCard>
+  <StudyCard eyebrow="SUBORDINATION" title="从属：一句嵌入另一句" tone="mint">
+    从句进入主句并承担某种成分。例：**I know that she left.** 中 `that she left` 作 `know` 的宾语。
+  </StudyCard>
+</div>
+
+从句可以承担的工作与前面的句子成分对应：
+
+- **名词性从句**：主语从句、宾语从句、表语从句、同位语从句。
+- **定语从句 / 关系从句**：修饰名词或代词。
+- **状语从句**：表达时间、条件、原因、让步、目的等关系。
+
+一个更严谨的区分是：**clause（分句）是语法基本单位，sentence（句子）至少包含一个主句。** 一句话可以只有一个分句，也可以包含多个并列或从属分句。
+
+<h2 id="verb-system">动词是整套语法的主线</h2>
+
+课程用三个字母概括谓语动词的重要信息：**TAM**。
+
+<div class="overview-grid">
+  <StudyCard eyebrow="T · TENSE" title="时：时间定位" tone="coral">
+    传统教学常按现在、过去、将来、过去将来组织时间关系。
+  </StudyCard>
+  <StudyCard eyebrow="A · ASPECT" title="体：观察方式" tone="mint">
+    一般、进行、完成、完成进行，强调动作是整体、过程、先行结果还是持续过程。
+  </StudyCard>
+  <StudyCard eyebrow="M · MOOD" title="气：说话者立场" tone="blue">
+    陈述事实、发出命令，或表达与事实有距离的假设、愿望等。
+  </StudyCard>
+  <StudyCard eyebrow="HELPERS" title="助动词协作" tone="gold">
+    `be`、`have`、`do` 与情态动词帮助构成时体、否定、疑问、被动及情态意义。
+  </StudyCard>
+</div>
+
+限定谓语承担分句的时态、语气和主谓一致。其他动词若不充当限定谓语，会以不定式、`-ing` 形式、过去分词等非谓语形式进入句子，承担主语、宾语、补语或修饰语等工作。
+
+<div class="note-caution">
+  <strong>准确性补充：16“时态”是教学模型</strong>
+  <p>课程为了建立清晰框架，把 4 种时间与 4 种状态组合成 16 格。这个模型适合国内考试和入门理解；现代语言学常把 tense（时）与 aspect（体）分开，并指出英语动词没有专门的将来时词形，未来意义可由 <code>will</code>、<code>be going to</code>、现在时等多种结构表达。第三讲会把两种视角并列说明。</p>
+</div>
+
+<h2 id="recap">一页复盘</h2>
+
+1. 语法服务于表达；复杂句应先还原为一个个分句。
+2. 每个典型分句先找主语和限定谓语，再判断动词要求的宾语或补语。
+3. 五种基本句型来自五类常见的动词配价模式，不是孤立公式。
+4. 句子成分是“工作”，词类是“类别”，两者不要混用。
+5. 并列让分句平行相连；从属让一个分句进入另一个分句承担成分。
+6. 后续语法学习以动词为主线：时、体、气，助动词与非谓语。
+
+<details class="knowledge-check">
+  <summary>自测：The committee found the plan practical. 属于哪种句型？</summary>
+  <div><code>The committee</code> 是 S，<code>found</code> 是 V，<code>the plan</code> 是 O，<code>practical</code> 补充说明宾语的性质，是 OC。因此属于 <strong>S + V + O + OC</strong>。</div>
+</details>
+
+<details class="knowledge-check">
+  <summary>自测：为什么 “blue” 不能永远叫定语？</summary>
+  <div>因为 <code>blue</code> 是形容词这一词类，但句法工作会变：<code>a blue bag</code> 中修饰名词，可称定语；<code>The bag is blue.</code> 中补充说明主语，是主语补语 / 表语。</div>
+</details>
+
+<div class="source-note">
+  <strong>整理依据与可靠性说明</strong>
+  <ul>
+    <li>课程主线与顺序：英语兔《英语语法精讲合集》P2《英语语法综述》，页面顶部可直达原视频。</li>
+    <li>术语交叉核对：<a href="https://dictionary.cambridge.org/grammar/british-grammar/clauses" target="_blank" rel="noreferrer">Cambridge Grammar：Clauses</a> 与 <a href="https://dictionary.cambridge.org/grammar/british-grammar/complements" target="_blank" rel="noreferrer">Complements</a>。</li>
+    <li>本页是重新组织的学习笔记，例句为本站另写；“准确性补充”用于标明传统教学模型与现代语法分析的差异。</li>
+  </ul>
+</div>

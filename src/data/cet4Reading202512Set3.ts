@@ -1,5 +1,7 @@
 import type { CloseReading, InlineGlossary } from '../types/closeReading';
 import type { ReadingQuestion } from '../types/readingQuestion';
+import { cet4InlineGlossary202606Set2 } from './cet4InlineGlossary202606Set2';
+import { describeReadingStructure, readingStructurePattern } from './describeReadingStructure';
 
 type Role = 'subject' | 'predicate' | 'object' | 'complement' | 'adverbial';
 type Highlight = { role: Role; text: string; label?: string };
@@ -7,7 +9,10 @@ const h = (role: Role, text: string, label?: string): Highlight => ({ role, text
 const note = (translation: string, highlights: readonly Highlight[], trunk = highlights, vocabulary: readonly (readonly [string, string])[] = []): CloseReading => ({
   translation,
   vocabulary: vocabulary.map(([term, explanation]) => ({ term, explanation })),
-  structure: { pattern: '主语 + 谓语 + 补充成分', explanation: '先识别句子的主语和谓语，再补充宾语、补语或状语；第二种模式会展开句中的从句。' },
+  structure: {
+    pattern: readingStructurePattern(highlights, trunk),
+    explanation: describeReadingStructure(highlights, trunk),
+  },
   highlights: [...highlights],
   trunk: [...trunk],
 });
@@ -23,13 +28,31 @@ const vocabularyFor = (sentence: string) => Object.entries(vocabularyHints)
   .slice(0, 3)
   .map(([term, explanation]) => [term, explanation] as const);
 const verbPattern = /\b(?:am|is|are|was|were|be|been|being|has|have|had|can|could|may|might|will|would|should|must|do|does|did|inspire|inspires|move|moves|get|gets|change|changes|feel|feels|turn|turns|publish|published|put|puts|confirm|confirms|lift|lifts|bring|brings|observe|observed|study|studied|come|comes|say|says|said|make|makes|made|decrease|improve|list|lists|wake|wakes|apply|applied|reckon|reckons|find|found|prefer|enjoy|enjoys|play|plays|lead|led|persuade|transform|see|sees|ask|asks|run|ran|realise|realized|restructure|restructured|teach|teaches|credit|credits|help|helps|destroy|destroyed|create|creates|solve|solves|work|works|feature|features|begin|begins|include|includes|develop|develops|remember|remembers|start|starts|appear|appears|sleep|sleeps|dream|dreams|assume|assumes|serve|serves|allow|allows|learn|learns|stem|stems|wonder|wonders|rely|relies|depend|depends|provide|provides|claim|claims|reveal|reveals|reflect|reflects|identify|identified|account|accounts|predict|predicts|offer|offers|look|looks|become|becomes|receive|receives|acknowledge|acknowledged|call|called|tell|tells|validate|validates|award|awarded|read|reads|think|thinks|rise|rises|rate|rates|associate|associated|choose|chose|seem|seems|remain|remains|raise|raises|honor|honors|protect|protects|organize|organized|strengthen|strengthened|support|supports|pursue|pursues|face|faces|hire|hires|argue|argues|admit|admits|worry|worries|try|tries|switch|switched|enable|enabled|satisfy|satisfied|cost|costs|want|wants|need|needs|know|knows|travel|travels|participate|participates|change|changed|give|gives|go|goes|benefit|benefits|test|tests|detect|detects|interpret|interpreted|involve|involves|interact|interacts|played|matter|matters|explain|explains|open|opens|follow|follows|push|pushes|believe|believes|take|takes|remove|removed|cite|citing|show|shows|eat|eating|drink|drinks|chooses|rated|prevent|prevents|base|based|traveling|growing|compare|compared|describes|recall|recalls|vary|varies|continue|continues|roused|upset|affect|affects)\b/i;
+const compoundVerbPattern = /\b(?:am|is|are|was|were|has|have|had|can|could|may|might|will|would|should|must|do|does|did)(?:\s+(?:not|never|also|still|just|probably|actually|already|rarely|usually|often))*\s+(?:(?:been|being)\s+)?(?:[A-Za-z]+(?:ed|en|ing)|be|do|feel|make|get|put|come|go|take|bring|learn|serve|allow|help|show|say|see|find|think|look|become|remain|appear|matter|depend|provide|claim|reveal|reflect|identify|account|predict|offer|receive|acknowledge|call|tell|validate|award|read|rise|rate|choose|seem|raise|protect|organize|support|pursue|face|hire|argue|admit|worry|try|switch|enable|satisfy|cost|want|need|know|travel|participate|give|benefit|test|detect|interpret|involve|interact|follow|push|believe|remove|cite|prevent|base|compare|describe|recall|vary|continue|upset|affect|left)\b/i;
 const auto = (sentence: string, translation = '句意：' + sentence): CloseReading => {
-  const leadingMatch = sentence.match(/^(?:(?:Although|Though|While|When|If|Since|Because|As|With|After|Before|According to|In|On|At|For|By|Instead|However|Unfortunately|Importantly|Apparently|Basically|Eventually)\b[^,]{2,},\s*)/i)
+  const leadingMatch = sentence.match(/^(?:Unfortunately,\s+while\b[^,]+,\s*|(?:(?:But|And|So),?\s+)(?:if|when|while|although|because|since|as)\b[^,]+,\s*|(?:Earlier this year|Two years ago|Many years ago),\s*|Now,?\s+)/i)
+    ?? sentence.match(/^(?:(?:Although|Though|While|When|If|Since|Because|As|With|After|Before|According to|In|On|At|For|By|Instead|However|Unfortunately|Importantly|Apparently|Basically|Eventually)\b[^,]{2,},\s*)/i)
     ?? sentence.match(/^(?:Attended|Based|Compared|Given|Supported|Driven|Located|Founded|Born)\b[^,]{2,},\s*/i);
   const leading = leadingMatch?.[0] ?? '';
   const mainStart = leading.length;
   const mainSentence = sentence.slice(mainStart);
-  const verb = mainSentence.match(verbPattern);
+  const simpleVerb = Array.from(mainSentence.matchAll(new RegExp(verbPattern.source, 'gi')))
+    .find((candidate) => {
+      const value = candidate[0].toLowerCase();
+      const before = mainSentence.slice(0, candidate.index).toLowerCase();
+      const after = mainSentence.slice((candidate.index ?? 0) + candidate[0].length).toLowerCase();
+      return !(
+        (value === 'start' && after.startsWith('-'))
+        || (value === 'work' && /\binto\s*$/.test(before))
+        || (value === 'associate' && /^\s+professor\b/.test(after))
+        || (value === 'study' && /^(?:\s*,|\s+(?:which|that|has|made|says|shows|confirms|finds|found)\b)/.test(after))
+      );
+    });
+  const compoundVerb = mainSentence.match(compoundVerbPattern);
+  const priorityVerb = mainSentence.match(/\b(?:send|sends|sent|received|told|wrote)\b/i);
+  const verb = [compoundVerb, simpleVerb, priorityVerb]
+    .filter((candidate) => candidate !== undefined && candidate !== null)
+    .sort((left, right) => (left.index ?? 0) - (right.index ?? 0))[0];
   const verbStart = verb?.index ?? 0;
   const predicate = verb?.[0]
     ? `${verb[0]}${/^(?:turns?|comes?|gets?|brings?|goes?|takes?|puts?|makes?)\s+(?:out|back|up|off|on|into|over)\b/i.test(mainSentence.slice(verbStart)) ? ` ${mainSentence.slice(verbStart + verb[0].length).match(/^\s+(?:out|back|up|off|on|into|over)\b/i)?.[0]?.trim() ?? ''}` : ''}`.trim()
@@ -319,6 +342,14 @@ export const cet4CloseReadings202512Set3 = closeReadings satisfies Record<string
 
 export const cet4InlineGlossary202512Set3: InlineGlossary = {
   words: {
+    ...cet4InlineGlossary202606Set2.words,
+    annual: { partOfSpeech: 'adj', meaning: '每年的；一年一度的' },
+    honor: { partOfSpeech: 'v / n', meaning: '表彰；给予荣誉；荣誉' },
+    achievement: { partOfSpeech: 'n', meaning: '成就；成绩' },
+    awareness: { partOfSpeech: 'n', meaning: '认识；意识' },
+    resource: { partOfSpeech: 'n', meaning: '资源' },
+    future: { partOfSpeech: 'adj / n', meaning: '未来的；将来' },
+    generation: { partOfSpeech: 'n', meaning: '一代人；世代' },
     equinox: { partOfSpeech: 'n', meaning: '昼夜平分点；春分或秋分' },
     activism: { partOfSpeech: 'n', meaning: '行动主义；社会运动' },
     legislation: { partOfSpeech: 'n', meaning: '法律；立法' },
@@ -334,6 +365,8 @@ export const cet4InlineGlossary202512Set3: InlineGlossary = {
     trait: { partOfSpeech: 'n', meaning: '特征；性状' },
   },
   phrases: [
+    { term: 'Earth Day', explanation: '地球日' },
+    { term: 'United States', explanation: '美国' },
     { term: 'make up the bulk of', explanation: '构成……的大部分' },
     { term: 'turn ... on its head', explanation: '彻底扭转……' },
     { term: 'let alone', explanation: '更不用说' },
@@ -459,6 +492,8 @@ passageOneSentences.forEach((sentence, index) => { const key = `R1-${String(inde
 passageTwoSentences.forEach((sentence, index) => { const key = `R2-${String(index + 1).padStart(2, '0')}`; closeReadings[key].translation = autoTranslations[sentence] ?? closeReadings[key].translation; });
 
 Object.assign(closeReadings, {
+  'M-A03': note('被裁员后重返职场更加困难。', [h('subject', "Getting back into work after you've been laid off"), h('predicate', 'is'), h('complement', 'even harder')]),
+  'M-C03': note('如果 45 岁以后失业，你有将近三分之二的可能会失业超过一年。', [h('adverbial', "And if you're out of work past the age of 45", '条件状语从句'), h('subject', 'there'), h('predicate', "'s"), h('complement', "nearly a two in three chance you'll be out of work for over a year")], [h('subject', 'there'), h('predicate', "'s"), h('complement', "nearly a two in three chance you'll be out of work for over a year")]),
   'M-C02': note('例如，45 岁以上的人占长期失业者的 40% 以上。', [h('subject', 'Those over 45'), h('predicate', 'comprise'), h('object', 'over 40% of the long-term unemployed')]),
   'M-F01': note('他们在雇用 45 岁以上的人时最大的担忧是什么？', [h('subject', 'Their biggest fears about hiring those over 45')]),
   'M-G01': note('但这里有个好消息。', [h('adverbial', 'But'), h('subject', 'the good news'), h('predicate', 'here’s')]),

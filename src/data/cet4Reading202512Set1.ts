@@ -1,5 +1,7 @@
 import type { CloseReading, InlineGlossary } from '../types/closeReading';
 import type { ReadingQuestion } from '../types/readingQuestion';
+import { cet4InlineGlossary202606Set2 } from './cet4InlineGlossary202606Set2';
+import { describeReadingStructure } from './describeReadingStructure';
 
 type Role = 'subject' | 'predicate' | 'object' | 'complement' | 'adverbial';
 type Highlight = { role: Role; text: string; label?: string };
@@ -14,14 +16,20 @@ const note = (
   clauses: readonly Highlight[] = [],
   vocabulary: readonly Word[] = [],
   pattern = '主语 + 谓语 + 补充成分',
-  explanation = '先确定主句的主语和谓语，再把宾语、补语或状语补回；标记为从句的成分可在第二种模式中展开阅读。',
-): CloseReading => ({
-  translation,
-  vocabulary: vocabulary.map(([term, itemExplanation]) => ({ term, explanation: itemExplanation })),
-  structure: { pattern, explanation },
-  highlights: [...trunk, ...clauses],
-  trunk: [...trunk],
-});
+  explanation?: string,
+): CloseReading => {
+  const highlights = [...trunk, ...clauses];
+  return {
+    translation,
+    vocabulary: vocabulary.map(([term, itemExplanation]) => ({ term, explanation: itemExplanation })),
+    structure: {
+      pattern,
+      explanation: explanation ?? describeReadingStructure(highlights, trunk),
+    },
+    highlights,
+    trunk: [...trunk],
+  };
+};
 
 const simple = (
   translation: string,
@@ -501,27 +509,113 @@ const matchingTranslations: Record<string, string> = {
   'O05': '如果数据不能改变想法，顾客也许可以。',
 };
 
+const matchingVerbPattern = /\b(?:might\s+lose|has\s+shown|have\s+shifted|will\s+always\s+be|didn[’']t\s+believe|aren[’']t\s+convinced|won[’']t\s+cycle|am|is|are|was|were|has|have|had|can|could|may|might|will|would|should|must|do|does|did|announced|loved|got|argued|ruin|shouted|wondered|asked|fared|turns|arrived|saw|compared|believe|spoke|described|found|admitted|helped|insisted|ran|scattered|face|try|update|clean|reduce|speed|boosts|works|performs|end|studied|analyzed|grew|hurt|concluded|shown|lose|gain|arrive|notes|tend|become|hang|recognizing|focuses|hit|said|fell|removed|put|drive|shifted|cycle|supports|sees|deserve|says|commute|points|adds|became|seems|exploded|beats|knew|learned|oversaw|claimed|justify|turned|claiming|charged|concerned|lost|began|allowing|build|sit|reduced|making|enjoying|change)\b/i;
+
+const matchingNote = (sentence: string, translation: string): CloseReading => {
+  const quotedReport = sentence.match(/^(“.+?”)\s+(?:(one|he|she|the researchers)\s+(shouted|said|told|adds|concluded)|(notes|says)\s+([^,.]+))(.*)$/i);
+  if (quotedReport) {
+    const [, quote, ordinarySubject, ordinaryPredicate, invertedPredicate, invertedSubject, remainder] = quotedReport;
+    const subject = ordinarySubject ?? invertedSubject;
+    const predicate = ordinaryPredicate ?? invertedPredicate;
+    const reportTail = remainder.trim().replace(/^[,;:\s]+|[.!?]+$/g, '');
+    return note(
+      translation,
+      [
+        h('object', quote),
+        ...(ordinarySubject ? [h('subject', subject)] : [h('predicate', predicate), h('subject', subject)]),
+        ...(ordinarySubject ? [h('predicate', predicate)] : []),
+        ...(reportTail ? [h('adverbial', reportTail)] : []),
+      ],
+      [],
+      [],
+      '报道句 + 直接引语',
+    );
+  }
+
+  const parenthetical = sentence.match(/^(.+?),\s+as\s+(.+?),\s+(would\s+\w+)\s+(.+?)[.!?]?$/i);
+  if (parenthetical) {
+    return note(
+      translation,
+      [
+        h('subject', parenthetical[1]),
+        h('adverbial', `as ${parenthetical[2]}`),
+        h('predicate', parenthetical[3]),
+        h('object', parenthetical[4].replace(/[.!?]+$/, '')),
+      ],
+      [],
+      [],
+      '主语 + 插入说明 + 谓语 + 宾语',
+    );
+  }
+
+  const whQuestion = sentence.match(/^(How|Why|What)\s+(had|can|does|do|did|will|would)\s+(.+?)\s+(\w+)[?]$/i);
+  if (whQuestion) {
+    return note(
+      translation,
+      [h('adverbial', whQuestion[1]), h('predicate', whQuestion[2]), h('subject', whQuestion[3]), h('predicate', whQuestion[4])],
+      [],
+      [],
+      '特殊疑问词 + 助动词 + 主语 + 实义谓语',
+    );
+  }
+
+  const leadingMatch = sentence.match(/^(?:Five years ago,\s*|Early this year\s+|In \d{4},\s*|In the year after[^,]*,\s*|When [^,]+,\s*|If [^,]+,\s*|While [^,]+,\s*|Beyond New York,\s*|For others,\s*|During Covid,\s*|Given [^,]+,\s*|What[’']s more,\s*|(?:Plus|Now|Perhaps|So|But|And),?\s+)/i);
+  const leading = leadingMatch?.[0] ?? '';
+  const mainSentence = sentence.slice(leading.length);
+  const contraction = mainSentence.match(/^(There|It|They|We|He|She)([’'](?:s|re|ve|d|ll))\s+(.+?)[.!?]?$/i);
+  if (contraction) {
+    return note(
+      translation,
+      [
+        ...(leading ? [h('adverbial', leading.trim().replace(/,$/, ''))] : []),
+        h('subject', contraction[1]),
+        h('predicate', contraction[2]),
+        h('complement', contraction[3].replace(/[.!?]+$/, '')),
+      ],
+      [],
+      [],
+      contraction[1].toLowerCase() === 'there' ? 'There be 存在句' : '主语 + 缩略谓语 + 补充成分',
+    );
+  }
+  const verb = mainSentence.match(matchingVerbPattern);
+  if (!verb || verb.index === undefined) {
+    return note(
+      translation,
+      [h('complement', sentence.replace(/[.!?]+$/, ''))],
+      [],
+      [],
+      /[?!]$/.test(sentence) ? '省略式问句 / 简短回应' : '省略句 / 独立成分',
+      `核心信息由“${sentence.replace(/[.!?]+$/, '')}”整体表达，需结合上下文补出省略内容。`,
+    );
+  }
+
+  const verbStart = leading.length + verb.index;
+  const subject = sentence.slice(leading.length, verbStart).trim().replace(/^[“”"'‘’]+|[,;:—“”"'‘’]+$/g, '');
+  const predicate = verb[0];
+  const tail = sentence.slice(verbStart + predicate.length).trim().replace(/^[,;:\s]+|[.!?]+$/g, '');
+  const trunk: Highlight[] = [
+    ...(leading ? [h('adverbial', leading.trim().replace(/,$/, ''))] : []),
+    ...(subject ? [h('subject', subject)] : []),
+    h('predicate', predicate),
+    ...(tail ? [h(/^(?:to|for|with|from|in|on|at|by|during|over|under)\b/i.test(tail) ? 'complement' : 'object', tail)] : []),
+  ];
+  return note(translation, trunk, [], [], '主句核心成分');
+};
+
 Object.entries(matchingSentences).forEach(([label, sentences]) => {
   sentences.forEach((sentence, index) => {
     const key = `M-${label}${String(index + 1).padStart(2, '0')}`;
     const compactLabel = `${label}${String(index + 1).padStart(2, '0')}`;
-    const words = sentence.match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g) ?? [];
-    const subject = words[0] ?? 'This';
-    const predicate = words[1] ?? 'is';
-    matchingCloseReadings[key] = simple(
+    matchingCloseReadings[key] = matchingNote(
+      sentence,
       matchingTranslations[compactLabel] ?? sentence,
-      subject,
-      predicate,
-      undefined,
-      [],
-      '主语 + 谓语 + 补充信息',
     );
   });
 });
 
 const passageCloseReadings: Record<string, CloseReading> = {
   'R1-01': simple('地球上的所有生物都暴露在 24 小时的昼夜循环中。', 'All living organisms on Earth', 'are exposed', ['complement', 'to a 24-hour day-night cycle'], [['be exposed to', '暴露于；处于……影响下']], '主语 + 被动谓语 + 补语'),
-  'R1-02': note('这种循环是人们晚上休息、白天活动的原因。', [h('subject', 'This cycle'), h('is', 'is'), h('complement', 'the reason')], [sub('object', 'why people rest at night and are active during the day', '原因从句')], [['day-night cycle', '昼夜循环']], '主语 + 系动词 + 表语 + 原因从句'),
+  'R1-02': note('这种循环是人们晚上休息、白天活动的原因。', [h('subject', 'This cycle'), h('predicate', 'is'), h('complement', 'the reason')], [sub('object', 'why people rest at night and are active during the day', '原因从句')], [['day-night cycle', '昼夜循环']], '主语 + 系动词 + 表语 + 原因从句'),
   'R1-03': note('因此，人体的所有功能也都遵循这一日常节律，而锻炼或进食等行为的时间会显著影响健康。', [h('adverbial', 'Consequently'), h('subject', 'all human body functions'), h('predicate', 'follow'), h('object', 'this daily rhythm')], [sub('subject', 'the timing of behaviors like exercise or food intake', '并列分句主语'), sub('predicate', 'can significantly influence'), sub('object', 'your health', '并列分句宾语')], [['consequently', '因此；所以'], ['daily rhythm', '日常节律']], '连接副词 + 并列主句'),
   'R1-04': note('例如，夜间进食会随着时间推移导致体重增加，因为夜间进食会增加脂肪储存。', [h('adverbial', 'For example'), h('subject', 'eating at night'), h('predicate', 'can lead'), h('complement', 'to weight gain over time')], [sub('adverbial', 'because food intake at night leads to increased fat storage', '原因状语从句')], [['lead to', '导致'], ['fat storage', '脂肪储存']], '状语 + 主句 + 原因从句'),
   'R1-05': simple('人体中的许多药物靶点也遵循 24 小时循环。', 'Many drug targets in the body', 'follow', ['object', 'a 24-hour cycle'], [['drug target', '药物靶点']], '主语 + 谓语 + 宾语'),
@@ -591,6 +685,7 @@ export const cet4CloseReadings202512Set1 = allCloseReadings satisfies Record<str
 
 export const cet4InlineGlossary202512Set1: InlineGlossary = {
   words: {
+    ...cet4InlineGlossary202606Set2.words,
     choice: { partOfSpeech: 'n', meaning: '选择；选项' },
     decision: { partOfSpeech: 'n', meaning: '决定；决策' },
     confused: { partOfSpeech: 'adj', meaning: '困惑的' },

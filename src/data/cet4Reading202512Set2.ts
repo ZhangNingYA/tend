@@ -1,5 +1,7 @@
 import type { CloseReading, InlineGlossary } from '../types/closeReading';
 import type { ReadingQuestion } from '../types/readingQuestion';
+import { cet4InlineGlossary202606Set2 } from './cet4InlineGlossary202606Set2';
+import { describeReadingStructure, readingStructurePattern } from './describeReadingStructure';
 
 type Role = 'subject' | 'predicate' | 'object' | 'complement' | 'adverbial';
 type Highlight = { role: Role; text: string; label?: string };
@@ -8,7 +10,10 @@ const h = (role: Role, text: string, label?: string): Highlight => ({ role, text
 const note = (translation: string, highlights: readonly Highlight[], trunk = highlights, vocabulary: readonly (readonly [string, string])[] = []): CloseReading => ({
   translation,
   vocabulary: vocabulary.map(([term, explanation]) => ({ term, explanation })),
-  structure: { pattern: '主语 + 谓语 + 补充成分', explanation: '先识别句子的主语和谓语，再补充宾语、补语或状语；第二种模式会展开句中的从句。' },
+  structure: {
+    pattern: readingStructurePattern(highlights, trunk),
+    explanation: describeReadingStructure(highlights, trunk),
+  },
   highlights: [...highlights],
   trunk: [...trunk],
 });
@@ -25,13 +30,31 @@ const vocabularyFor = (sentence: string) => Object.entries(vocabularyHints)
   .slice(0, 3)
   .map(([term, explanation]) => [term, explanation] as const);
 const verbPattern = /\b(?:am|is|are|was|were|be|been|being|has|have|had|can|could|may|might|will|would|should|must|do|does|did|inspire|inspires|move|moves|get|gets|change|changes|feel|feels|turn|turns|publish|published|put|puts|confirm|confirms|lift|lifts|bring|brings|observe|observed|study|studied|come|comes|say|says|said|make|makes|made|decrease|improve|list|lists|wake|wakes|apply|applied|reckon|reckons|find|found|prefer|enjoy|enjoys|play|plays|lead|led|persuade|transform|see|sees|ask|asks|run|ran|realise|realized|restructure|restructured|teach|teaches|credit|credits|help|helps|destroy|destroyed|create|creates|solve|solves|work|works|feature|features|begin|begins|include|includes|develop|develops|remember|remembers|start|starts|appear|appears|sleep|sleeps|dream|dreams|assume|assumes|serve|serves|allow|allows|learn|learns|stem|stems|wonder|wonders|rely|relies|depend|depends|provide|provides|claim|claims|reveal|reveals|reflect|reflects|identify|identified|account|accounts|predict|predicts|offer|offers|look|looks|become|becomes|receive|receives|acknowledge|acknowledged|call|called|tell|tells|validate|validates|award|awarded|read|reads|think|thinks|rise|rises|rate|rates|associate|associated|choose|chose|seem|seems|remain|remains|raise|raises|honor|honors|protect|protects|organize|organized|strengthen|strengthened|support|supports|pursue|pursues|face|faces|hire|hires|argue|argues|admit|admits|worry|worries|try|tries|switch|switched|enable|enabled|satisfy|satisfied|cost|costs|want|wants|need|needs|know|knows|travel|travels|participate|participates|change|changed|give|gives|go|goes|benefit|benefits|test|tests|detect|detects|interpret|interpreted|involve|involves|interact|interacts|played|matter|matters|explain|explains|open|opens|follow|follows|push|pushes|believe|believes|take|takes|remove|removed|cite|citing|show|shows|eat|eating|drink|drinks|chooses|rated|prevent|prevents|base|based|traveling|growing|compare|compared|describes|recall|recalls|vary|varies|continue|continues|roused|upset|affect|affects)\b/i;
+const compoundVerbPattern = /\b(?:am|is|are|was|were|has|have|had|can|could|may|might|will|would|should|must|do|does|did)(?:\s+(?:not|never|also|still|just|probably|actually|already|rarely|usually|often))*\s+(?:(?:been|being)\s+)?(?:[A-Za-z]+(?:ed|en|ing)|be|do|feel|make|get|put|come|go|take|bring|learn|serve|allow|help|show|say|see|find|think|look|become|remain|appear|matter|depend|provide|claim|reveal|reflect|identify|account|predict|offer|receive|acknowledge|call|tell|validate|award|read|rise|rate|choose|seem|raise|protect|organize|support|pursue|face|hire|argue|admit|worry|try|switch|enable|satisfy|cost|want|need|know|travel|participate|give|benefit|test|detect|interpret|involve|interact|follow|push|believe|remove|cite|prevent|base|compare|describe|recall|vary|continue|upset|affect|left)\b/i;
 const auto = (sentence: string, translation = '句意：' + sentence): CloseReading => {
-  const leadingMatch = sentence.match(/^(?:(?:Although|Though|While|When|If|Since|Because|As|With|After|Before|According to|In|On|At|For|By|Instead|However|Unfortunately|Importantly|Apparently|Basically|Eventually)\b[^,]{2,},\s*)/i)
+  const leadingMatch = sentence.match(/^(?:Unfortunately,\s+while\b[^,]+,\s*|(?:(?:But|And|So),?\s+)(?:if|when|while|although|because|since|as)\b[^,]+,\s*|(?:Earlier this year|Two years ago|Many years ago),\s*|Now,?\s+)/i)
+    ?? sentence.match(/^(?:(?:Although|Though|While|When|If|Since|Because|As|With|After|Before|According to|In|On|At|For|By|Instead|However|Unfortunately|Importantly|Apparently|Basically|Eventually)\b[^,]{2,},\s*)/i)
     ?? sentence.match(/^(?:Attended|Based|Compared|Given|Supported|Driven|Located|Founded|Born)\b[^,]{2,},\s*/i);
   const leading = leadingMatch?.[0] ?? '';
   const mainStart = leading.length;
   const mainSentence = sentence.slice(mainStart);
-  const verb = mainSentence.match(verbPattern);
+  const simpleVerb = Array.from(mainSentence.matchAll(new RegExp(verbPattern.source, 'gi')))
+    .find((candidate) => {
+      const value = candidate[0].toLowerCase();
+      const before = mainSentence.slice(0, candidate.index).toLowerCase();
+      const after = mainSentence.slice((candidate.index ?? 0) + candidate[0].length).toLowerCase();
+      return !(
+        (value === 'start' && after.startsWith('-'))
+        || (value === 'work' && /\binto\s*$/.test(before))
+        || (value === 'associate' && /^\s+professor\b/.test(after))
+        || (value === 'study' && /^(?:\s*,|\s+(?:which|that|has|made|says|shows|confirms|finds|found)\b)/.test(after))
+      );
+    });
+  const compoundVerb = mainSentence.match(compoundVerbPattern);
+  const priorityVerb = mainSentence.match(/\b(?:send|sends|sent|received|told|wrote)\b/i);
+  const verb = [compoundVerb, simpleVerb, priorityVerb]
+    .filter((candidate) => candidate !== undefined && candidate !== null)
+    .sort((left, right) => (left.index ?? 0) - (right.index ?? 0))[0];
   const verbStart = verb?.index ?? 0;
   const predicate = verb?.[0]
     ? `${verb[0]}${/^(?:turns?|comes?|gets?|brings?|goes?|takes?|puts?|makes?)\s+(?:out|back|up|off|on|into|over)\b/i.test(mainSentence.slice(verbStart)) ? ` ${mainSentence.slice(verbStart + verb[0].length).match(/^\s+(?:out|back|up|off|on|into|over)\b/i)?.[0]?.trim() ?? ''}` : ''}`.trim()
@@ -328,6 +351,11 @@ export const cet4CloseReadings202512Set2 = closeReadings satisfies Record<string
 
 export const cet4InlineGlossary202512Set2: InlineGlossary = {
   words: {
+    ...cet4InlineGlossary202606Set2.words,
+    inspire: { partOfSpeech: 'v', meaning: '激励；鼓舞；启发' },
+    move: { partOfSpeech: 'v', meaning: '使感动；使行动；移动' },
+    foot: { partOfSpeech: 'n', meaning: '脚；足部' },
+    fair: { partOfSpeech: 'adj', meaning: '合理的；公平的' },
     autonomous: { partOfSpeech: 'adj', meaning: '自主的；自治的' },
     dementia: { partOfSpeech: 'n', meaning: '痴呆；失智症' },
     manageable: { partOfSpeech: 'adj', meaning: '可控制的；可处理的' },
@@ -472,6 +500,8 @@ Object.assign(closeReadings, {
   'M-A02': note('但为什么不把它列入简历呢？', [h('adverbial', 'But'), h('predicate', 'why not', '省略式疑问')]),
   'M-A03': note('企业开始意识到游戏玩家能带给职场的技能。', [h('subject', 'Businesses'), h('predicate', 'are waking up'), h('complement', 'to the skills gamers can bring to the workplace')]),
   'M-B03': note('你喜欢 Portal 这样的不寻常益智游戏，还是 Defense Grid 这样的塔防游戏？', [h('subject', 'you'), h('predicate', 'enjoy'), h('object', 'unusual puzzle games like Portal, or tower defence games like Defense Grid')]),
+  'M-B05': note('但如果你更喜欢 Civilization、Total War 或 X-Com 这类强调策略和资源管理的游戏，那么你可能更接近管理者的能力画像。', [h('adverbial', 'But if you prefer Civilization, Total War, or X-Com, where strategy and resource management are key', '条件状语从句'), h('subject', 'you'), h('predicate', 'might have'), h('object', 'more in common with managers')], [h('subject', 'you'), h('predicate', 'might have'), h('object', 'more in common with managers')]),
+  'M-F04': note('但举例来说，如果有人能说明自己如何在网络游戏中带领团队，他或许就能让雇主相信这种能力有用。', [h('adverbial', 'But if someone can explain how they have led a team in an online game, for example', '条件状语从句'), h('subject', 'they'), h('predicate', 'may be able'), h('complement', 'to persuade an employer that this is useful')], [h('subject', 'they'), h('predicate', 'may be able'), h('complement', 'to persuade an employer that this is useful')]),
   'M-G02': note('游戏学院建议的一部分，是把休闲玩家转变为“有意识”的玩家，并运用批判性思维培养他们的技能。', [h('subject', 'part of Game Academy’s suggestion'), h('predicate', 'is'), h('object', 'to transform casual gamers into “conscious” ones'), h('complement', 'applying critical thinking to developing their skills', '分词补充结构')], [h('subject', 'part of Game Academy’s suggestion'), h('predicate', 'is'), h('object', 'to transform casual gamers into “conscious” ones')]),
   'M-K04': note('每一次新的游戏升级都加深了他对计算机运作方式的了解。', [h('subject', 'Every new gaming upgrade'), h('predicate', 'improved'), h('object', 'his knowledge of how they worked')]),
   'M-K08': note('这与取得高分或完美通关并没有什么不同。', [h('complement', 'Not unlike achieving a high score or a perfect run', '省略式比较')]),
@@ -480,4 +510,5 @@ Object.assign(closeReadings, {
   'R2-07': note('你想知道婴儿会梦见什么吗？', [h('subject', 'you'), h('predicate', 'wondering'), h('object', 'what do babies dream about', '宾语从句（整体）')], [h('subject', 'you'), h('predicate', 'wondering')]),
   'R2-17': note('与成年人的梦相比，很小的孩子的梦通常只是快照；与电影相比，它们更像幻灯片。', [h('subject', 'Dreams of very small kids'), h('predicate', 'are'), h('complement', 'usually just snapshots'), h('adverbial', 'when compared to the dreams of adults', '比较状语')], [h('subject', 'Dreams of very small kids'), h('predicate', 'are'), h('complement', 'usually just snapshots')]),
   'R2-21': note('现在，梦境包含一个接一个串联起来的多个事件。', [h('subject', 'Dreams'), h('predicate', 'include'), h('object', 'multiple events strung together, one after the other')]),
+  'R2-23': note('不过情况并非总是如此：在快速眼动睡眠中被唤醒时，福克斯研究中的 25% 儿童不记得自己做过梦，而且这一趋势会持续到 9 岁。', [h('adverbial', "Still, that's not always the case: When roused during REM sleep", '背景与时间状语'), h('subject', "25% of the kids in Foulkes' studies"), h('predicate', 'had'), h('object', 'no recollection of dreaming'), h('complement', 'a trend that continues through age 9', '同位补充')], [h('subject', "25% of the kids in Foulkes' studies"), h('predicate', 'had'), h('object', 'no recollection of dreaming')]),
 });

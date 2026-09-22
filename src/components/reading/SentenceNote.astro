@@ -145,6 +145,8 @@ const irregularLemmas: Record<string, string> = {
   brought: 'bring', led: 'lead',
   gave: 'give', given: 'give', found: 'find', made: 'make',
   took: 'take', taken: 'take', thought: 'think',
+  children: 'child', feet: 'foot', teeth: 'tooth', mice: 'mouse', geese: 'goose',
+  men: 'man', women: 'woman', better: 'good', best: 'good', worse: 'bad', worst: 'bad',
 };
 
 const wordForms = (word: string) => {
@@ -190,8 +192,16 @@ const wordsEquivalent = (source: string, term: string) => {
   return [...sourceForms].some((form) => termForms.has(form));
 };
 
-const inlineGlossaryEntry = (value: string) =>
-  effectiveInlineGlossary?.words[normalizeForMatch(value).toLowerCase()];
+const inlineGlossaryEntry = (value: string) => {
+  const normalized = normalizeForMatch(value).toLowerCase();
+  const exact = effectiveInlineGlossary?.words[normalized];
+  if (exact) return exact;
+  for (const form of wordForms(normalized)) {
+    const entry = effectiveInlineGlossary?.words[form];
+    if (entry) return entry;
+  }
+  return undefined;
+};
 
 const partOfSpeechLabel = (value: string) => ({
   n: '名词',
@@ -540,20 +550,20 @@ const glossaryMatches = (): Array<{
     // Number tokens are needed to fill phrase patterns such as “multiply A
     // by B”, but they are not standalone vocabulary entries.
     .filter((token) => /[A-Za-z]/.test(token.raw))
-    .filter((token) => inlineGlossaryEntry(token.text) !== undefined)
     .filter((token) => !claimedMatches.some((match) => (
       token.start < match.end && token.end > match.start
     )))
-    .map((token) => {
+    .flatMap((token) => {
       const entry = inlineGlossaryEntry(token.text);
-      return {
+      if (!entry) return [];
+      return [{
         start: token.start,
         end: token.end,
         term: token.raw,
-        explanation: entry?.meaning ?? '本句中的词义',
-        partOfSpeech: partOfSpeechLabel(entry?.partOfSpeech ?? '词汇'),
+        explanation: entry.meaning,
+        partOfSpeech: partOfSpeechLabel(entry.partOfSpeech),
         priority: 0,
-      };
+      }];
     });
 
   return [...claimedMatches, ...singleWordMatches]
@@ -1125,7 +1135,7 @@ const structureExplanation = reportedQuoteAnalysis?.explanation
     if (!button) return;
     event.stopPropagation();
     const note = button.closest<HTMLElement>('[data-sentence-note]');
-    if (!note || note.hasAttribute('data-open')) return;
+    if (!note) return;
     if (activeGlossaryButton === button) {
       closeActiveGlossary();
       return;
@@ -1202,7 +1212,10 @@ const structureExplanation = reportedQuoteAnalysis?.explanation
     font: inherit;
     line-height: inherit;
     cursor: pointer;
-    text-decoration: none;
+    text-decoration-line: underline;
+    text-decoration-color: #9bad9f;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
     transition: background-color 140ms ease, box-shadow 140ms ease, color 140ms ease;
   }
 
@@ -1217,7 +1230,6 @@ const structureExplanation = reportedQuoteAnalysis?.explanation
   [data-open] .inline-glossary-term {
     background: transparent;
     box-shadow: none;
-    pointer-events: none;
   }
 
   :global(.inline-glossary-popover) {

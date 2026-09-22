@@ -224,7 +224,11 @@ const glossaryMatches = (): Array<{
   const candidates: GlossaryMatch[][] = [];
   const vocabulary = [
     ...closeReading.vocabulary.map((item) => ({ ...item, allowFlexibleMatch: true })),
-    ...sharedGlossaryPhrases.map((item) => ({ ...item, allowFlexibleMatch: false })),
+    // Shared phrases come from the page-level glossary. Allow ordinary
+    // inflection and template matching here as well, so entries such as
+    // “come out of” can match “comes out of”, and “bring ... back to” can
+    // match “bring them back to”.
+    ...sharedGlossaryPhrases.map((item) => ({ ...item, allowFlexibleMatch: true })),
   ]
     .filter((item, index, all) => all.findIndex((candidate) => (
       normalizeForMatch(candidate.term).toLowerCase() === normalizeForMatch(item.term).toLowerCase()
@@ -366,7 +370,7 @@ const glossaryMatches = (): Array<{
             continue;
           }
 
-          const maxGap = hasFlexibleGap ? 18 : 4;
+          const maxGap = hasFlexibleGap ? 8 : 4;
           const foundIndex = sentenceWords.findIndex((sourceWord, index) => (
             index >= sentenceIndex
             && index <= sentenceIndex + maxGap
@@ -441,7 +445,13 @@ const glossaryMatches = (): Array<{
           return { ...sentenceWords[sentenceTokenIndex], sentenceTokenIndex };
         })
         .filter((token) => token !== undefined);
-      if (fallbackTokens.length === 0) return;
+      const literalTermTokens = termWords.filter((token, index) => (
+        !isPlaceholder(token, index) && !fallbackStopWords.has(token.text)
+      ));
+      // A transformed phrase may reorder its words, but every meaningful
+      // word still has to be present. Do not turn a single matching word
+      // into a misleading phrase button.
+      if (fallbackTokens.length < literalTermTokens.length) return;
 
       const sortedFallbackTokens = [...fallbackTokens]
         .sort((a, b) => a.sentenceTokenIndex - b.sentenceTokenIndex);
@@ -530,6 +540,7 @@ const glossaryMatches = (): Array<{
     // Number tokens are needed to fill phrase patterns such as “multiply A
     // by B”, but they are not standalone vocabulary entries.
     .filter((token) => /[A-Za-z]/.test(token.raw))
+    .filter((token) => inlineGlossaryEntry(token.text) !== undefined)
     .filter((token) => !claimedMatches.some((match) => (
       token.start < match.end && token.end > match.start
     )))

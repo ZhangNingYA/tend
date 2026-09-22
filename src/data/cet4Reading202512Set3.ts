@@ -339,6 +339,13 @@ export const cet4InlineGlossary202512Set3: InlineGlossary = {
     { term: 'let alone', explanation: '更不用说' },
     { term: 'in view of', explanation: '鉴于；考虑到' },
     { term: 'account for', explanation: '考虑到；解释' },
+    { term: 'be awarded', explanation: '被授予；获得（奖项）' },
+    { term: 'take ... off the menu', explanation: '把……从菜单上撤下' },
+    { term: 'plant-based', explanation: '以植物为基础的；植物性的' },
+    { term: 'depend upon', explanation: '取决于；依赖于' },
+    { term: 'at the moment', explanation: '目前；此刻' },
+    { term: 'play together', explanation: '共同发挥作用；相互作用' },
+    { term: 'based on', explanation: '基于；根据' },
   ],
 };
 const autoTranslations: Record<string, string> = {

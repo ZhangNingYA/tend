@@ -346,6 +346,11 @@ export const cet4InlineGlossary202512Set2: InlineGlossary = {
     { term: 'bring ... back to', explanation: '使……恢复到' },
     { term: 'have in common with', explanation: '与……有共同点' },
     { term: 'in contrast', explanation: '相比之下' },
+    { term: 'wake up to', explanation: '开始意识到；认识到' },
+    { term: 'apply ... to', explanation: '把……应用于……' },
+    { term: 'be relevant to', explanation: '与……相关' },
+    { term: 'make ... more manageable', explanation: '使……更容易处理' },
+    { term: 'bring ... back', explanation: '使……恢复；带回……' },
   ],
 };
 const autoTranslations: Record<string, string> = {

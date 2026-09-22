@@ -1,0 +1,21 @@
+---
+title: '2025-12 Reading Practice · CET-4 Set 2'
+description: '2025 年 12 月大学英语四级第二套阅读练习，包含选词填空、段落匹配、仔细阅读、参考答案与逐句精读。'
+pubDate: '2026-09-22'
+pageLayout: 'reading'
+---
+
+import ReadingPractice from '../../components/reading/ReadingPractice.astro';
+import {
+  cet4CloseReadings202512Set2,
+  cet4InlineGlossary202512Set2,
+  cet4Reading202512Set2,
+} from '../../data/cet4Reading202512Set2';
+
+<ReadingPractice
+  {...cet4Reading202512Set2}
+  closeReadings={cet4CloseReadings202512Set2}
+  inlineGlossary={cet4InlineGlossary202512Set2}
+  experience="game"
+  timerVariant="focus"
+/>

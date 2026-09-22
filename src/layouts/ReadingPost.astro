@@ -44,7 +44,7 @@ const {
   <head>
     <BaseHead {title} description={metaDescription} />
   </head>
-  <body class:list={['reading-post-page', !showHeader && 'reading-post-page--headerless']}>
+  <body class:list={['reading-post-page', !showHeader && 'reading-post-page--headerless']} data-structure-mode="main">
     {showHeader && <BlogHeader active={markReadingNav ? 'reading' : undefined} />}
 
     <main class="reading-post-shell">

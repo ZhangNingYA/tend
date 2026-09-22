@@ -54,9 +54,13 @@ const sharedGlossaryPhrases = inlineGlossary
         ) > 1),
     ]
   : [];
+const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
+  Boolean(item.trunk?.length)
+  && item.highlights.some((highlight) => highlight.label?.includes('从句'))
+));
 ---
 
-{timerVariant === 'focus' && (
+{(timerVariant === 'focus' || (experience === 'game' && hasStructureModes)) && (
   <section class="reading-guide" aria-label="精读使用说明">
     <div class="reading-guide-heading">
       <span class="reading-guide-kicker">How to read</span>
@@ -68,7 +72,52 @@ const sharedGlossaryPhrases = inlineGlossary
       <span><i class="guide-icon guide-word" aria-hidden="true">Aa</i>下划线词：查看词义</span>
       <span><i class="guide-icon guide-clock" aria-hidden="true">◷</i>计时器：记录首读</span>
     </div>
+    {experience === 'game' && hasStructureModes && (
+      <div class="reading-structure-mode" data-structure-mode-control>
+        <span class="reading-structure-mode-label">句子成分</span>
+        <div class="reading-structure-mode-options" role="group" aria-label="句子成分标记模式">
+          <button type="button" data-structure-mode-option="main" aria-pressed="true">仅标记主句</button>
+          <button type="button" data-structure-mode-option="all" aria-pressed="false">主句＋从句</button>
+        </div>
+        <span class="reading-structure-mode-hint">打开书本后，可切换原句颜色和结构分解的范围。</span>
+      </div>
+    )}
   </section>
+)}
+
+{experience === 'game' && hasStructureModes && (
+  <script>
+    const modeButtons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>('[data-structure-mode-option]'),
+    );
+    const modeStorageKey = 'reading-structure-mode';
+    const setStructureMode = (mode: 'main' | 'all') => {
+      document.body.dataset.structureMode = mode;
+      modeButtons.forEach((button) => {
+        const active = button.dataset.structureModeOption === mode;
+        button.setAttribute('aria-pressed', String(active));
+      });
+      try {
+        localStorage.setItem(modeStorageKey, mode);
+      } catch {
+        // Storage can be unavailable in private browsing; the toggle still works.
+      }
+    };
+
+    let initialMode: 'main' | 'all' = 'main';
+    try {
+      initialMode = localStorage.getItem(modeStorageKey) === 'all' ? 'all' : 'main';
+    } catch {
+      // Keep the default main-clause view.
+    }
+    setStructureMode(initialMode);
+    modeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const mode = button.dataset.structureModeOption === 'all' ? 'all' : 'main';
+        setStructureMode(mode);
+      });
+    });
+  </script>
 )}
 
 <h2 id="word-bank-cloze">Word Bank Cloze</h2>
@@ -237,6 +286,59 @@ const sharedGlossaryPhrases = inlineGlossary
 
   .guide-clock { font-size: 0.85rem; }
 
+  .reading-structure-mode {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px 12px;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #e1e9e3;
+  }
+
+  .reading-structure-mode-label {
+    color: #40564a;
+    font-size: 0.7rem;
+    font-weight: 760;
+    letter-spacing: 0.04em;
+  }
+
+  .reading-structure-mode-options {
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    border: 1px solid #cddbd1;
+    border-radius: 9px;
+    background: #f7faf7;
+  }
+
+  .reading-structure-mode-options button {
+    padding: 5px 9px;
+    border: 0;
+    border-radius: 6px;
+    color: #6a786f;
+    background: transparent;
+    font: inherit;
+    font-size: 0.67rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .reading-structure-mode-options button[aria-pressed='true'] {
+    color: #1f5f40;
+    background: #e0f0e5;
+    box-shadow: 0 1px 3px rgba(40, 72, 51, 0.08);
+  }
+
+  .reading-structure-mode-options button:focus-visible {
+    outline: 2px solid rgba(49, 95, 155, 0.3);
+    outline-offset: 1px;
+  }
+
+  .reading-structure-mode-hint {
+    color: #748078;
+    font-size: 0.68rem;
+  }
+
   @media (max-width: 640px) {
     .reading-guide {
       margin-bottom: 36px;
@@ -246,5 +348,7 @@ const sharedGlossaryPhrases = inlineGlossary
 
     .reading-guide-heading { display: grid; gap: 4px; }
     .reading-guide-items { gap: 8px 13px; }
+    .reading-structure-mode { align-items: flex-start; }
+    .reading-structure-mode-hint { width: 100%; }
   }
 </style>

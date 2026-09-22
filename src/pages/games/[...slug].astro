@@ -46,7 +46,7 @@ const { Content } = await render(post);
 		allLabel="Back to games"
 		markReadingNav={false}
 		showHeader={false}
-		metaDescription="2026 年 6 月大学英语四级阅读练习，包含选词填空、段落匹配、阅读文章、逐句翻译与句子结构精读。"
+		metaDescription={post.data.description || '大学英语四级阅读练习，包含选词填空、段落匹配、阅读文章、逐句翻译与句子结构精读。'}
 		{previous}
 		{next}
 	>

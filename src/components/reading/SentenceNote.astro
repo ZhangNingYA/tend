@@ -54,6 +54,7 @@ const roleHelp: Record<SentenceRole, string> = {
 interface SentencePart {
   text: string;
   role?: SentenceRole;
+  scope?: 'main' | 'clause';
   start: number;
 }
 
@@ -74,7 +75,11 @@ const buildSentenceParts = (): SentencePart[] => {
   if (!sentence || !closeReading) return sentence ? [{ text: sentence, start: 0 }] : [];
 
   const normalizedSentence = normalizeForMatch(sentence);
-  const matches: Array<{ start: number; end: number; role: SentenceRole }> = [];
+  const hasStructureModes = Boolean(
+    closeReading.trunk?.length
+    && closeReading.highlights.some((highlight) => highlight.label?.includes('从句')),
+  );
+  const matches: Array<{ start: number; end: number; role: SentenceRole; scope: 'main' | 'clause' }> = [];
   let searchFrom = 0;
 
   (semanticAnalysis?.highlights ?? closeReading.highlights).forEach((highlight) => {
@@ -83,7 +88,12 @@ const buildSentenceParts = (): SentencePart[] => {
     if (start === -1) start = normalizedSentence.indexOf(normalizedText);
     if (start === -1) return;
 
-    matches.push({ start, end: start + normalizedText.length, role: highlight.role });
+    matches.push({
+      start,
+      end: start + normalizedText.length,
+      role: highlight.role,
+      scope: hasStructureModes && highlight.label?.includes('从句') ? 'clause' : 'main',
+    });
     searchFrom = start + normalizedText.length;
   });
 
@@ -92,7 +102,12 @@ const buildSentenceParts = (): SentencePart[] => {
   matches.sort((a, b) => a.start - b.start || a.end - b.end).forEach((match) => {
     if (match.start < cursor) return;
     if (match.start > cursor) parts.push({ text: sentence.slice(cursor, match.start), start: cursor });
-    parts.push({ text: sentence.slice(match.start, match.end), role: match.role, start: match.start });
+    parts.push({
+      text: sentence.slice(match.start, match.end),
+      role: match.role,
+      scope: match.scope,
+      start: match.start,
+    });
     cursor = match.end;
   });
   if (cursor < sentence.length) parts.push({ text: sentence.slice(cursor), start: cursor });
@@ -546,6 +561,7 @@ const sentenceGlossaryMatches = glossaryMatches();
 interface RenderSegment {
   text: string;
   role?: SentenceRole;
+  scope?: 'main' | 'clause';
   glossary?: SentenceRun['glossary'];
 }
 
@@ -585,6 +601,7 @@ const sentenceRenderGroups = (): RenderGroup[] => {
     segments.push({
       text: sentence.slice(start, end),
       role: part?.role,
+      scope: part?.scope,
       glossary: match ? {
         term: match.term,
         explanation: match.explanation,
@@ -599,7 +616,10 @@ const sentenceRenderGroups = (): RenderGroup[] => {
     const previous = groups.at(-1);
     const canMerge = previous && (
       segment.matchIndex === previous.matchIndex
-        && (segment.matchIndex >= 0 || previous.segments.at(-1)?.role === segment.role)
+        && (segment.matchIndex >= 0 || (
+          previous.segments.at(-1)?.role === segment.role
+          && previous.segments.at(-1)?.scope === segment.scope
+        ))
     );
 
     if (canMerge) previous.segments.push(segment);
@@ -860,6 +880,13 @@ const buildStructureHighlights = () => {
 };
 
 const structureHighlights = buildStructureHighlights();
+const hasStructureModes = Boolean(
+  closeReading?.trunk?.length
+  && closeReading.highlights.some((highlight) => highlight.label?.includes('从句')),
+);
+const mainStructureHighlights = hasStructureModes
+  ? structureHighlights.filter((item) => !item.label?.includes('从句'))
+  : structureHighlights;
 const visibleTrunk = reportedQuoteAnalysis?.trunk ?? mergedTrunk;
 const structurePattern = reportedQuoteAnalysis?.pattern
   ?? semanticAnalysis?.pattern
@@ -891,7 +918,10 @@ const structureExplanation = reportedQuoteAnalysis?.explanation
         <span class="sentence-text" lang="en">
           {sentenceRender.map((group) => {
             const content = group.segments.map((segment) => segment.role ? (
-              <span class={`grammar-role grammar-${segment.role}`}>{segment.text}</span>
+              <span
+                class={`grammar-role grammar-${segment.role}`}
+                data-grammar-scope={segment.scope ?? 'main'}
+              >{segment.text}</span>
             ) : segment.text);
             return group.glossary ? (
               <button
@@ -1000,19 +1030,34 @@ const structureExplanation = reportedQuoteAnalysis?.explanation
             <p class="close-reading-label"><span>{structureStep}</span>完整句子结构</p>
             <p class="sentence-pattern">{structurePattern}</p>
             <p lang="zh-CN">{structureExplanation}</p>
-            <div class="structure-rows">
-              {structureHighlights.map((item) => (
-                <div class={`structure-row role-${item.role}`}>
-                  <span><i aria-hidden="true"></i>{item.label ?? roleLabels[item.role]}<small>{roleHelp[item.role]}</small></span>
-                  <code lang="en">{item.text}</code>
+            <div>
+              <div class="structure-rows" data-structure-view="main">
+                {mainStructureHighlights.map((item) => (
+                  <div class={`structure-row role-${item.role}`}>
+                    <span><i aria-hidden="true"></i>{item.label ?? roleLabels[item.role]}<small>{roleHelp[item.role]}</small></span>
+                    <code lang="en">{item.text}</code>
+                  </div>
+                ))}
+              </div>
+              {hasStructureModes && (
+                <div class="structure-rows" data-structure-view="all">
+                  {structureHighlights.map((item) => (
+                    <div class={`structure-row role-${item.role}`}>
+                      <span><i aria-hidden="true"></i>{item.label ?? roleLabels[item.role]}<small>{roleHelp[item.role]}</small></span>
+                      <code lang="en">{item.text}</code>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
+              <ul class="role-legend" aria-label="句子成分颜色">
+                {[...new Set(mainStructureHighlights.map((item) => item.role))].map((role) => (
+                  <li class={`role-${role}`} data-structure-view="main"><span aria-hidden="true"></span>{roleLabels[role]}</li>
+                ))}
+                {hasStructureModes && [...new Set(structureHighlights.map((item) => item.role))].map((role) => (
+                  <li class={`role-${role}`} data-structure-view="all"><span aria-hidden="true"></span>{roleLabels[role]}</li>
+                ))}
+              </ul>
             </div>
-            <ul class="role-legend" aria-label="句子成分颜色">
-              {[...new Set(structureHighlights.map((item) => item.role))].map((role) => (
-                <li class={`role-${role}`}><span aria-hidden="true"></span>{roleLabels[role]}</li>
-              ))}
-            </ul>
           </section>
         </template>
       </>
@@ -1584,6 +1629,16 @@ const structureExplanation = reportedQuoteAnalysis?.explanation
   .role-object { color: #c2410c !important; }
   .role-complement { color: #7e22ce !important; }
   .role-adverbial { color: #be123c !important; }
+
+  [data-structure-view='all'] { display: none; }
+
+  :global(body[data-structure-mode='all']) [data-structure-view='main'] { display: none; }
+  :global(body[data-structure-mode='all']) [data-structure-view='all'] { display: block; }
+
+  :global(body[data-structure-mode='main']) [data-grammar-scope='clause'] {
+    color: inherit !important;
+    background: transparent !important;
+  }
 
   [data-open] .sentence-original :global(.grammar-role) {
     border-radius: 2px;

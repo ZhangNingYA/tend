@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   ArrowRight,
   BookOpenText,
+  ChevronDown,
   Clock3,
   ExternalLink,
   Library,
@@ -84,25 +85,39 @@ const partLabel = String(part).padStart(2, '0');
       </header>
 
       <div class="grammar-layout">
-        <aside class="grammar-rail">
-          <div class="grammar-rail-title"><ListTree size={16} /><span>本讲目录</span></div>
-          <nav aria-label="本讲目录">
-            {sections.map((section, index) => (
-              <a href={`#${section.id}`} data-section-link={section.id} aria-current={index === 0 ? 'location' : undefined}>
-                <span>{String(index + 1).padStart(2, '0')}</span>{section.label}
-              </a>
-            ))}
-          </nav>
-          {sourceUrl && (
-            <a class="grammar-source" href={sourceUrl} target="_blank" rel="noreferrer">
-              <PlayCircle size={18} /><span><small>原始课程</small>B 站观看</span><ExternalLink size={14} />
-            </a>
-          )}
-        </aside>
-
         <article class="grammar-article">
           <slot />
         </article>
+
+        <aside class="grammar-rail" data-grammar-rail>
+          <button
+            class="grammar-rail-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="grammar-note-toc"
+            data-rail-toggle
+          >
+            <span><ListTree size={15} />本讲目录</span>
+            <strong data-rail-current>{sections[0]?.label ?? '课程导航'}</strong>
+            <ChevronDown size={16} aria-hidden="true" />
+          </button>
+
+          <div class="grammar-rail-panel" id="grammar-note-toc" data-rail-panel>
+            <div class="grammar-rail-title"><ListTree size={15} /><span>本讲目录</span></div>
+            <nav aria-label="本讲目录">
+              {sections.map((section, index) => (
+                <a href={`#${section.id}`} data-section-link={section.id} aria-current={index === 0 ? 'location' : undefined}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>{section.label}
+                </a>
+              ))}
+            </nav>
+            {sourceUrl && (
+              <a class="grammar-source" href={sourceUrl} target="_blank" rel="noreferrer">
+                <PlayCircle size={17} /><span><small>原始课程</small>B 站观看</span><ExternalLink size={13} />
+              </a>
+            )}
+          </div>
+        </aside>
       </div>
 
       <nav class="grammar-pager" aria-label="课程章节导航">
@@ -125,6 +140,15 @@ const partLabel = String(part).padStart(2, '0');
       const progress = document.querySelector<HTMLElement>('[data-reading-progress]');
       const headings = Array.from(document.querySelectorAll<HTMLElement>('.grammar-article h2[id]'));
       const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-section-link]'));
+      const rail = document.querySelector<HTMLElement>('[data-grammar-rail]');
+      const railToggle = document.querySelector<HTMLButtonElement>('[data-rail-toggle]');
+      const railCurrent = document.querySelector<HTMLElement>('[data-rail-current]');
+
+      const setRailOpen = (open: boolean) => {
+        if (!rail || !railToggle) return;
+        rail.dataset.open = String(open);
+        railToggle.setAttribute('aria-expanded', String(open));
+      };
 
       const updatePageState = () => {
         const scrollable = document.documentElement.scrollHeight - window.innerHeight;
@@ -135,10 +159,21 @@ const partLabel = String(part).padStart(2, '0');
           if (heading.getBoundingClientRect().top <= 150) current = heading.id;
         });
         links.forEach((link) => {
-          if (link.dataset.sectionLink === current) link.setAttribute('aria-current', 'location');
-          else link.removeAttribute('aria-current');
+          if (link.dataset.sectionLink === current) {
+            link.setAttribute('aria-current', 'location');
+            if (railCurrent) railCurrent.textContent = link.textContent?.replace(/^\d+/, '').trim() || '本讲目录';
+          } else link.removeAttribute('aria-current');
         });
       };
+
+      railToggle?.addEventListener('click', () => setRailOpen(rail?.dataset.open !== 'true'));
+      links.forEach((link) => link.addEventListener('click', () => setRailOpen(false)));
+      document.addEventListener('click', (event) => {
+        if (rail?.dataset.open === 'true' && !rail.contains(event.target as Node)) setRailOpen(false);
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') setRailOpen(false);
+      });
 
       updatePageState();
       window.addEventListener('scroll', updatePageState, { passive: true });

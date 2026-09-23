@@ -35,6 +35,7 @@ const entries = allGames
     }
     return b.id.localeCompare(a.id);
   });
+const answerEntries = entries.filter((post) => post.data.answerCoverage && post.data.answerCoverage !== 'none');
 
 const getPaperMeta = (id: string) => {
   const match = id.match(/^(\d{4})-(\d{2})-cet4-reading-(\d+)$/);
@@ -111,17 +112,17 @@ const sourceUrl = 'https://www.bilibili.com/video/BV1XY411J7aG/';
       <section class="hub-stats" aria-label="资料概况">
         <div><strong>{String(entries.length).padStart(2, '0')}</strong><span>{isExamLibrary ? '套阅读真题' : '篇已完成笔记'}</span></div>
         <div><strong>{isExamLibrary ? '03' : '01—03'}</strong><span>{isExamLibrary ? '种阅读题型' : '当前课程进度'}</span></div>
-        <div><strong>{isExamLibrary ? '双模' : '可回看'}</strong><span>{isExamLibrary ? '主句 / 全结构标记' : '来源与视频分 P'}</span></div>
+        <div><strong>{isExamLibrary ? `${answerEntries.length}/${entries.length}` : '可回看'}</strong><span>{isExamLibrary ? '套含答案核对' : '来源与视频分 P'}</span></div>
       </section>
 
       <section class="hub-intro-card">
         <div class="intro-icon">{isExamLibrary ? <FileQuestion size={24} /> : <BookOpenText size={24} />}</div>
         <div>
           <p>{isExamLibrary ? 'HOW TO USE' : 'NOTE POLICY'}</p>
-          <h2>{isExamLibrary ? '先做题，再把每一句拆开看' : '不是逐字稿，而是一套能复习的课程笔记'}</h2>
+          <h2>{isExamLibrary ? '先通读，再按页面范围精读' : '不是逐字稿，而是一套能复习的课程笔记'}</h2>
           <span>
             {isExamLibrary
-              ? '每套保留选项、答案、计时器、逐句翻译、词义和句子结构。做完后再打开精读，效果最好。'
+              ? '每套都会标明当前整理范围，并提供计时、逐句翻译、词义和句子结构；答案与结构双模式按页面实际标注为准。'
               : '按正式语法课编号，导学视频不计入前三讲；核心讲解来自原课，并单列必要的严谨性补充。'}
           </span>
         </div>
@@ -152,7 +153,13 @@ const sourceUrl = 'https://www.bilibili.com/video/BV1XY411J7aG/';
                 <p class="entry-summary">{post.data.description}</p>
                 <div class="entry-tags">
                   {isExamLibrary ? (
-                    <><span><Timer size={14} />计时</span><span><Languages size={14} />逐句精读</span><span><Layers3 size={14} />结构双模式</span></>
+                    <>
+                      <span><Timer size={14} />计时</span>
+                      <span><Languages size={14} />逐句精读</span>
+                      {post.data.answerCoverage === 'full' && <span><CheckCircle2 size={14} />答案核对</span>}
+                      {post.data.answerCoverage === 'passage-only' && <span><CheckCircle2 size={14} />仔细阅读答案</span>}
+                      {post.data.hasStructureModes && <span><Layers3 size={14} />结构双模式</span>}
+                    </>
                   ) : (
                     <><span><PlayCircle size={14} />{post.data.videoDuration}</span><span><Clock3 size={14} />约 {post.data.estimatedMinutes} 分钟</span></>
                   )}

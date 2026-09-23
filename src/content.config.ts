@@ -19,6 +19,8 @@ const games = defineCollection({
         pubDate: z.coerce.date(),
         pageLayout: z.enum(['experience', 'reading', 'library', 'grammar']).optional(),
         libraryKind: z.enum(['exam-papers', 'english-rabbit']).optional(),
+        answerCoverage: z.enum(['full', 'passage-only', 'none']).optional(),
+        hasStructureModes: z.boolean().optional(),
         series: z.string().optional(),
         part: z.number().int().positive().optional(),
         videoPart: z.number().int().positive().optional(),

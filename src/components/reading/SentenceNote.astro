@@ -19,13 +19,35 @@ interface Props {
 
 const {
   number,
-  sentence,
-  closeReading,
+  sentence: sourceSentence,
+  closeReading: sourceCloseReading,
   inlineGlossary,
   sharedGlossaryPhrases = [],
   experience = 'blog',
 } = Astro.props;
 const isBlogExperience = experience === 'blog';
+// Some imported CET-4 source strings contain parenthetical Chinese glosses.
+// Keep the source data intact for auditing, but show clean English in game
+// pages because the same meaning is available through the click glossary.
+const cleanGameText = (value: string) => experience === 'game'
+  ? value.replace(/\s*\([^()]*[\u4e00-\u9fff][^()]*\)/g, '')
+  : value;
+const cleanHighlight = <T extends { text: string }>(item: T): T => ({
+  ...item,
+  text: cleanGameText(item.text),
+});
+const sentence = sourceSentence ? cleanGameText(sourceSentence) : sourceSentence;
+const closeReading = sourceCloseReading
+  ? {
+      ...sourceCloseReading,
+      highlights: sourceCloseReading.highlights.map(cleanHighlight),
+      trunk: sourceCloseReading.trunk?.map(cleanHighlight),
+      segments: sourceCloseReading.segments?.map((segment) => ({
+        ...segment,
+        source: cleanGameText(segment.source),
+      })),
+    }
+  : sourceCloseReading;
 // Blog sentence notes historically use the CET-6 inline glossary. Keep that
 // as the default so pages that provide close readings cannot accidentally
 // lose clickable vocabulary by omitting the prop; Games remain unchanged.

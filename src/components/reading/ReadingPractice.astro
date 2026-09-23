@@ -12,6 +12,7 @@ interface Passage {
   sentences: readonly string[];
   questions?: readonly ReadingQuestion[];
   wordBank?: readonly { key: string; word: string }[];
+  answerRange?: string;
   answers?: readonly {
     number: number;
     key: string;
@@ -152,8 +153,9 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
 {cloze.wordBank && cloze.answers && (
   <ReadingSectionAnswers
     variant="cloze"
-    wordBank={cloze.wordBank}
-    answers={cloze.answers}
+  wordBank={cloze.wordBank}
+  answers={cloze.answers}
+  answerRange={cloze.answerRange}
   />
 )}
 

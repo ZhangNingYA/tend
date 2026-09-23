@@ -1,0 +1,25 @@
+---
+title: '2025 考研英语（二）精读'
+description: '2025 年全国硕士研究生招生考试英语（二）英文材料，收录完形、段落小标题和四篇阅读理解，按句提供翻译、重点词汇与结构精读。'
+pubDate: '2025-12-02'
+---
+
+import ReadingPractice from '../../components/reading/ReadingPractice.astro';
+import {
+  kaoyanEnglishTwo2025 as paper,
+  kaoyanEnglishTwoCloseReadings2025 as closeReadings,
+  kaoyanEnglishTwoInlineGlossary2025 as inlineGlossary,
+} from '../../data/reading/2025-kaoyan-english-2';
+
+<ReadingPractice
+  cloze={paper.sections.cloze}
+  matching={paper.sections.matching}
+  passages={[
+    paper.sections.passage1,
+    paper.sections.passage2,
+    paper.sections.passage3,
+    paper.sections.passage4,
+  ]}
+  closeReadings={closeReadings}
+  inlineGlossary={inlineGlossary}
+/>

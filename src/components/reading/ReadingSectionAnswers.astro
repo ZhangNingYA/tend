@@ -25,9 +25,16 @@ interface Props {
   wordBank?: readonly WordBankItem[];
   answers?: readonly ClozeAnswer[];
   questions?: readonly MatchingQuestion[];
+  answerRange?: string;
 }
 
-const { variant, wordBank = [], answers = [], questions = [] } = Astro.props;
+const {
+  variant,
+  wordBank = [],
+  answers = [],
+  questions = [],
+  answerRange = '26–35',
+} = Astro.props;
 ---
 
 {variant === 'cloze' ? (
@@ -43,7 +50,7 @@ const { variant, wordBank = [], answers = [], questions = [] } = Astro.props;
       {wordBank.map((item) => <span><b>{item.key}</b>{item.word}</span>)}
     </div>
     <details class="answer-sheet">
-      <summary>查看 26–35 答案与依据</summary>
+      <summary>查看 {answerRange} 答案与依据</summary>
       <ol>
         {answers.map((item) => (
           <li>

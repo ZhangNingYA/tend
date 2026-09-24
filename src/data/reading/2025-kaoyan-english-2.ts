@@ -4001,11 +4001,11 @@ const deriveStructure = (highlights: readonly { role: string; text: string }[]) 
     .map((highlight) => structureRoleLabels[highlight.role] ?? highlight.role)
     .filter((label, index, all) => index === 0 || label !== all[index - 1]);
   const pattern = labels.join(' + ') || '句子成分';
-  const hasSubject = highlights.some((highlight) => highlight.role === 'subject');
-  const hasPredicate = highlights.some((highlight) => highlight.role === 'predicate');
-  const explanation = hasSubject && hasPredicate
-    ? '句子核心结构说明：先确定主语和谓语，再根据句型判断宾语、表语、补语、状语及从句的作用。'
-    : '句子核心结构说明：本句含有省略、祈使或倒装结构，先根据谓语和上下文补出核心成分，再理解其余信息。';
+  const explanation = highlights.length > 0
+    ? highlights
+      .map((highlight) => `${structureRoleLabels[highlight.role] ?? highlight.role}为 ${highlight.text}`)
+      .join('，') + '。'
+    : '句子成分未单独标注。';
   return { pattern, explanation };
 };
 

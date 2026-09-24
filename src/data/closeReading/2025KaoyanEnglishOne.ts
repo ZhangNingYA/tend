@@ -4,6 +4,24 @@ import { createCloseReading as cr } from './createCloseReading';
 type Vocabulary = readonly [term: string, explanation: string][];
 type Tail = readonly [role: SentenceRole, text: string];
 
+const structureRoleLabels: Record<SentenceRole, string> = {
+  subject: '主语',
+  predicate: '谓语',
+  object: '宾语',
+  complement: '表语 / 补语',
+  adverbial: '状语',
+};
+
+const describeStructure = (
+  subject: string,
+  predicate: string,
+  tail: Tail | undefined,
+): string => [
+  `主语为 ${subject}`,
+  `谓语为 ${predicate}`,
+  ...(tail ? [`${structureRoleLabels[tail[0]]}为 ${tail[1]}`] : []),
+].join('，') + '。';
+
 const s = (
   translation: string,
   vocabulary: Vocabulary,
@@ -11,12 +29,12 @@ const s = (
   predicate: string,
   tail?: Tail,
   pattern = '主语 + 谓语 + 补充成分',
-  explanation = '句子核心结构说明：先确定主语和谓语，再根据句型判断宾语、表语、补语、状语及从句的作用。',
+  explanation?: string,
 ): CloseReading => cr(
   translation,
   vocabulary,
   pattern,
-  explanation,
+  explanation ?? describeStructure(subject, predicate, tail),
   [
     ['subject', subject],
     ['predicate', predicate],
@@ -72,6 +90,7 @@ export const kaoyanEnglishOneCloseReadings2025 = {
     [['for millennia', '几千年来'], ['remain', '遗迹；剩余部分'], ['lay unseen', '未被发现地躺着']],
     'the city’s remains', 'lay', ['adverbial', 'unseen below some 13 feet of water'],
     '主语 + 谓语 + 主语补足语 + 地点状语',
+    'the city’s remains 是主语，lay 是谓语；unseen 补充说明遗迹的状态，below some 13 feet of water 表示地点。',
   ),
   C05: s(
     '它们被拉科尼亚岛附近的一层厚厚的沙子覆盖。',

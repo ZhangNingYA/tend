@@ -40,9 +40,9 @@ const f = (
 
 export const kaoyanEnglishOneCloseReadings2025 = {
   C01: s(
-    '帕夫洛佩特里位于伯罗奔尼撒半岛南部，是该遗址的现代名称；它在公元前约 3500 年形成了一个新石器时代聚落。',
+    '帕夫洛佩特里位于伯罗奔尼撒半岛南部（这是该遗址的现代名称），在公元前约 3500 年形成了一个新石器时代聚落，后来成为迈锡尼希腊的重要贸易中心（公元前 1650—1180 年）。',
     [['located in', '位于'], ['Neolithic settlement', '新石器时代聚落'], ['emerge', '出现；形成']],
-    'Pavlopetri (the modern name of the site)', 'emerged', ['complement', 'as a Neolithic settlement'],
+    'Pavlopetri (the modern name of the site)', 'emerged', ['complement', 'as a Neolithic settlement around 3500 B.C. and became an important trading center for Mycenaean Greece (1650–1180 B.C.)'],
     '分词状语 + 主语 + 谓语 + 表语',
     'Located in... 是过去分词短语，交代地点；Pavlopetri 是主语，emerged 是谓语，as 短语说明其形成的身份。',
   ),
@@ -53,11 +53,19 @@ export const kaoyanEnglishOneCloseReadings2025 = {
     '主语 + 系动词 + 表语 + 非限制性定语从句',
     'is prone to... 构成系表结构；which 引导的非限制性定语从句回指 earthquakes and tsunamis，说明其后果。',
   ),
-  C03: s(
-    '地中海海平面缓慢上升，在三千多年前淹没了这座城市。',
-    [['sea level rise', '海平面上升'], ['submerge', '淹没'], ['more than', '超过']],
-    'The slow sea level rise in the Mediterranean', 'submerged', ['object', 'the city'],
-    '主语 + 谓语 + 宾语（SVO）',
+  C03: cr(
+    '最靠近海岸的建筑遭受了海上风暴和海啸的冲击，而地中海海平面的缓慢上升在三千多年前淹没了这座城市。',
+    [['battered by', '遭受……的冲击'], ['sea level rise', '海平面上升'], ['submerge', '淹没']],
+    '并列分句：主语 + 被动谓语 + 补充成分；and 后接第二个主语和谓语',
+    '第一分句说明海岸建筑受到的冲击；and 后的分句说明海平面上升造成的结果，两个分句共同解释城市沉没。',
+    [
+      ['subject', 'The buildings closest to the coast'],
+      ['predicate', 'were battered'],
+      ['complement', 'by sea storms and tsunamis'],
+      ['subject', 'the slow sea level rise in the Mediterranean'],
+      ['predicate', 'submerged'],
+      ['object', 'the city'],
+    ],
   ),
   C04: s(
     '几千年来，这座城市的遗迹一直沉睡在约 13 英尺深的水下，无人看见。',
@@ -180,22 +188,6 @@ export const kaoyanEnglishOneCloseReadings2025 = {
     '主语 + 系动词 + 表语 + 分词补充说明',
   ),
   'M-B02': s(
-    '他是如何拍到这种照片的？',
-    [['capture', '捕捉；拍摄'], ['how', '如何']],
-    'he', 'capture', undefined, '特殊疑问句',
-  ),
-  'M-B03': s(
-    '技术提供了帮助。',
-    [['technology', '技术'], ['help', '帮助']],
-    'Technology', 'helps', undefined, '主语 + 谓语（SV）',
-  ),
-  'M-B04': s(
-    '普通的数码单反相机每秒能拍摄 20 帧。',
-    [['digital SLR camera', '数码单反相机'], ['frame', '画面；帧'], ['a second', '一秒']],
-    'A typical digital SLR camera', 'shoots', ['object', '20 frames a second'],
-    '主语 + 谓语 + 宾语（SVO）',
-  ),
-  'M-B05': s(
     '他使用每秒能拍摄 120 帧的高速 OM System 相机。',
     [['high-speed', '高速的'], ['shoot', '拍摄'], ['frame a second', '每秒一帧；每秒拍摄……帧']],
     'He', 'uses', ['object', 'a high-speed OM System which shoots 120 frames a second'],
@@ -294,7 +286,7 @@ export const kaoyanEnglishOneCloseReadings2025 = {
     'It', 'became', ['complement', 'an obsession'], '主语 + 系动词 + 表语 + as 从句',
   ),
   'M-G03': s(
-    '近几个夏天，他走遍英国各地，拍摄全部 58 种本土蝴蝶。',
+    '近几个夏天，他走遍英国各地，拍摄全部 58 种本土蝴蝶，从常见的小龟壳蝶到稀有难寻的高棕色蛱蝶。',
     [['the length and breadth of', '遍及……各地'], ['native species', '本土物种'], ['travel', '旅行；走遍']],
     'he', 'has travelled', ['adverbial', 'the length and breadth of Britain'], '时间状语 + 主语 + 现在完成时谓语 + 目的状语',
   ),

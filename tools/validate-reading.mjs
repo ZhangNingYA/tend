@@ -307,7 +307,7 @@ const readingSentenceMap = (reading) => {
     });
   });
   Object.keys(sections)
-    .filter((name) => /^passage[A-Z]/.test(name))
+    .filter((name) => /^passage(?:[A-Z]|\d+)/.test(name))
     .forEach((name, passageIndex) => {
       sections[name].sentences.forEach((sentence, index) => {
         result[`R${passageIndex + 1}-${pad(index)}`] = sentence;
@@ -501,6 +501,15 @@ const blogSpecifications = [
     semantic: false,
     vocabularyQuality: false,
   },
+  {
+    paper: '2025 Kaoyan English II',
+    module: path.join(projectRoot, 'src/data/reading/2025-kaoyan-english-2.ts'),
+    exportName: 'kaoyanEnglishTwoCloseReadings2025',
+    readingModule: path.join(projectRoot, 'src/data/reading/2025-kaoyan-english-2.ts'),
+    readingExport: 'kaoyanEnglishTwo2025',
+    semantic: false,
+    vocabularyQuality: false,
+  },
 ];
 
 // Keep future CET6 papers from silently skipping validation. As long as a new
@@ -567,6 +576,14 @@ for (const specification of blogSpecifications) {
   let sentences;
   if (specification.reading) {
     sentences = readingSentenceMap(JSON.parse(await readFile(specification.reading, 'utf8')));
+  } else if (specification.readingModule) {
+    const sourceModule = await importTypeScript(specification.readingModule);
+    const sourceReading = sourceModule[specification.readingExport];
+    if (!sourceReading) {
+      fail(specification.paper, `缺少 ${specification.readingExport} 阅读数据导出`);
+      continue;
+    }
+    sentences = readingSentenceMap(sourceReading);
   } else if (specification.mdx) {
     sentences = await mdxSentenceMap(specification.mdx);
   } else {

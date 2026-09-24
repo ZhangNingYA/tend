@@ -3,9 +3,9 @@
     "cloze": {
       "title": "Pavlopetri: a city beneath the sea",
       "sentences": [
-        "Located in the southern Peloponnesian peninsula, Pavlopetri (the modern name of the site) emerged as a Neolithic settlement around 3500 B.C.",
+        "Located in the southern Peloponnesian peninsula, Pavlopetri (the modern name of the site) emerged as a Neolithic settlement around 3500 B.C. and became an important trading center for Mycenaean Greece (1650–1180 B.C.).",
         "This area of the Aegean Sea is prone to earthquakes and tsunamis, which caused the city to gradually sink.",
-        "The slow sea level rise in the Mediterranean submerged the city more than 3,000 years ago.",
+        "The buildings closest to the coast were battered by sea storms and tsunamis, and the slow sea level rise in the Mediterranean submerged the city more than 3,000 years ago.",
         "For millennia, the city’s remains lay unseen below some 13 feet of water.",
         "They were covered by a thick layer of sand off the island of Laconia.",
         "In recent decades, shifting currents and climate change have eroded a natural barrier that protected Pavlopetri.",
@@ -19,6 +19,231 @@
         "From 2009 to 2013 they were able to bring the underwater town to reality.",
         "Covering about two and a half acres, Pavlopetri’s three main roads connected some 50 rectangular buildings, all of which had open courtyards.",
         "Excavations revealed a large number of Minoan-style loom weights, suggesting Pavlopetri was a thriving trade center with a robust textile industry."
+      ],
+      "answerRange": "1–20",
+      "wordBank": [
+        {
+          "key": "1",
+          "word": "prone"
+        },
+        {
+          "key": "2",
+          "word": "gradually"
+        },
+        {
+          "key": "3",
+          "word": "submerged"
+        },
+        {
+          "key": "4",
+          "word": "remains"
+        },
+        {
+          "key": "5",
+          "word": "off"
+        },
+        {
+          "key": "6",
+          "word": "currents"
+        },
+        {
+          "key": "7",
+          "word": "protected"
+        },
+        {
+          "key": "8",
+          "word": "gathering"
+        },
+        {
+          "key": "9",
+          "word": "when"
+        },
+        {
+          "key": "10",
+          "word": "structures"
+        },
+        {
+          "key": "11",
+          "word": "examine"
+        },
+        {
+          "key": "12",
+          "word": "Despite"
+        },
+        {
+          "key": "13",
+          "word": "undisturbed"
+        },
+        {
+          "key": "14",
+          "word": "resumed"
+        },
+        {
+          "key": "15",
+          "word": "techniques"
+        },
+        {
+          "key": "16",
+          "word": "employed"
+        },
+        {
+          "key": "17",
+          "word": "light"
+        },
+        {
+          "key": "18",
+          "word": "connected"
+        },
+        {
+          "key": "19",
+          "word": "suggesting"
+        },
+        {
+          "key": "20",
+          "word": "robust"
+        }
+      ],
+      "answers": [
+        {
+          "number": 1,
+          "key": "B",
+          "word": "prone",
+          "evidence": "is prone to earthquakes and tsunamis",
+          "analysis": "prone to 表示“容易遭受”，与地震和海啸搭配。"
+        },
+        {
+          "number": 2,
+          "key": "C",
+          "word": "gradually",
+          "evidence": "caused the city to gradually sink",
+          "analysis": "gradually 表示城市经过一段时间逐渐下沉。"
+        },
+        {
+          "number": 3,
+          "key": "B",
+          "word": "submerged",
+          "evidence": "sea level rise in the Mediterranean submerged the city",
+          "analysis": "submerged 表示海平面上升淹没城市。"
+        },
+        {
+          "number": 4,
+          "key": "C",
+          "word": "remains",
+          "evidence": "the city's remains lay unseen",
+          "analysis": "remains 指城市遗迹。"
+        },
+        {
+          "number": 5,
+          "key": "B",
+          "word": "off",
+          "evidence": "sand off the island of Laconia",
+          "analysis": "off 表示在拉科尼亚岛附近。"
+        },
+        {
+          "number": 6,
+          "key": "A",
+          "word": "currents",
+          "evidence": "shifting currents and climate change",
+          "analysis": "currents 指洋流。"
+        },
+        {
+          "number": 7,
+          "key": "D",
+          "word": "protected",
+          "evidence": "a natural barrier that protected Pavlopetri",
+          "analysis": "protected 表示屏障保护遗址。"
+        },
+        {
+          "number": 8,
+          "key": "A",
+          "word": "gathering",
+          "evidence": "was gathering data",
+          "analysis": "gathering data 表示收集数据。"
+        },
+        {
+          "number": 9,
+          "key": "A",
+          "word": "when",
+          "evidence": "was gathering data ... when British oceanographer Nicholas Flemming first spotted",
+          "analysis": "when 引导时间从句。"
+        },
+        {
+          "number": 10,
+          "key": "D",
+          "word": "structures",
+          "evidence": "the submerged structures",
+          "analysis": "structures 指水下建筑遗迹。"
+        },
+        {
+          "number": 11,
+          "key": "D",
+          "word": "examine",
+          "evidence": "returned with a few students to examine the location",
+          "analysis": "examine 表示检查、考察地点。"
+        },
+        {
+          "number": 12,
+          "key": "A",
+          "word": "Despite",
+          "evidence": "Despite the exciting initial finds",
+          "analysis": "Despite 表示尽管。"
+        },
+        {
+          "number": 13,
+          "key": "D",
+          "word": "undisturbed",
+          "evidence": "would lie undisturbed for decades",
+          "analysis": "undisturbed 表示未受干扰。"
+        },
+        {
+          "number": 14,
+          "key": "C",
+          "word": "resumed",
+          "evidence": "resumed the excavation",
+          "analysis": "resumed 表示继续此前中断的发掘。"
+        },
+        {
+          "number": 15,
+          "key": "D",
+          "word": "techniques",
+          "evidence": "underwater archaeology techniques and tools",
+          "analysis": "techniques 与 tools 并列，指考古技术。"
+        },
+        {
+          "number": 16,
+          "key": "C",
+          "word": "employed",
+          "evidence": "employed robotics, sonar mapping, and graphics",
+          "analysis": "employed 表示使用这些工具。"
+        },
+        {
+          "number": 17,
+          "key": "B",
+          "word": "light",
+          "evidence": "bring the underwater town to light",
+          "analysis": "bring ... to light 表示使……被发现、公开。"
+        },
+        {
+          "number": 18,
+          "key": "B",
+          "word": "connected",
+          "evidence": "three main roads connected buildings",
+          "analysis": "connected 表示道路连接建筑。"
+        },
+        {
+          "number": 19,
+          "key": "B",
+          "word": "suggesting",
+          "evidence": "weights, suggesting Pavlopetri was a thriving trade center",
+          "analysis": "suggesting 表示这些发现暗示结论。"
+        },
+        {
+          "number": 20,
+          "key": "A",
+          "word": "robust",
+          "evidence": "a robust textile industry",
+          "analysis": "robust 表示强劲、发达。"
+        }
       ]
     },
     "matching": {
@@ -38,9 +263,6 @@
           "label": "B",
           "sentences": [
             "Peters’ signature shot is a butterfly “take-off”, showing the multiple wing-beats of one butterfly in one frame as it lifts off from a flower.",
-            "How does he capture it?",
-            "Technology helps.",
-            "A typical digital SLR camera shoots 20 frames a second.",
             "He uses a high-speed OM System which shoots 120 frames a second."
           ]
         },
@@ -83,7 +305,7 @@
           "sentences": [
             "A children’s author and poet who had become a keen amateur photographer, Peters watched the butterflies and idly wondered if he could capture them in flight.",
             "It swiftly became an obsession as he recovered from a successful operation to remove the cancer.",
-            "In recent summers, he has travelled the length and breadth of Britain to photograph all 58 native species of butterfly.",
+            "In recent summers, he has travelled the length and breadth of Britain to photograph all 58 native species of butterfly, from the ubiquitous small tortoiseshell to the rare and elusive high brown fritillary.",
             "Now the fruits of those summers have been published in a beautiful new book."
           ]
         },
@@ -94,6 +316,43 @@
             "“It’s time travel, so I don’t miss the moment of take-off,” he says.",
             "After he’s captured the butterfly taking off, he layers 10 to 15 frames together in Photoshop."
           ]
+        }
+      ],
+      "questions": [
+        {
+          "number": 41,
+          "prompt": "Which paragraph should come first?",
+          "answer": "D",
+          "evidence": "Five years ago, at summer’s end, Andrew Fusek Peters was diagnosed with bowel cancer.",
+          "analysis": "D 首次完整介绍 Peters，并以癌症经历引出他与蝴蝶摄影的缘起。"
+        },
+        {
+          "number": 42,
+          "prompt": "Which paragraph should follow paragraph D?",
+          "answer": "G",
+          "evidence": "It swiftly became an obsession as he recovered from a successful operation to remove the cancer.",
+          "analysis": "G 承接 D 的癌症经历，说明康复后拍摄蝴蝶逐渐成为痴迷。"
+        },
+        {
+          "number": 43,
+          "prompt": "Which paragraph should follow paragraph C?",
+          "answer": "B",
+          "evidence": "Peters’ signature shot is a butterfly “take-off”, showing the multiple wing-beats of one butterfly in one frame as it lifts off from a flower.",
+          "analysis": "B 由英国蝴蝶的背景转入 Peters 的标志性起飞照，并继续解释拍摄方法。"
+        },
+        {
+          "number": 44,
+          "prompt": "Which paragraph should follow paragraph H?",
+          "answer": "E",
+          "evidence": "That makes it sound easy, and artificial, but Peters insists it is still a massive challenge.",
+          "analysis": "E 中的 That 承接 H 介绍的连拍与后期叠图，同时转入拍摄难度。"
+        },
+        {
+          "number": 45,
+          "prompt": "Which paragraph should follow paragraph A?",
+          "answer": "F",
+          "evidence": "So what’s the appeal of a long, sweaty day in pursuit of an elusive, fast-moving wild animal?",
+          "analysis": "F 回应 A 所写的艰苦拍摄，解释 Peters 坚持追拍蝴蝶的原因。"
         }
       ]
     },

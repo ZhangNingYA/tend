@@ -9,11 +9,12 @@ const sections = {
       "Psychologists have been interested in this question for decades, not least because people’s widespread reluctance to ask for help has led to some high-profile failures.",
       "Asking for help takes courage.",
       "It involves communicating a need on your part — there’s something you can’t do.",
-      "In other words, you’re broadcasting your own weakness, which can be uncomfortable.",
+      "In other words, you’re broadcasting your own weaknesses, which can be uncomfortable.",
+      "You might worry about coming across as incompetent.",
       "You might have concerns about losing control of whatever it is you are asking for help with.",
-      "Once someone starts to help, perhaps they will take over, or get a credit for your early efforts.",
+      "Once someone starts to help, perhaps they will take over, or get credit for your earlier efforts.",
       "Yet another factor that you might be worried about is being a nuisance or inconveniencing the person you go to for help.",
-      "If you struggle with low self-esteem, you might find it especially difficult to reach out for help because you have the added worry of the other person considering your request.",
+      "If you struggle with low self-esteem, you might find it especially difficult to reach out for help because you have the added worry of the other person declining your request.",
       "You might see such refusals as implying something negative about the status of your relationship with them.",
       "To overcome these difficulties, try to remind yourself that everyone needs help sometimes.",
       "Nobody knows everything and can do everything all by themselves.",
@@ -43,7 +44,9 @@ const sections = {
         "sentences": [
           "Sometimes it makes sense to go to your boss first.",
           "But other times, it’s useful to build a coalition among your co-workers or other stakeholders.",
-          "When it works, it works great — because you’re ready for your stubborn supervisor’s pushback with answers like, “Actually, I connected with a few people in our tech department to discuss how much time these kinds of website updates would take, and they suggested they have the bandwidth.”"
+          "When it works, it works great — because you’re ready for your stubborn supervisor’s pushback with answers like, “Actually, I connected with a few people in our tech department to discuss how much time these kinds of website updates would take, and they suggested they have the bandwidth.”",
+          "However, just be certain you can explain your end-around approach as one that built your case, rather than simply circumvented your manager.",
+          "The last thing you want is for your boss to feel embarrassed he wasn’t informed—which could lead him to quash the idea before it even takes off."
         ]
       },
       {
@@ -71,7 +74,10 @@ const sections = {
           "When pitching a new idea, it’s important to use the language of abundance instead of the language of deficit.",
           "Instead of saying what is wrong, broken, or suboptimal, talk about what is right, fixable, or ideal.",
           "For example, try, “I can see lots of applications for this new approach” rather than, “This innovation is the only way.”",
-          "Be optimistic but realistic, and you will stand out."
+          "Be optimistic but realistic, and you will stand out.",
+          "There is rarely value in pointing out a problem without also offering a solution.",
+          "Innovation isn’t seeing the problem, it is being able to see a viable solution to the issue.",
+          "So, use the steps above to pitch your new idea—they should help you overcome the barriers to buy-in so that people will be on board and excited."
         ]
       }
     ]
@@ -772,6 +778,7 @@ const matchingQuestions = [
     "number": 41,
     "prompt": "Choose the most suitable subheading for paragraph 41.",
     "answer": "F",
+    "answerLabel": "Subheading",
     "evidence": "Great ideas don’t stand alone. ... sell its merits.",
     "analysis": "本段要求持续推介并解释想法，核心是把方案讲清楚并争取采用。"
   },
@@ -779,6 +786,7 @@ const matchingQuestions = [
     "number": 42,
     "prompt": "Choose the most suitable subheading for paragraph 42.",
     "answer": "C",
+    "answerLabel": "Subheading",
     "evidence": "go to your boss first ... build a coalition among your co-workers or other stakeholders.",
     "analysis": "本段建议根据情境选择上级、同事或利益相关者等沟通渠道。"
   },
@@ -786,6 +794,7 @@ const matchingQuestions = [
     "number": 43,
     "prompt": "Choose the most suitable subheading for paragraph 43.",
     "answer": "G",
+    "answerLabel": "Subheading",
     "evidence": "if people disagree with you, don’t be indignant. Instead, listen to their concerns fully.",
     "analysis": "本段强调面对异议要谦逊倾听，不要把自己表现成无所不知。"
   },
@@ -793,6 +802,7 @@ const matchingQuestions = [
     "number": 44,
     "prompt": "Choose the most suitable subheading for paragraph 44.",
     "answer": "B",
+    "answerLabel": "Subheading",
     "evidence": "New ideas are the grandchildren of old ones ... Appreciating the older contributions.",
     "analysis": "本段提醒尊重旧方案的历史贡献，再提出新方案。"
   },
@@ -800,6 +810,7 @@ const matchingQuestions = [
     "number": 45,
     "prompt": "Choose the most suitable subheading for paragraph 45.",
     "answer": "A",
+    "answerLabel": "Subheading",
     "evidence": "use the language of abundance instead of the language of deficit ... Be optimistic but realistic.",
     "analysis": "本段主张用积极、建设性的语言介绍新想法。"
   }
@@ -817,7 +828,7 @@ export const kaoyanEnglishTwo2025 = {
         { key: 'E', word: 'uncomfortable' }, { key: 'F', word: 'concerns' },
         { key: 'G', word: 'Once' }, { key: 'H', word: 'factor' },
         { key: 'I', word: 'inconveniencing' }, { key: 'J', word: 'reach out' },
-        { key: 'K', word: 'considering' }, { key: 'L', word: 'negative' },
+        { key: 'K', word: 'declining' }, { key: 'L', word: 'negative' },
         { key: 'M', word: 'overcome' }, { key: 'N', word: 'fear' },
         { key: 'O', word: 'perceived' }, { key: 'P', word: 'recall' },
         { key: 'Q', word: 'willing' }, { key: 'R', word: 'rewarding' },
@@ -834,7 +845,7 @@ export const kaoyanEnglishTwo2025 = {
         { number: 8, key: 'H', word: 'factor', evidence: 'Yet another factor', analysis: 'factor 表示原因或因素。' },
         { number: 9, key: 'I', word: 'inconveniencing', evidence: 'or inconveniencing the person', analysis: '与 being a nuisance 并列。' },
         { number: 10, key: 'J', word: 'reach out', evidence: 'difficult to reach out for help', analysis: 'reach out 表示主动求助。' },
-        { number: 11, key: 'K', word: 'considering', evidence: 'person considering your request', analysis: '动名词短语补充说明对方的动作。' },
+        { number: 11, key: 'K', word: 'declining', evidence: 'person declining your request', analysis: 'declining 表示拒绝请求，与后文 such refusals 呼应。' },
         { number: 12, key: 'L', word: 'negative', evidence: 'implying something negative', analysis: 'negative 与 relationship status 的语义匹配。' },
         { number: 13, key: 'M', word: 'overcome', evidence: 'To overcome these difficulties', analysis: 'overcome 表示克服。' },
         { number: 14, key: 'N', word: 'fear', evidence: 'you might fear coming across', analysis: 'fear 接动名词短语。' },
@@ -968,7 +979,7 @@ const noteData = {
     ]
   },
   "C05": {
-    "sentence": "In other words, you’re broadcasting your own weakness, which can be uncomfortable.",
+    "sentence": "In other words, you’re broadcasting your own weaknesses, which can be uncomfortable.",
     "translation": "换句话说，你正在传播自己的弱点，这可能会让人感到不舒服。",
     "vocabulary": [
       [
@@ -991,13 +1002,27 @@ const noteData = {
       ],
       [
         "object",
-        "your own weakness, which can be uncomfortable"
+        "your own weaknesses, which can be uncomfortable"
       ]
     ]
   },
   "C06": {
+    "sentence": "You might worry about coming across as incompetent.",
+    "translation": "你可能担心给人留下无能的印象。",
+    "vocabulary": [
+      ["worry about", "担心"],
+      ["come across as", "给人留下……印象"],
+      ["incompetent", "无能的；不胜任的"]
+    ],
+    "highlights": [
+      ["subject", "You"],
+      ["predicate", "might worry"],
+      ["complement", "about coming across as incompetent"]
+    ]
+  },
+  "C07": {
     "sentence": "You might have concerns about losing control of whatever it is you are asking for help with.",
-    "translation": "您可能担心失去对您寻求帮助的任何事情的控制。",
+    "translation": "你可能会担心失去对所求助之事的控制。",
     "vocabulary": [
       [
         "concern",
@@ -1013,18 +1038,12 @@ const noteData = {
         "subject",
         "You"
       ],
-      [
-        "predicate",
-        "might have"
-      ],
-      [
-        "object",
-        "concerns about losing control of whatever it is you are asking for help with"
-      ]
+      ["predicate", "might have"],
+      ["object", "concerns about losing control of whatever it is you are asking for help with"]
     ]
   },
-  "C07": {
-    "sentence": "Once someone starts to help, perhaps they will take over, or get a credit for your early efforts.",
+  "C08": {
+    "sentence": "Once someone starts to help, perhaps they will take over, or get credit for your earlier efforts.",
     "translation": "一旦有人开始提供帮助，也许他们会接管，或者为你的早期努力获得奖励。",
     "vocabulary": [
       [
@@ -1047,9 +1066,9 @@ const noteData = {
       ]
     ]
   },
-  "C08": {
+  "C09": {
     "sentence": "Yet another factor that you might be worried about is being a nuisance or inconveniencing the person you go to for help.",
-    "translation": "您可能担心的另一个因素是滋扰或不便您去求助的人。",
+    "translation": "你可能担心的另一个因素，是成为麻烦或给你求助的那个人带来不便。",
     "vocabulary": [
       [
         "nuisance",
@@ -1061,15 +1080,14 @@ const noteData = {
       ]
     ],
     "highlights": [
-      [
-        "predicate",
-        "factor"
-      ]
+      ["subject", "Yet another factor that you might be worried about"],
+      ["predicate", "is"],
+      ["complement", "being a nuisance or inconveniencing the person you go to for help"]
     ]
   },
-  "C09": {
-    "sentence": "If you struggle with low self-esteem, you might find it especially difficult to reach out for help because you have the added worry of the other person considering your request.",
-    "translation": "如果您在自尊心低下时遇到困难，您可能会发现寻求帮助特别困难，因为您还有其他考虑您的请求的人的额外担忧。",
+  "C10": {
+    "sentence": "If you struggle with low self-esteem, you might find it especially difficult to reach out for help because you have the added worry of the other person declining your request.",
+    "translation": "如果你的自尊心较低，你可能尤其难以开口求助，因为你还担心对方会拒绝你的请求。",
     "vocabulary": [
       [
         "low self-esteem",
@@ -1095,7 +1113,7 @@ const noteData = {
       ]
     ]
   },
-  "C10": {
+  "C11": {
     "sentence": "You might see such refusals as implying something negative about the status of your relationship with them.",
     "translation": "您可能会认为这种拒绝暗示着您与他们的关系状态是负面的。",
     "vocabulary": [
@@ -1123,7 +1141,7 @@ const noteData = {
       ]
     ]
   },
-  "C11": {
+  "C12": {
     "sentence": "To overcome these difficulties, try to remind yourself that everyone needs help sometimes.",
     "translation": "为了克服这些困难，请尝试提醒自己，每个人有时都需要帮助。",
     "vocabulary": [
@@ -1147,7 +1165,7 @@ const noteData = {
       ]
     ]
   },
-  "C12": {
+  "C13": {
     "sentence": "Nobody knows everything and can do everything all by themselves.",
     "translation": "没有人知道所有的事情，可以自己做所有的事情。",
     "vocabulary": [],
@@ -1166,7 +1184,7 @@ const noteData = {
       ]
     ]
   },
-  "C13": {
+  "C14": {
     "sentence": "And while you might fear coming across as incompetent, there’s actually research that shows that advice-seekers are perceived as more competent, not less.",
     "translation": "虽然你可能会害怕被认为是无能的，但实际上有研究表明，寻求建议的人被认为更有能力，而不是更少。",
     "vocabulary": [
@@ -1194,7 +1212,7 @@ const noteData = {
       ]
     ]
   },
-  "C14": {
+  "C15": {
     "sentence": "Perhaps most encouraging of all is a paper from 2022 by researchers at Stanford University, in California, that involved a mix of contrived help-seeking interactions and asking people to recall times they’d sought help in the past.",
     "translation": "也许最令人鼓舞的是加利福尼亚州斯坦福大学的研究人员2022年的一篇论文，该论文涉及人为寻求帮助的互动，并要求人们回忆他们过去寻求帮助的时间。",
     "vocabulary": [
@@ -1215,10 +1233,14 @@ const noteData = {
       [
         "predicate",
         "is"
+      ],
+      [
+        "subject",
+        "a paper from 2022 by researchers at Stanford University, in California"
       ]
     ]
   },
-  "C15": {
+  "C16": {
     "sentence": "The findings showed that help-seekers generally underestimate how willing other people will be to help and how good it will make the help-giver feel (for most people, having the chance to help someone is highly rewarding).",
     "translation": "研究结果表明，寻求帮助者通常会低估其他人愿意提供帮助的意愿，以及这会让提供帮助的人感觉有多好（对于大多数人来说，有机会帮助某人是非常有益的）。",
     "vocabulary": [
@@ -1250,7 +1272,7 @@ const noteData = {
       ]
     ]
   },
-  "C16": {
+  "C17": {
     "sentence": "So bear all this in mind the next time you need to ask for help.",
     "translation": "因此，下次您需要寻求帮助时，请记住这一点。",
     "vocabulary": [
@@ -1270,7 +1292,7 @@ const noteData = {
       ]
     ]
   },
-  "C17": {
+  "C18": {
     "sentence": "Also, take care over who you ask and when you ask them.",
     "translation": "此外，请留意您询问的对象和询问的时间。",
     "vocabulary": [],
@@ -1285,7 +1307,7 @@ const noteData = {
       ]
     ]
   },
-  "C18": {
+  "C19": {
     "sentence": "And if someone can’t help right now, avoid taking it personally.",
     "translation": "如果有人现在无法提供帮助，请避免将其视为个人问题。",
     "vocabulary": [
@@ -1309,7 +1331,7 @@ const noteData = {
       ]
     ]
   },
-  "C19": {
+  "C20": {
     "sentence": "They might just be too busy, or they might not feel confident about their ability to help.",
     "translation": "他们可能只是太忙了，或者他们可能对自己的帮助能力没有信心。",
     "vocabulary": [
@@ -1514,6 +1536,33 @@ const noteData = {
         "predicate",
         "connected"
       ]
+    ]
+  },
+  "M-B04": {
+    "sentence": "However, just be certain you can explain your end-around approach as one that built your case, rather than simply circumvented your manager.",
+    "translation": "不过，一定要确保你能把这种绕开上级的做法解释为建立论据，而不是简单地绕过你的经理。",
+    "vocabulary": [
+      ["end-around", "绕开正式渠道的做法"],
+      ["circumvent", "绕过；规避"],
+      ["build one’s case", "建立论据；为观点提供依据"]
+    ],
+    "highlights": [
+      ["predicate", "be certain"],
+      ["object", "you can explain your end-around approach as one that built your case, rather than simply circumvented your manager"]
+    ]
+  },
+  "M-B05": {
+    "sentence": "The last thing you want is for your boss to feel embarrassed he wasn’t informed—which could lead him to quash the idea before it even takes off.",
+    "translation": "你最不希望看到的，是你的老板因为没有被告知而感到尴尬——这可能导致他在想法尚未启动前就把它扼杀。",
+    "vocabulary": [
+      ["the last thing", "最不希望发生的事"],
+      ["embarrassed", "尴尬的"],
+      ["quash", "压制；扼杀"]
+    ],
+    "highlights": [
+      ["subject", "The last thing you want"],
+      ["predicate", "is"],
+      ["complement", "for your boss to feel embarrassed he wasn’t informed"]
     ]
   },
   "M-C01": {
@@ -1826,6 +1875,49 @@ const noteData = {
         "complement",
         "optimistic but realistic"
       ]
+    ]
+  },
+  "M-E05": {
+    "sentence": "There is rarely value in pointing out a problem without also offering a solution.",
+    "translation": "指出问题却不同时提供解决方案，通常没有什么价值。",
+    "vocabulary": [
+      ["rarely", "很少"],
+      ["point out", "指出"],
+      ["offer a solution", "提供解决方案"]
+    ],
+    "highlights": [
+      ["subject", "There"],
+      ["predicate", "is"],
+      ["complement", "rarely value in pointing out a problem without also offering a solution"]
+    ]
+  },
+  "M-E06": {
+    "sentence": "Innovation isn’t seeing the problem, it is being able to see a viable solution to the issue.",
+    "translation": "创新不只是看见问题，而是能够看见问题的可行解决方案。",
+    "vocabulary": [
+      ["innovation", "创新"],
+      ["viable", "可行的"],
+      ["solution", "解决方案"]
+    ],
+    "highlights": [
+      ["subject", "Innovation"],
+      ["predicate", "isn’t seeing"],
+      ["object", "the problem"],
+      ["complement", "it is being able to see a viable solution to the issue"]
+    ]
+  },
+  "M-E07": {
+    "sentence": "So, use the steps above to pitch your new idea—they should help you overcome the barriers to buy-in so that people will be on board and excited.",
+    "translation": "所以，运用上面的步骤来推介你的新想法；这些步骤应能帮助你克服争取认同的障碍，让大家愿意支持并感到兴奋。",
+    "vocabulary": [
+      ["pitch", "推介；推销"],
+      ["overcome", "克服"],
+      ["on board", "支持；赞同"]
+    ],
+    "highlights": [
+      ["predicate", "use"],
+      ["object", "the steps above"],
+      ["complement", "to pitch your new idea"]
     ]
   },
   "R1-01": {
@@ -2172,7 +2264,15 @@ const noteData = {
     "highlights": [
       [
         "subject",
-        "This increase is sometimes called tipflation — the expectation of ever-higher tip amounts"
+        "This increase"
+      ],
+      [
+        "predicate",
+        "is sometimes called"
+      ],
+      [
+        "complement",
+        "tipflation — the expectation of ever-higher tip amounts"
       ]
     ]
   },
@@ -2238,7 +2338,7 @@ const noteData = {
   },
   "R1-16": {
     "sentence": "Notably, tipping primarily benefits some of these workers, such as waiters, but not others, such as cooks and dishwashers.",
-    "translation": "值得注意的是，给小费主要有利于这些工人中的一些人，如服务员，但不利于其他人，如厨师和洗碗机。",
+    "translation": "值得注意的是，给小费主要有利于这些工人中的一些人，如服务员，却未必惠及其他人，如厨师和洗碗工。",
     "vocabulary": [
       [
         "tipping",
@@ -2579,8 +2679,16 @@ const noteData = {
     ],
     "highlights": [
       [
+        "subject",
+        "Much more"
+      ],
+      [
         "predicate",
-        "needs"
+        "needs to be invested"
+      ],
+      [
+        "complement",
+        "in communities and primary care"
       ]
     ]
   },
@@ -3110,7 +3218,7 @@ const noteData = {
   },
   "R3-11": {
     "sentence": "But the effects of the heat were amplified by humidity — an often neglected factor in heat alert systems — and the lack of shade at the late-morning outdoor ceremony.",
-    "translation": "但是，湿度（热量警报系统中经常被忽视的因素）和清晨户外仪式缺少阴凉，放大了热量的影响。",
+    "translation": "但是，湿度（高温预警系统中经常被忽视的因素）以及上午较晚时段户外仪式缺少遮阴，都放大了高温的影响。",
     "vocabulary": [
       [
         "humidity",
@@ -3124,7 +3232,15 @@ const noteData = {
     "highlights": [
       [
         "subject",
-        "the effects of the heat were amplified by humidity — an often neglected factor in heat alert systems — and the lack of shade at the late-morning outdoor ceremony"
+        "the effects of the heat"
+      ],
+      [
+        "predicate",
+        "were amplified"
+      ],
+      [
+        "complement",
+        "by humidity — an often neglected factor in heat alert systems — and the lack of shade at the late-morning outdoor ceremony"
       ]
     ]
   },
@@ -3143,8 +3259,16 @@ const noteData = {
     ],
     "highlights": [
       [
+        "subject",
+        "urban planner Kotharkar’s team"
+      ],
+      [
         "predicate",
         "is working"
+      ],
+      [
+        "object",
+        "on a model plan that outlines best practices and could be adapted to local conditions"
       ]
     ]
   },
@@ -3754,7 +3878,7 @@ const noteData = {
   },
   "R4-14": {
     "sentence": "Animal desire paths, such as ducks forging trails through frozen ponds or dogs carving direct routes in gardens, highlight the adaptability of these trails in both human and animal experiences.",
-    "translation": "动物渴望的路径，例如鸭子在冰冻的池塘中锻造小径或在花园中雕刻直达路线的狗，突出了这些小径在人类和动物体验中的适应性。",
+    "translation": "动物形成的意愿小路——例如鸭子在结冰池塘上踩出小径、狗在花园中踩出直线路径——凸显了这些路径在人类和动物活动中的适应性。",
     "vocabulary": [
       [
         "desire path",
@@ -3766,6 +3890,10 @@ const noteData = {
       ]
     ],
     "highlights": [
+      [
+        "subject",
+        "Animal desire paths"
+      ],
       [
         "predicate",
         "highlight"
@@ -3804,13 +3932,13 @@ const noteData = {
 
 const translationOverrides: Readonly<Record<string, string>> = {
   C01: '有许多原因可以解释，为什么你在需要帮助时会觉得难以开口求助。',
-  C06: '你可能会担心失去对所求助之事的控制。',
-  C07: '一旦有人开始帮忙，也许他们会接手，或者把你前期的努力算作自己的功劳。',
-  C08: '你可能还担心自己会成为麻烦，或给你求助的那个人带来不便。',
-  C09: '如果你的自尊心较低，你可能尤其难以开口求助，因为你还担心对方会如何看待你的请求。',
-  C14: '也许最令人鼓舞的是，加州斯坦福大学研究人员在 2022 年发表的一篇论文；研究包含设计的求助互动，并要求人们回忆过去寻求帮助的经历。',
-  C15: '研究结果表明，求助者通常会低估他人愿意帮忙的程度，也会低估帮助别人会让施助者感觉多么良好（对大多数人来说，有机会帮助别人很有回报）。',
-  C13: '虽然你可能害怕给人留下无能的印象，但研究实际上表明，寻求建议的人会被认为更有能力，而不是更没有能力。',
+  C07: '你可能会担心失去对所求助之事的控制。',
+  C08: '一旦有人开始帮忙，也许他们会接手，或者把你前期的努力算作自己的功劳。',
+  C09: '你可能还担心自己会成为麻烦，或给你求助的那个人带来不便。',
+  C10: '如果你的自尊心较低，你可能尤其难以开口求助，因为你还担心对方会拒绝你的请求。',
+  C15: '也许最令人鼓舞的是，加州斯坦福大学研究人员在 2022 年发表的一篇论文；研究包含设计的求助互动，并要求人们回忆过去寻求帮助的经历。',
+  C16: '研究结果表明，求助者通常会低估他人愿意帮忙的程度，也会低估帮助别人会让施助者感觉多么良好（对大多数人来说，有机会帮助别人很有回报）。',
+  C14: '虽然你可能害怕给人留下无能的印象，但研究实际上表明，寻求建议的人会被认为更有能力，而不是更没有能力。',
   'M-B03': '如果这样做奏效，效果会很好——因为你可以用“我已经联系技术部门几个人，了解网站更新需要多少时间，他们说目前有余力”来回应固执的主管。',
   'M-C01': '当一个想法的提出者被认为好争辩、戒备或思想封闭时，争取他人支持就会遇到很大的障碍。',
   'M-D02': '换句话说，不要为了凸显自己的改进，就把旧方案全盘否定。',
@@ -3846,7 +3974,7 @@ const translationOverrides: Readonly<Record<string, string>> = {
 const highlightOverrides: Readonly<Record<string, readonly [string, string][]>> = {
   C03: [['subject', 'Asking for help'], ['predicate', 'takes'], ['object', 'courage']],
   C04: [['subject', 'It'], ['predicate', 'involves'], ['object', 'communicating a need on your part']],
-  C07: [['subject', 'they'], ['predicate', 'will take over']],
+  C08: [['subject', 'they'], ['predicate', 'will take over']],
   'M-C01': [['subject', 'One of the biggest barriers to gaining buy-in'], ['predicate', 'occurs'], ['complement', 'when the owner of an idea is viewed as argumentative, defensive, or close-minded']],
   'R2-01': [['subject', 'the National Health Service (NHS)'], ['predicate', 'was'], ['complement', 'visionary']],
   'R2-04': [['subject', 'healthcare'], ['predicate', 'is becoming'], ['complement', 'increasingly inaccessible for those who cannot opt to pay for private treatment']],
@@ -3860,11 +3988,32 @@ const highlightOverrides: Readonly<Record<string, readonly [string, string][]>> 
   'R4-12': [['subject', 'desire paths'], ['predicate', 'have sparked'], ['object', 'a fascination that can approach obsession']],
 };
 
+const structureRoleLabels: Record<string, string> = {
+  subject: '主语',
+  predicate: '谓语',
+  object: '宾语',
+  complement: '补语 / 表语',
+  adverbial: '状语',
+};
+
+const deriveStructure = (highlights: readonly { role: string; text: string }[]) => {
+  const labels = highlights
+    .map((highlight) => structureRoleLabels[highlight.role] ?? highlight.role)
+    .filter((label, index, all) => index === 0 || label !== all[index - 1]);
+  const pattern = labels.join(' + ') || '句子成分';
+  const hasSubject = highlights.some((highlight) => highlight.role === 'subject');
+  const hasPredicate = highlights.some((highlight) => highlight.role === 'predicate');
+  const explanation = hasSubject && hasPredicate
+    ? '先定位主句的主语和谓语，再把宾语、补语或状语与从句整体放回原句理解。'
+    : '本句含有省略、祈使或倒装结构；先根据谓语和上下文补出省略成分，再理解其余信息。';
+  return { pattern, explanation };
+};
+
 export const kaoyanEnglishTwoCloseReadings2025: Readonly<Record<string, CloseReading>> = Object.fromEntries(
   Object.entries(noteData).map(([key, item]) => [key, {
     translation: translationOverrides[key] ?? item.translation,
     vocabulary: item.vocabulary.map(([term, explanation]) => ({ term, explanation })),
-    structure: { pattern: '主句主干 + 补充成分', explanation: '先定位主句的主语和谓语，再把宾语、补语或状语作为整体补回；从句先整体理解。' },
+    structure: deriveStructure((highlightOverrides[key] ?? item.highlights).map(([role, text]) => ({ role, text }))),
     highlights: (highlightOverrides[key] ?? item.highlights).map(([role, text]) => ({ role, text })),
   }]),
 ) as Readonly<Record<string, CloseReading>>;

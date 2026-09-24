@@ -16,6 +16,7 @@ interface MatchingQuestion {
   number: number;
   prompt: string;
   answer: string;
+  answerLabel?: string;
   evidence: string;
   analysis: string;
 }
@@ -35,6 +36,13 @@ const {
   questions = [],
   answerRange = '26–35',
 } = Astro.props;
+const matchingFirstQuestion = questions.at(0)?.number;
+const matchingLastQuestion = questions.at(-1)?.number;
+const matchingRange = matchingFirstQuestion === undefined
+  ? '—'
+  : matchingFirstQuestion === matchingLastQuestion
+    ? String(matchingFirstQuestion)
+    : `${matchingFirstQuestion}–${matchingLastQuestion}`;
 ---
 
 {variant === 'cloze' ? (
@@ -67,7 +75,7 @@ const {
     <header>
       <span>Section B</span>
       <div>
-        <h4>Questions 36–45</h4>
+        <h4>Questions {matchingRange}</h4>
         <p>先判断题干中的同义改写，再展开查看对应段落。</p>
       </div>
     </header>
@@ -77,7 +85,7 @@ const {
           <details>
             <summary><b>{item.number}</b><span lang="en">{item.prompt}</span></summary>
             <div class="matching-answer">
-              <strong>Paragraph {item.answer}</strong>
+              <strong>{item.answerLabel ?? 'Paragraph'}{' '}{item.answer}</strong>
               <blockquote lang="en">{item.evidence}</blockquote>
               <p>{item.analysis}</p>
             </div>

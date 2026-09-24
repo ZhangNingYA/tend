@@ -4004,8 +4004,8 @@ const deriveStructure = (highlights: readonly { role: string; text: string }[]) 
   const hasSubject = highlights.some((highlight) => highlight.role === 'subject');
   const hasPredicate = highlights.some((highlight) => highlight.role === 'predicate');
   const explanation = hasSubject && hasPredicate
-    ? '先定位主句的主语和谓语，再把宾语、补语或状语与从句整体放回原句理解。'
-    : '本句含有省略、祈使或倒装结构；先根据谓语和上下文补出省略成分，再理解其余信息。';
+    ? '句子核心结构说明：先确定主语和谓语，再根据句型判断宾语、表语、补语、状语及从句的作用。'
+    : '句子核心结构说明：本句含有省略、祈使或倒装结构，先根据谓语和上下文补出核心成分，再理解其余信息。';
   return { pattern, explanation };
 };
 

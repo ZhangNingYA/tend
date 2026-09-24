@@ -11,7 +11,7 @@ const s = (
   predicate: string,
   tail?: Tail,
   pattern = '主语 + 谓语 + 补充成分',
-  explanation = '先抓住主句的主语和谓语，再把其余成分作为宾语、补语或状语整体理解。',
+  explanation = '句子核心结构说明：先确定主语和谓语，再根据句型判断宾语、表语、补语、状语及从句的作用。',
 ): CloseReading => cr(
   translation,
   vocabulary,

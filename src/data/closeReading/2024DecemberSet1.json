@@ -717,7 +717,7 @@
       },
       {
         "role": "complement",
-        "text": "very well-known,\"says"
+        "text": "very well-known,\" says"
       },
       {
         "role": "complement",
@@ -735,7 +735,7 @@
       },
       {
         "role": "complement",
-        "text": "very well-known,\"says"
+        "text": "very well-known,\" says"
       },
       {
         "role": "complement",
@@ -850,7 +850,7 @@
       },
       {
         "role": "object",
-        "text": "the boundaries of what humans eat by growing and processing so-called\"alternative\"crops—such as kedondong"
+        "text": "the boundaries of what humans eat by growing and processing so-called \"alternative\" crops—such as kedondong"
       }
     ],
     "trunk": [
@@ -864,7 +864,7 @@
       },
       {
         "role": "object",
-        "text": "the boundaries of what humans eat by growing and processing so-called\"alternative\"crops—such as kedondong"
+        "text": "the boundaries of what humans eat by growing and processing so-called \"alternative\" crops—such as kedondong"
       }
     ],
     "structure": {
@@ -944,7 +944,7 @@
       },
       {
         "role": "complement",
-        "text": "a forgotten crop,\"says Sayed Azam-Ali of the abundant plants weaving through the gardens of CFF outside Malaysia's capital Kuala Lumpur"
+        "text": "a forgotten crop,\" says Sayed Azam-Ali of the abundant plants weaving through the gardens of CFF outside Malaysia's capital Kuala Lumpur"
       }
     ],
     "trunk": [
@@ -958,7 +958,7 @@
       },
       {
         "role": "complement",
-        "text": "a forgotten crop,\"says Sayed Azam-Ali of the abundant plants weaving through the gardens of CFF outside Malaysia's capital Kuala Lumpur"
+        "text": "a forgotten crop,\" says Sayed Azam-Ali of the abundant plants weaving through the gardens of CFF outside Malaysia's capital Kuala Lumpur"
       }
     ],
     "structure": {
@@ -1622,7 +1622,7 @@
       },
       {
         "role": "complement",
-        "text": "food ignorance,\"says Cecilia Tortajada, a senior research fellow at the Institute of Water Policy at the National University of Singapore"
+        "text": "food ignorance,\" says Cecilia Tortajada, a senior research fellow at the Institute of Water Policy at the National University of Singapore"
       }
     ],
     "trunk": [
@@ -1636,7 +1636,7 @@
       },
       {
         "role": "complement",
-        "text": "food ignorance,\"says Cecilia Tortajada, a senior research fellow at the Institute of Water Policy at the National University of Singapore"
+        "text": "food ignorance,\" says Cecilia Tortajada, a senior research fellow at the Institute of Water Policy at the National University of Singapore"
       }
     ],
     "structure": {
@@ -1815,7 +1815,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "The then-Ph D student"
+        "text": "The then-PhD student"
       },
       {
         "role": "predicate",
@@ -1833,7 +1833,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "The then-Ph D student"
+        "text": "The then-PhD student"
       },
       {
         "role": "predicate",
@@ -1917,7 +1917,7 @@
       },
       {
         "role": "complement",
-        "text": "enormous,\"he recalls"
+        "text": "enormous,\" he recalls"
       }
     ],
     "trunk": [
@@ -1931,7 +1931,7 @@
       },
       {
         "role": "complement",
-        "text": "enormous,\"he recalls"
+        "text": "enormous,\" he recalls"
       }
     ],
     "structure": {
@@ -2065,7 +2065,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "the critical thing,\"he"
+        "text": "the critical thing,\" he"
       },
       {
         "role": "predicate",
@@ -2080,7 +2080,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "the critical thing,\"he"
+        "text": "the critical thing,\" he"
       },
       {
         "role": "predicate",
@@ -2173,7 +2173,7 @@
       },
       {
         "role": "complement",
-        "text": "to create recipes with these still- unfamiliar ingredients that will appeal to both local and international tastes"
+        "text": "to create recipes with these still-unfamiliar ingredients that will appeal to both local and international tastes"
       }
     ],
     "trunk": [
@@ -2187,7 +2187,7 @@
       },
       {
         "role": "complement",
-        "text": "to create recipes with these still- unfamiliar ingredients that will appeal to both local and international tastes"
+        "text": "to create recipes with these still-unfamiliar ingredients that will appeal to both local and international tastes"
       }
     ],
     "structure": {
@@ -2499,7 +2499,7 @@
       },
       {
         "role": "complement",
-        "text": "for growing it,\"says Azam-Ali"
+        "text": "for growing it,\" says Azam-Ali"
       }
     ],
     "trunk": [
@@ -2513,7 +2513,7 @@
       },
       {
         "role": "complement",
-        "text": "for growing it,\"says Azam-Ali"
+        "text": "for growing it,\" says Azam-Ali"
       }
     ],
     "structure": {
@@ -2852,7 +2852,7 @@
       },
       {
         "role": "object",
-        "text": "modern agriculture That was in part a crucial response to devastating famines at a time when the world needed to increase its food supply"
+        "text": "modern agriculture. That was in part a crucial response to devastating famines at a time when the world needed to increase its food supply"
       }
     ],
     "trunk": [
@@ -2866,7 +2866,7 @@
       },
       {
         "role": "object",
-        "text": "modern agriculture That was in part a crucial response to devastating famines at a time when the world needed to increase its food supply"
+        "text": "modern agriculture. That was in part a crucial response to devastating famines at a time when the world needed to increase its food supply"
       }
     ],
     "structure": {
@@ -3400,7 +3400,7 @@
       },
       {
         "role": "complement",
-        "text": "to be forced to change,\"says Tim Lang, professor of food policy at City, University of London"
+        "text": "to be forced to change,\" says Tim Lang, professor of food policy at City, University of London"
       }
     ],
     "trunk": [
@@ -3414,7 +3414,7 @@
       },
       {
         "role": "complement",
-        "text": "to be forced to change,\"says Tim Lang, professor of food policy at City, University of London"
+        "text": "to be forced to change,\" says Tim Lang, professor of food policy at City, University of London"
       }
     ],
     "structure": {

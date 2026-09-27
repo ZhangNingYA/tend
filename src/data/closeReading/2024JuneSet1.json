@@ -849,14 +849,14 @@
     "highlights": [
       {
         "role": "complement",
-        "text": "So how did this treecome to own itself and the land around it",
+        "text": "So how did this tree come to own itself and the land around it",
         "label": "省略式表达（整体）"
       }
     ],
     "trunk": [
       {
         "role": "complement",
-        "text": "So how did this treecome to own itself and the land around it",
+        "text": "So how did this tree come to own itself and the land around it",
         "label": "省略式表达（整体）"
       }
     ],
@@ -965,7 +965,7 @@
       },
       {
         "role": "complement",
-        "text": "an anonymously written front page article in the Athens Weekly Banner published on August 12,1890"
+        "text": "an anonymously written front page article in the Athens Weekly Banner published on August 12, 1890"
       }
     ],
     "trunk": [
@@ -979,7 +979,7 @@
       },
       {
         "role": "complement",
-        "text": "an anonymously written front page article in the Athens Weekly Banner published on August 12,1890"
+        "text": "an anonymously written front page article in the Athens Weekly Banner published on August 12, 1890"
       }
     ],
     "structure": {
@@ -1568,7 +1568,7 @@
       },
       {
         "role": "complement",
-        "text": "on October 9,1946"
+        "text": "on October 9, 1946"
       }
     ],
     "trunk": [
@@ -1586,7 +1586,7 @@
       },
       {
         "role": "complement",
-        "text": "on October 9,1946"
+        "text": "on October 9, 1946"
       }
     ],
     "structure": {
@@ -1832,7 +1832,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "Thisall"
+        "text": "This all"
       },
       {
         "role": "predicate",
@@ -1850,7 +1850,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "Thisall"
+        "text": "This all"
       },
       {
         "role": "predicate",
@@ -2099,7 +2099,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "Wardwas"
+        "text": "Ward was"
       },
       {
         "role": "predicate",
@@ -2113,7 +2113,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "Wardwas"
+        "text": "Ward was"
       },
       {
         "role": "predicate",
@@ -2635,7 +2635,7 @@
       },
       {
         "role": "object",
-        "text": "perhaps it was a 19th century version of a click-bait thought exercise on whether it would be legal for someone to deed such a non-conscious living thing to itselfor not",
+        "text": "perhaps it was a 19th century version of a click-bait thought exercise on whether it would be legal for someone to deed such a non-conscious living thing to itself or not",
         "label": "宾语从句（整体）"
       }
     ],
@@ -2650,7 +2650,7 @@
       },
       {
         "role": "object",
-        "text": "perhaps it was a 19th century version of a click-bait thought exercise on whether it would be legal for someone to deed such a non-conscious living thing to itselfor not",
+        "text": "perhaps it was a 19th century version of a click-bait thought exercise on whether it would be legal for someone to deed such a non-conscious living thing to itself or not",
         "label": "宾语从句（整体）"
       }
     ],
@@ -2665,7 +2665,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "the case, the next known instance of the Tree That Owns Itselfbeing mentioned"
+        "text": "the case, the next known instance of the Tree That Owns Itself being mentioned"
       },
       {
         "role": "predicate",
@@ -2683,7 +2683,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "the case, the next known instance of the Tree That Owns Itselfbeing mentioned"
+        "text": "the case, the next known instance of the Tree That Owns Itself being mentioned"
       },
       {
         "role": "predicate",
@@ -3737,7 +3737,7 @@
       },
       {
         "role": "complement",
-        "text": "to intervene when workers perform a taskwithoutthe proper equipment or if the conditions are unsafe"
+        "text": "to intervene when workers perform a task without the proper equipment or if the conditions are unsafe"
       }
     ],
     "trunk": [
@@ -3751,7 +3751,7 @@
       },
       {
         "role": "complement",
-        "text": "to intervene when workers perform a taskwithoutthe proper equipment or if the conditions are unsafe"
+        "text": "to intervene when workers perform a task without the proper equipment or if the conditions are unsafe"
       }
     ],
     "structure": {
@@ -3770,21 +3770,21 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "Competentworkers"
+        "text": "Competent workers"
       },
       {
         "role": "predicate",
-        "text": "are alsorequired"
+        "text": "are also required"
       }
     ],
     "trunk": [
       {
         "role": "subject",
-        "text": "Competentworkers"
+        "text": "Competent workers"
       },
       {
         "role": "predicate",
-        "text": "are alsorequired"
+        "text": "are also required"
       }
     ],
     "structure": {
@@ -3922,7 +3922,7 @@
       },
       {
         "role": "object",
-        "text": "whether you're adesignated competent person, a supervisoror a frontline worker",
+        "text": "whether you're a designated competent person, a supervisor or a frontline worker",
         "label": "宾语从句（整体）"
       }
     ],
@@ -3945,7 +3945,7 @@
       },
       {
         "role": "object",
-        "text": "whether you're adesignated competent person, a supervisoror a frontline worker",
+        "text": "whether you're a designated competent person, a supervisor or a frontline worker",
         "label": "宾语从句（整体）"
       }
     ],

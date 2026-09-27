@@ -286,7 +286,7 @@
     }
   },
   "C07": {
-    "translation": "拥有 20,000 法郎的人可以轻松承担每年赠送 2,000 法郎的费用，并且仍然有足够的生活费和一些奢侈品。",
+    "translation": "拥有 20,000 英镑的人可以轻松承担每年赠送 2,000 英镑的费用，并且仍然有足够的生活费和一些奢侈品。",
     "vocabulary": [
       {
         "term": "luxuries",
@@ -308,7 +308,7 @@
       },
       {
         "role": "complement",
-        "text": "to give away f2,000 per year and still have plenty to live on plus some luxuries"
+        "text": "to give away £2,000 per year and still have plenty to live on plus some luxuries"
       }
     ],
     "trunk": [
@@ -322,7 +322,7 @@
       },
       {
         "role": "complement",
-        "text": "to give away f2,000 per year and still have plenty to live on plus some luxuries"
+        "text": "to give away £2,000 per year and still have plenty to live on plus some luxuries"
       }
     ],
     "structure": {

@@ -243,7 +243,7 @@
       },
       {
         "role": "predicate",
-        "text": "doesn't tll"
+        "text": "doesn't tell"
       },
       {
         "role": "object",
@@ -266,7 +266,7 @@
       },
       {
         "role": "predicate",
-        "text": "doesn't tll"
+        "text": "doesn't tell"
       },
       {
         "role": "object",
@@ -1118,7 +1118,7 @@
       },
       {
         "role": "complement",
-        "text": "about how difficult it must have been not to glance at your phone when it was within reach, ornot to walk to the vending machine when your afternoon slump hit"
+        "text": "about how difficult it must have been not to glance at your phone when it was within reach, or not to walk to the vending machine when your afternoon slump hit"
       }
     ],
     "trunk": [
@@ -1128,7 +1128,7 @@
       },
       {
         "role": "complement",
-        "text": "about how difficult it must have been not to glance at your phone when it was within reach, ornot to walk to the vending machine when your afternoon slump hit"
+        "text": "about how difficult it must have been not to glance at your phone when it was within reach, or not to walk to the vending machine when your afternoon slump hit"
       }
     ]
   },
@@ -3150,7 +3150,7 @@
       },
       {
         "role": "complement",
-        "text": "to earn more thantheir parents did at the same age"
+        "text": "to earn more than their parents did at the same age"
       }
     ],
     "trunk": [
@@ -3164,7 +3164,7 @@
       },
       {
         "role": "complement",
-        "text": "to earn more thantheir parents did at the same age"
+        "text": "to earn more than their parents did at the same age"
       }
     ]
   },
@@ -3222,7 +3222,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "Eunji Kimfrom Vanderbilt University"
+        "text": "Eunji Kim from Vanderbilt University"
       },
       {
         "role": "predicate",
@@ -3232,7 +3232,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "Eunji Kimfrom Vanderbilt University"
+        "text": "Eunji Kim from Vanderbilt University"
       },
       {
         "role": "predicate",
@@ -3258,7 +3258,7 @@
       },
       {
         "role": "complement",
-        "text": "whowork hard to achieve great economic success"
+        "text": "who work hard to achieve great economic success"
       }
     ],
     "trunk": [
@@ -3276,7 +3276,7 @@
       },
       {
         "role": "complement",
-        "text": "whowork hard to achieve great economic success"
+        "text": "who work hard to achieve great economic success"
       }
     ]
   },
@@ -3299,11 +3299,11 @@
       },
       {
         "role": "object",
-        "text": "a much smaller proportion of the viewership Rags-to-riches stories"
+        "text": "a much smaller proportion of the viewership. Rags-to-riches stories"
       },
       {
         "role": "object",
-        "text": "are wbiquitous(无处不在的) on TV",
+        "text": "are ubiquitous(无处不在的) on TV",
         "label": "宾语从句（整体）"
       },
       {
@@ -3327,11 +3327,11 @@
       },
       {
         "role": "object",
-        "text": "a much smaller proportion of the viewership Rags-to-riches stories"
+        "text": "a much smaller proportion of the viewership. Rags-to-riches stories"
       },
       {
         "role": "object",
-        "text": "are wbiquitous(无处不在的) on TV",
+        "text": "are ubiquitous(无处不在的) on TV",
         "label": "宾语从句（整体）"
       },
       {
@@ -3456,7 +3456,7 @@
     "highlights": [
       {
         "role": "adverbial",
-        "text": "when participants were separated by party affliation",
+        "text": "when participants were separated by party affiliation",
         "label": "状语从句（整体）"
       },
       {
@@ -3617,7 +3617,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "Participants whowere heavy viewers"
+        "text": "Participants who were heavy viewers"
       },
       {
         "role": "predicate",
@@ -3631,7 +3631,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "Participants whowere heavy viewers"
+        "text": "Participants who were heavy viewers"
       },
       {
         "role": "predicate",
@@ -3752,7 +3752,7 @@
       },
       {
         "role": "complement",
-        "text": "anythingbut trivial"
+        "text": "anything but trivial"
       }
     ],
     "trunk": [
@@ -3766,7 +3766,7 @@
       },
       {
         "role": "complement",
-        "text": "anythingbut trivial"
+        "text": "anything but trivial"
       }
     ]
   },
@@ -3924,7 +3924,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "“Without myjob I don't know who I am,”",
+        "text": "“Without my job I don't know who I am,”",
         "label": "主语从句（整体）"
       },
       {
@@ -3997,7 +3997,7 @@
       },
       {
         "role": "object",
-        "text": "an identity crisis much greater than the loss of thejob itself"
+        "text": "an identity crisis much greater than the loss of the job itself"
       }
     ],
     "trunk": [
@@ -4011,7 +4011,7 @@
       },
       {
         "role": "object",
-        "text": "an identity crisis much greater than the loss of thejob itself"
+        "text": "an identity crisis much greater than the loss of the job itself"
       }
     ]
   },
@@ -4475,7 +4475,7 @@
       },
       {
         "role": "complement",
-        "text": "to challenge our sense of self and explore whether you can create a new experience ofyour identity by changing the beliefs you hold about yourself in orderto"
+        "text": "to challenge our sense of self and explore whether you can create a new experience of your identity by changing the beliefs you hold about yourself in order to"
       }
     ],
     "trunk": [
@@ -4493,7 +4493,7 @@
       },
       {
         "role": "complement",
-        "text": "to challenge our sense of self and explore whether you can create a new experience ofyour identity by changing the beliefs you hold about yourself in orderto"
+        "text": "to challenge our sense of self and explore whether you can create a new experience of your identity by changing the beliefs you hold about yourself in order to"
       }
     ]
   },
@@ -4545,7 +4545,7 @@
       },
       {
         "role": "object",
-        "text": "your job ifyou let it be so",
+        "text": "your job if you let it be so",
         "label": "宾语从句（整体）"
       }
     ],
@@ -4560,7 +4560,7 @@
       },
       {
         "role": "object",
-        "text": "your job ifyou let it be so",
+        "text": "your job if you let it be so",
         "label": "宾语从句（整体）"
       }
     ]

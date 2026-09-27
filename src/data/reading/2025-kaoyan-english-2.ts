@@ -180,8 +180,47 @@ const sections = {
   ]
 } as const;
 
-const questionNote = (prompt: string): CloseReading => ({ translation: prompt, vocabulary: [], structure: { pattern: '题干主干', explanation: '先找题干主语和谓语，再回到原文定位同义信息。' }, highlights: [{ role: 'complement', text: prompt }] });
-const makeQuestions = (specs: readonly any[]): readonly ReadingQuestion[] => specs.map((item) => ({ ...item, closeReading: questionNote(item.prompt), options: item.options.map(([key, text, explanation]: ReadingQuestionOption | any) => ({ key, text, explanation })) }));
+const questionAnnotations: Readonly<Record<number, { translation: string; focus: string }>> = {
+  21: { translation: '根据第1段，美国的小费习惯____。', focus: 'the practice of tipping in the U.S.' },
+  22: { translation: '与过去相比，今天的小费____。', focus: 'today’s tips' },
+  23: { translation: '小费请求进入新服务领域是因为____。', focus: 'Tip requests are creeping into new kinds of services' },
+  24: { translation: '取消小费服务的做法旨在____。', focus: 'The movement toward no-tipping services' },
+  25: { translation: '从最后一段可以看出，小费____。', focus: 'tipping' },
+  26: { translation: '根据前两段，英国国家医疗服务体系（NHS）____。', focus: 'the NHS' },
+  27: { translation: '医疗与照护危机的一个解决办法是____。', focus: 'One answer to the crisis in health and care' },
+  28: { translation: '“重新构想医疗”计划旨在____。', focus: '“Reimagining health”' },
+  29: { translation: '为了最大化国民健康，作者建议____。', focus: 'To maximise the nation’s health' },
+  30: { translation: '可以推断，地方领导者应该____。', focus: 'local leaders' },
+  31: { translation: '根据第1段，Nagpur 的计划提出了旨在____的措施。', focus: 'Nagpur’s plan proposes measures' },
+  32: { translation: '现有高温行动计划的一个问题是，它们____。', focus: 'One problem with existing HAPs' },
+  33: { translation: '孟买的案例表明，印度的高温预警系统需要____。', focus: 'India’s heat alert systems' },
+  34: { translation: 'Kotharkar 认为，脆弱性地图可以帮助____。', focus: 'a vulnerability map can help' },
+  35: { translation: '根据最后一段，研究者认为高温行动计划应该____。', focus: 'HAPs should' },
+  36: { translation: '根据第1段，愿望小径是____的结果。', focus: 'desire paths are a result of' },
+  37: { translation: '可以推断，俄亥俄州立大学____。', focus: 'Ohio State University' },
+  38: { translation: 'Reddit 网页上的图片反映了____。', focus: 'The images on the Reddit webpage' },
+  39: { translation: 'Wickquasgeck Trail 的例子说明了____。', focus: 'The example of the Wickquasgeck Trail' },
+  40: { translation: '从最后一段可以看出，愿望小径____。', focus: 'desire paths' },
+  41: { translation: '选择第41段最合适的小标题。', focus: 'the most suitable subheading for paragraph 41' },
+  42: { translation: '选择第42段最合适的小标题。', focus: 'the most suitable subheading for paragraph 42' },
+  43: { translation: '选择第43段最合适的小标题。', focus: 'the most suitable subheading for paragraph 43' },
+  44: { translation: '选择第44段最合适的小标题。', focus: 'the most suitable subheading for paragraph 44' },
+  45: { translation: '选择第45段最合适的小标题。', focus: 'the most suitable subheading for paragraph 45' },
+};
+
+const questionNote = (number: number, prompt: string): CloseReading => {
+  const annotation = questionAnnotations[number];
+  return {
+    translation: annotation?.translation ?? '请根据题干定位原文信息。',
+    vocabulary: [],
+    structure: {
+      pattern: '题干定位结构',
+      explanation: '先提取题干中的定位词和核心谓语，再回到对应段落核对同义表达。',
+    },
+    highlights: [{ role: 'complement', text: annotation?.focus ?? prompt }],
+  };
+};
+const makeQuestions = (specs: readonly any[]): readonly ReadingQuestion[] => specs.map((item) => ({ ...item, closeReading: questionNote(item.number, item.prompt), options: item.options.map(([key, text, explanation]: ReadingQuestionOption | any) => ({ key, text, explanation })) }));
 const passageQuestionSpecs = [
   [
     {
@@ -874,10 +913,7 @@ const noteData = {
         "ask for help",
         "求助；寻求帮助"
       ],
-      [
-        "understandable",
-        "重点词汇（结合本句理解）"
-      ]
+      ["understandable", "可以理解的"]
     ],
     "highlights": [
       [
@@ -934,10 +970,7 @@ const noteData = {
         "courage",
         "勇气"
       ],
-      [
-        "Asking",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Asking", "求助；请求帮助"]
     ],
     "highlights": [
       [
@@ -954,14 +987,8 @@ const noteData = {
     "sentence": "It involves communicating a need on your part — there’s something you can’t do.",
     "translation": "它涉及传达您的需求—有些事情您做不到。",
     "vocabulary": [
-      [
-        "involves",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "communicating",
-        "重点词汇（结合本句理解）"
-      ]
+      ["involves", "涉及；需要"],
+      ["communicating", "表达；沟通"]
     ],
     "highlights": [
       [
@@ -1028,10 +1055,7 @@ const noteData = {
         "concern",
         "担忧；顾虑"
       ],
-      [
-        "concerns",
-        "重点词汇（结合本句理解）"
-      ]
+      ["concerns", "担忧；顾虑"]
     ],
     "highlights": [
       [
@@ -1050,10 +1074,7 @@ const noteData = {
         "take over",
         "接手；接管"
       ],
-      [
-        "starts",
-        "重点词汇（结合本句理解）"
-      ]
+      ["starts", "开始"]
     ],
     "highlights": [
       [
@@ -1074,10 +1095,7 @@ const noteData = {
         "nuisance",
         "麻烦的人或事"
       ],
-      [
-        "factor",
-        "重点词汇（结合本句理解）"
-      ]
+      ["factor", "因素"]
     ],
     "highlights": [
       ["subject", "Yet another factor that you might be worried about"],
@@ -1121,10 +1139,7 @@ const noteData = {
         "refusal",
         "拒绝"
       ],
-      [
-        "refusals",
-        "重点词汇（结合本句理解）"
-      ]
+      ["refusals", "拒绝（请求）"]
     ],
     "highlights": [
       [
@@ -1149,10 +1164,7 @@ const noteData = {
         "overcome",
         "克服"
       ],
-      [
-        "difficulties",
-        "重点词汇（结合本句理解）"
-      ]
+      ["difficulties", "困难"]
     ],
     "highlights": [
       [
@@ -1216,14 +1228,8 @@ const noteData = {
     "sentence": "Perhaps most encouraging of all is a paper from 2022 by researchers at Stanford University, in California, that involved a mix of contrived help-seeking interactions and asking people to recall times they’d sought help in the past.",
     "translation": "也许最令人鼓舞的是加利福尼亚州斯坦福大学的研究人员2022年的一篇论文，该论文涉及人为寻求帮助的互动，并要求人们回忆他们过去寻求帮助的时间。",
     "vocabulary": [
-      [
-        "Perhaps",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "encouraging",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Perhaps", "或许；可能"],
+      ["encouraging", "令人鼓舞的"]
     ],
     "highlights": [
       [
@@ -1311,14 +1317,8 @@ const noteData = {
     "sentence": "And if someone can’t help right now, avoid taking it personally.",
     "translation": "如果有人现在无法提供帮助，请避免将其视为个人问题。",
     "vocabulary": [
-      [
-        "taking",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "personally",
-        "重点词汇（结合本句理解）"
-      ]
+      ["taking", "把……当作（某种态度）"],
+      ["personally", "针对个人地；往心里去"]
     ],
     "highlights": [
       [
@@ -1335,14 +1335,8 @@ const noteData = {
     "sentence": "They might just be too busy, or they might not feel confident about their ability to help.",
     "translation": "他们可能只是太忙了，或者他们可能对自己的帮助能力没有信心。",
     "vocabulary": [
-      [
-        "confident",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "ability",
-        "重点词汇（结合本句理解）"
-      ]
+      ["confident", "有信心的"],
+      ["ability", "能力"]
     ],
     "highlights": [
       [
@@ -1378,14 +1372,8 @@ const noteData = {
     "sentence": "In other words, you can’t mention your suggestion once and expect it to be adopted.",
     "translation": "换句话说，你不能一次性提及你的建议，然后期望它被采纳。",
     "vocabulary": [
-      [
-        "mention",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "suggestion",
-        "重点词汇（结合本句理解）"
-      ]
+      ["mention", "提及；提到"],
+      ["suggestion", "建议"]
     ],
     "highlights": [
       [
@@ -1410,10 +1398,7 @@ const noteData = {
         "champion",
         "积极支持；捍卫"
       ],
-      [
-        "change",
-        "重点词汇（结合本句理解）"
-      ]
+      ["change", "改变；变革"]
     ],
     "highlights": [
       [
@@ -1462,10 +1447,7 @@ const noteData = {
     "sentence": "Sometimes it makes sense to go to your boss first.",
     "translation": "有时先去找你的老板是有道理的。",
     "vocabulary": [
-      [
-        "Sometimes",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Sometimes", "有时"]
     ],
     "highlights": [
       [
@@ -1514,14 +1496,8 @@ const noteData = {
     "sentence": "When it works, it works great — because you’re ready for your stubborn supervisor’s pushback with answers like, “Actually, I connected with a few people in our tech department to discuss how much time these kinds of website updates would take, and they suggested they have the bandwidth.”",
     "translation": "当它工作时，它的工作原理很好—因为你已经准备好接受你顽固的主管的拒绝，回答说： “实际上，我与我们技术部门的几个人联系，讨论了这些类型的网站更新需要多少时间，他们建议他们有带宽。”",
     "vocabulary": [
-      [
-        "stubborn",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "supervisor",
-        "重点词汇（结合本句理解）"
-      ]
+      ["stubborn", "固执的"],
+      ["supervisor", "主管；上司"]
     ],
     "highlights": [
       [
@@ -1593,10 +1569,7 @@ const noteData = {
     "sentence": "Because, let’s be honest: No one likes a know-it-all.",
     "translation": "因为，老实说：没有人喜欢无所不知。",
     "vocabulary": [
-      [
-        "honest",
-        "重点词汇（结合本句理解）"
-      ]
+      ["honest", "诚实的；坦率的"]
     ],
     "highlights": [
       [
@@ -1621,10 +1594,7 @@ const noteData = {
         "indignant",
         "愤慨的"
       ],
-      [
-        "people",
-        "重点词汇（结合本句理解）"
-      ]
+      ["people", "人们"]
     ],
     "highlights": [
       [
@@ -1645,10 +1615,7 @@ const noteData = {
         "concern",
         "担忧；顾虑"
       ],
-      [
-        "Instead",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Instead", "相反；代替"]
     ],
     "highlights": [
       [
@@ -1665,10 +1632,7 @@ const noteData = {
         "stakeholder",
         "利益相关者"
       ],
-      [
-        "instead",
-        "重点词汇（结合本句理解）"
-      ]
+      ["instead", "相反；代替"]
     ],
     "highlights": [
       [
@@ -1689,10 +1653,7 @@ const noteData = {
     "sentence": "New ideas are the grandchildren of old ones.",
     "translation": "新思想是旧思想的孙辈。",
     "vocabulary": [
-      [
-        "grandchildren",
-        "重点词汇（结合本句理解）"
-      ]
+      ["grandchildren", "孙辈；后继成果"]
     ],
     "highlights": [
       [
@@ -1717,10 +1678,7 @@ const noteData = {
         "stand out",
         "脱颖而出"
       ],
-      [
-        "solutions",
-        "重点词汇（结合本句理解）"
-      ]
+      ["solutions", "解决方案"]
     ],
     "highlights": [
       [
@@ -1737,14 +1695,8 @@ const noteData = {
     "sentence": "Remember that in light of whatever the problem the old system solved — or, maybe, has failed to solve in recent memory — it was a great idea at the time.",
     "translation": "请记住，无论旧系统解决了什么问题—或者可能在最近的记忆中未能解决—这在当时是一个好主意。",
     "vocabulary": [
-      [
-        "Remember",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "problem",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Remember", "记住"],
+      ["problem", "问题"]
     ],
     "highlights": [
       [
@@ -1765,10 +1717,7 @@ const noteData = {
         "bolster",
         "加强；支持"
       ],
-      [
-        "Appreciating",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Appreciating", "认可；欣赏"]
     ],
     "highlights": [
       [
@@ -1817,10 +1766,7 @@ const noteData = {
         "suboptimal",
         "非最优的"
       ],
-      [
-        "Instead",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Instead", "相反；代替"]
     ],
     "highlights": [
       [
@@ -1833,14 +1779,8 @@ const noteData = {
     "sentence": "For example, try, “I can see lots of applications for this new approach” rather than, “This innovation is the only way.”",
     "translation": "例如，尝试“我可以看到这种新方法有很多应用” ，而不是“这种创新是唯一的方法”。",
     "vocabulary": [
-      [
-        "example",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "applications",
-        "重点词汇（结合本句理解）"
-      ]
+      ["example", "例子；例如"],
+      ["applications", "应用场景"]
     ],
     "highlights": [
       [
@@ -1861,10 +1801,7 @@ const noteData = {
         "stand out",
         "脱颖而出"
       ],
-      [
-        "optimistic",
-        "重点词汇（结合本句理解）"
-      ]
+      ["optimistic", "乐观的"]
     ],
     "highlights": [
       [
@@ -1928,10 +1865,7 @@ const noteData = {
         "historical",
         "历史的"
       ],
-      [
-        "customers",
-        "重点词汇（结合本句理解）"
-      ]
+      ["customers", "顾客"]
     ],
     "highlights": [
       [
@@ -1952,14 +1886,8 @@ const noteData = {
     "sentence": "In the early 2010s, a wide range of businesses started processing purchases with iPads and other digital payment systems.",
     "translation": "在2010年代初，各种各样的企业开始使用iPad和其他数字支付系统处理购买。",
     "vocabulary": [
-      [
-        "businesses",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "started",
-        "重点词汇（结合本句理解）"
-      ]
+      ["businesses", "企业；商家"],
+      ["started", "开始；启动"]
     ],
     "highlights": [
       [
@@ -1984,10 +1912,7 @@ const noteData = {
         "prompt",
         "促使；提示"
       ],
-      [
-        "systems",
-        "重点词汇（结合本句理解）"
-      ]
+      ["systems", "系统"]
     ],
     "highlights": [
       [
@@ -2012,10 +1937,7 @@ const noteData = {
         "tip request",
         "小费请求"
       ],
-      [
-        "requests",
-        "重点词汇（结合本句理解）"
-      ]
+      ["requests", "请求"]
     ],
     "highlights": [
       [
@@ -2032,14 +1954,8 @@ const noteData = {
     "sentence": "Customers in the past nearly always paid tips after receiving a service, such as at the conclusion of a restaurant meal, after getting a haircut or once a pizza was delivered.",
     "translation": "过去，顾客几乎总是在收到服务后支付小费，例如在餐厅用餐结束时、理发后或派送披萨后。",
     "vocabulary": [
-      [
-        "Customers",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "nearly",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Customers", "顾客"],
+      ["nearly", "几乎；差不多"]
     ],
     "highlights": [
       [
@@ -2060,14 +1976,8 @@ const noteData = {
     "sentence": "That timing could reward high-quality service and give workers an incentive to provide it.",
     "translation": "这种时机可以奖励高质量的服务，并激励工人提供服务。",
     "vocabulary": [
-      [
-        "timing",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "reward",
-        "重点词汇（结合本句理解）"
-      ]
+      ["timing", "时机"],
+      ["reward", "奖励；回报"]
     ],
     "highlights": [
       [
@@ -2092,10 +2002,7 @@ const noteData = {
         "beforehand",
         "事先；提前"
       ],
-      [
-        "becoming",
-        "重点词汇（结合本句理解）"
-      ]
+      ["becoming", "变得"]
     ],
     "highlights": [
       [
@@ -2120,10 +2027,7 @@ const noteData = {
         "tipping",
         "付小费；小费制度"
       ],
-      [
-        "technology",
-        "重点词汇（结合本句理解）"
-      ]
+      ["technology", "技术"]
     ],
     "highlights": [
       [
@@ -2148,10 +2052,7 @@ const noteData = {
         "prevalence",
         "普遍；流行"
       ],
-      [
-        "digital",
-        "重点词汇（结合本句理解）"
-      ]
+      ["digital", "数字化的"]
     ],
     "highlights": [
       [
@@ -2176,10 +2077,7 @@ const noteData = {
         "tip request",
         "小费请求"
       ],
-      [
-        "explain",
-        "重点词汇（结合本句理解）"
-      ]
+      ["explain", "解释；说明"]
     ],
     "highlights": [
       [
@@ -2200,14 +2098,8 @@ const noteData = {
     "sentence": "Customers now routinely see menus of suggested default options — often well above 20% of what they owe.",
     "translation": "顾客现在经常看到建议默认选项的菜单--通常远远高于他们所欠金额的20%。",
     "vocabulary": [
-      [
-        "Customers",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "routinely",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Customers", "顾客"],
+      ["routinely", "经常；惯常地"]
     ],
     "highlights": [
       [
@@ -2228,14 +2120,8 @@ const noteData = {
     "sentence": "The amounts have risen from 10% or less in the 1950s to 15% around the year 2000 to 20% or higher today.",
     "translation": "从20世纪50年代的10 ％或更低到2000年左右的15 ％ ，到今天的20 ％或更高。",
     "vocabulary": [
-      [
-        "amounts",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "higher",
-        "重点词汇（结合本句理解）"
-      ]
+      ["amounts", "金额；数量"],
+      ["higher", "更高的"]
     ],
     "highlights": [
       [
@@ -2256,10 +2142,7 @@ const noteData = {
         "tipflation",
         "小费通胀"
       ],
-      [
-        "increase",
-        "重点词汇（结合本句理解）"
-      ]
+      ["increase", "增加；提高"]
     ],
     "highlights": [
       [
@@ -2344,10 +2227,7 @@ const noteData = {
         "tipping",
         "付小费；小费制度"
       ],
-      [
-        "Notably",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Notably", "值得注意的是"]
     ],
     "highlights": [
       [
@@ -2372,10 +2252,7 @@ const noteData = {
         "tipping",
         "付小费；小费制度"
       ],
-      [
-        "ensure",
-        "重点词汇（结合本句理解）"
-      ]
+      ["ensure", "确保"]
     ],
     "highlights": [
       [
@@ -2400,10 +2277,7 @@ const noteData = {
         "tipflation",
         "小费通胀"
       ],
-      [
-        "increase",
-        "重点词汇（结合本句理解）"
-      ]
+      ["increase", "增加；提高"]
     ],
     "highlights": [
       [
@@ -2420,14 +2294,8 @@ const noteData = {
     "sentence": "However, many customers are frustrated because they feel they are being asked for too high of a tip too often.",
     "translation": "然而，许多顾客感到沮丧，因为他们经常被要求支付过高的小费。",
     "vocabulary": [
-      [
-        "However",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "customers",
-        "重点词汇（结合本句理解）"
-      ]
+      ["However", "然而"],
+      ["customers", "顾客"]
     ],
     "highlights": [
       [
@@ -2480,10 +2348,7 @@ const noteData = {
         "visionary",
         "有远见的"
       ],
-      [
-        "established",
-        "重点词汇（结合本句理解）"
-      ]
+      ["established", "建立；成立"]
     ],
     "highlights": [
       [
@@ -2508,10 +2373,7 @@ const noteData = {
         "out of date",
         "过时的"
       ],
-      [
-        "Nearly",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Nearly", "将近；几乎"]
     ],
     "highlights": [
       [
@@ -2560,10 +2422,7 @@ const noteData = {
         "inaccessible",
         "难以获得的"
       ],
-      [
-        "waitlists",
-        "重点词汇（结合本句理解）"
-      ]
+      ["waitlists", "等候名单"]
     ],
     "highlights": [
       [
@@ -2588,10 +2447,7 @@ const noteData = {
         "workforce",
         "劳动力；员工队伍"
       ],
-      [
-        "demand",
-        "重点词汇（结合本句理解）"
-      ]
+      ["demand", "需求"]
     ],
     "highlights": [
       [
@@ -2612,14 +2468,8 @@ const noteData = {
     "sentence": "Many of the answers to the crisis in health and care are well rehearsed.",
     "translation": "医疗保健危机的许多答案都得到了很好的演练。",
     "vocabulary": [
-      [
-        "answers",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "crisis",
-        "重点词汇（结合本句理解）"
-      ]
+      ["answers", "解决办法；答案"],
+      ["crisis", "危机"]
     ],
     "highlights": [
       [
@@ -2640,14 +2490,8 @@ const noteData = {
     "sentence": "We need to be much better at reducing and diverting demand on health services, rather than simply managing it.",
     "translation": "我们需要更好地减少和转移对医疗服务的需求，而不是简单地管理它。",
     "vocabulary": [
-      [
-        "better",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "reducing",
-        "重点词汇（结合本句理解）"
-      ]
+      ["better", "更好地"],
+      ["reducing", "减少；降低"]
     ],
     "highlights": [
       [
@@ -2672,10 +2516,7 @@ const noteData = {
         "primary care",
         "初级医疗；基层医疗"
       ],
-      [
-        "invested",
-        "重点词汇（结合本句理解）"
-      ]
+      ["invested", "投入；投资"]
     ],
     "highlights": [
       [
@@ -2700,10 +2541,7 @@ const noteData = {
         "social care",
         "社会照护"
       ],
-      [
-        "capacity",
-        "重点词汇（结合本句理解）"
-      ]
+      ["capacity", "承载能力；容量"]
     ],
     "highlights": [
       [
@@ -2728,10 +2566,7 @@ const noteData = {
         "reform",
         "改革"
       ],
-      [
-        "decades",
-        "重点词汇（结合本句理解）"
-      ]
+      ["decades", "数十年"]
     ],
     "highlights": [
       [
@@ -2756,10 +2591,7 @@ const noteData = {
         "reform",
         "改革"
       ],
-      [
-        "launching",
-        "重点词汇（结合本句理解）"
-      ]
+      ["launching", "启动；推出"]
     ],
     "highlights": [
       [
@@ -2780,10 +2612,7 @@ const noteData = {
         "hospital-centric",
         "以医院为中心的"
       ],
-      [
-        "Together",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Together", "共同；一起"]
     ],
     "highlights": [
       [
@@ -2804,10 +2633,7 @@ const noteData = {
         "maximise",
         "最大化"
       ],
-      [
-        "question",
-        "重点词汇（结合本句理解）"
-      ]
+      ["question", "问题"]
     ],
     "highlights": [
       [
@@ -2824,14 +2650,8 @@ const noteData = {
     "sentence": "It is estimated, for example, that healthcare accounts for only about 20% of health outcomes.",
     "translation": "例如，据估计，医疗保健仅占健康结果的20%左右。",
     "vocabulary": [
-      [
-        "estimated",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "example",
-        "重点词汇（结合本句理解）"
-      ]
+      ["estimated", "估计的"],
+      ["example", "例子；例如"]
     ],
     "highlights": [
       [
@@ -2856,10 +2676,7 @@ const noteData = {
         "social determinant",
         "社会决定因素"
       ],
-      [
-        "important",
-        "重点词汇（结合本句理解）"
-      ]
+      ["important", "重要的"]
     ],
     "highlights": [
       [
@@ -2884,10 +2701,7 @@ const noteData = {
         "obesity",
         "肥胖"
       ],
-      [
-        "policies",
-        "重点词汇（结合本句理解）"
-      ]
+      ["policies", "政策"]
     ],
     "highlights": [
       [
@@ -2932,14 +2746,8 @@ const noteData = {
     "sentence": "What health functions should remain at the centre, and what should be given to local leaders, often responsible for services that create health, and with a much better understanding of the needs of their populations?",
     "translation": "应该继续将哪些卫生职能放在中心位置？应该向当地领导人提供什么，他们通常负责创造健康的服务，并更好地了解其人口的需求？",
     "vocabulary": [
-      [
-        "health",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "functions",
-        "重点词汇（结合本句理解）"
-      ]
+      ["health", "健康；卫生"],
+      ["functions", "职能"]
     ],
     "highlights": [
       [
@@ -2960,14 +2768,8 @@ const noteData = {
     "sentence": "Heat action plans, or HAPs, have been proliferating in India in the past few years.",
     "translation": "在过去几年中，热行动计划（ HAP ）在印度激增。",
     "vocabulary": [
-      [
-        "action",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "proliferating",
-        "重点词汇（结合本句理解）"
-      ]
+      ["action", "行动；应对措施"],
+      ["proliferating", "迅速增加；普及"]
     ],
     "highlights": [
       [
@@ -2984,14 +2786,8 @@ const noteData = {
     "sentence": "In general, an HAP spells out when and how officials should issue heat warnings and alert hospitals and other institutions.",
     "translation": "一般来说， HAP规定了官员应该何时以及如何发出热量警告，并向医院和其他机构发出警报。",
     "vocabulary": [
-      [
-        "general",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "spells",
-        "重点词汇（结合本句理解）"
-      ]
+      ["general", "总体上；一般的"],
+      ["spells", "明确说明"]
     ],
     "highlights": [
       [
@@ -3012,10 +2808,7 @@ const noteData = {
         "heatstroke",
         "中暑"
       ],
-      [
-        "instance",
-        "重点词汇（结合本句理解）"
-      ]
+      ["instance", "例子；实例"]
     ],
     "highlights": [
       [
@@ -3032,14 +2825,8 @@ const noteData = {
     "sentence": "But implementation of existing HAPs has been uneven, according to a report from the Center for Policy Research.",
     "translation": "但根据政策研究中心的一份报告，现有HAP的实施情况参差不齐。",
     "vocabulary": [
-      [
-        "implementation",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "existing",
-        "重点词汇（结合本句理解）"
-      ]
+      ["implementation", "实施；执行"],
+      ["existing", "现有的"]
     ],
     "highlights": [
       [
@@ -3060,14 +2847,8 @@ const noteData = {
     "sentence": "Many lack adequate funding, it found.",
     "translation": "它发现，许多国家缺乏足够的资金。",
     "vocabulary": [
-      [
-        "adequate",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "funding",
-        "重点词汇（结合本句理解）"
-      ]
+      ["adequate", "足够的；适当的"],
+      ["funding", "资金"]
     ],
     "highlights": [
       [
@@ -3092,10 +2873,7 @@ const noteData = {
         "threshold",
         "阈值；临界点"
       ],
-      [
-        "triggering",
-        "重点词汇（结合本句理解）"
-      ]
+      ["triggering", "触发；启动"]
     ],
     "highlights": [
       [
@@ -3112,14 +2890,8 @@ const noteData = {
     "sentence": "In some areas, high daytime temperatures alone might serve as an adequate trigger for alerts.",
     "translation": "在某些地区，仅白天高温就足以触发警报。",
     "vocabulary": [
-      [
-        "daytime",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "temperatures",
-        "重点词汇（结合本句理解）"
-      ]
+      ["daytime", "白天的"],
+      ["temperatures", "温度"]
     ],
     "highlights": [
       [
@@ -3140,10 +2912,7 @@ const noteData = {
         "humidity",
         "湿度"
       ],
-      [
-        "places",
-        "重点词汇（结合本句理解）"
-      ]
+      ["places", "地区；地方"]
     ],
     "highlights": [
       [
@@ -3168,10 +2937,7 @@ const noteData = {
         "localized",
         "地方化的；局部的"
       ],
-      [
-        "stroke",
-        "重点词汇（结合本句理解）"
-      ]
+      ["stroke", "中暑"]
     ],
     "highlights": [
       [
@@ -3196,10 +2962,7 @@ const noteData = {
         "threshold",
         "阈值；临界点"
       ],
-      [
-        "temperature",
-        "重点词汇（结合本句理解）"
-      ]
+      ["temperature", "温度"]
     ],
     "highlights": [
       [
@@ -3224,10 +2987,7 @@ const noteData = {
         "humidity",
         "湿度"
       ],
-      [
-        "effects",
-        "重点词汇（结合本句理解）"
-      ]
+      ["effects", "影响；效果"]
     ],
     "highlights": [
       [
@@ -3252,10 +3012,7 @@ const noteData = {
         "urban planner",
         "城市规划者"
       ],
-      [
-        "improve",
-        "重点词汇（结合本句理解）"
-      ]
+      ["improve", "改善；改进"]
     ],
     "highlights": [
       [
@@ -3280,10 +3037,7 @@ const noteData = {
         "vulnerability",
         "脆弱性；易受伤害性"
       ],
-      [
-        "things",
-        "重点词汇（结合本句理解）"
-      ]
+      ["things", "事项；方面"]
     ],
     "highlights": [
       [
@@ -3304,14 +3058,8 @@ const noteData = {
     "sentence": "Such mapping doesn’t need to be complex, Kotharkar says.",
     "translation": "Kotharkar说，这种绘图不需要很复杂。",
     "vocabulary": [
-      [
-        "mapping",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "complex",
-        "重点词汇（结合本句理解）"
-      ]
+      ["mapping", "绘制地图；制图"],
+      ["complex", "复杂的"]
     ],
     "highlights": [
       [
@@ -3336,10 +3084,7 @@ const noteData = {
         "parameter",
         "参数；要素"
       ],
-      [
-        "useful",
-        "重点词汇（结合本句理解）"
-      ]
+      ["useful", "有用的"]
     ],
     "highlights": [
       [
@@ -3360,10 +3105,7 @@ const noteData = {
         "bolster",
         "加强；支持"
       ],
-      [
-        "example",
-        "重点词汇（结合本句理解）"
-      ]
+      ["example", "例子；例如"]
     ],
     "highlights": [
       [
@@ -3388,10 +3130,7 @@ const noteData = {
         "vulnerability",
         "脆弱性；易受伤害性"
       ],
-      [
-        "project",
-        "重点词汇（结合本句理解）"
-      ]
+      ["project", "项目"]
     ],
     "highlights": [
       [
@@ -3416,10 +3155,7 @@ const noteData = {
         "emergency response",
         "应急响应"
       ],
-      [
-        "include",
-        "重点词汇（结合本句理解）"
-      ]
+      ["include", "包括"]
     ],
     "highlights": [
       [
@@ -3440,14 +3176,8 @@ const noteData = {
     "sentence": "In Nagpur, for example, Kotharkar’s team has been able to advise city officials about where to plant trees to provide shade.",
     "translation": "例如，在Nagpur ， Kotharkar的团队已经能够就在哪里种树提供阴凉处向市政官员提供建议。",
     "vocabulary": [
-      [
-        "example",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "advise",
-        "重点词汇（结合本句理解）"
-      ]
+      ["example", "例子；例如"],
+      ["advise", "建议；告知"]
     ],
     "highlights": [
       [
@@ -3472,10 +3202,7 @@ const noteData = {
         "retrofit",
         "改造；翻新"
       ],
-      [
-        "efforts",
-        "重点词汇（结合本句理解）"
-      ]
+      ["efforts", "努力；举措"]
     ],
     "highlights": [
       [
@@ -3496,14 +3223,8 @@ const noteData = {
     "sentence": "“Reducing deaths in an emergency is a good target to have, but it’s the lowest target,” says climate researcher Chandni Singh.",
     "translation": "气候研究员Chandni Singh说： “减少紧急情况下的死亡人数是一个很好的目标，但它是最低的目标。”",
     "vocabulary": [
-      [
-        "Reducing",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "deaths",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Reducing", "减少；降低"],
+      ["deaths", "死亡人数"]
     ],
     "highlights": [
       [
@@ -3612,10 +3333,7 @@ const noteData = {
         "desire path",
         "意愿路径；非正式小路"
       ],
-      [
-        "allowed",
-        "重点词汇（结合本句理解）"
-      ]
+      ["allowed", "允许"]
     ],
     "highlights": [
       [
@@ -3696,10 +3414,7 @@ const noteData = {
         "curated",
         "精心规划的；筛选的"
       ],
-      [
-        "highlights",
-        "重点词汇（结合本句理解）"
-      ]
+      ["highlights", "凸显；突出显示"]
     ],
     "highlights": [
       [
@@ -3748,14 +3463,8 @@ const noteData = {
     "sentence": "This trail, when Dutch colonists arrived, was widened and made into one of the main trade roads across the island, known at the time as de Heere Straat, or Gentlemen’s Street.",
     "translation": "当荷兰殖民者抵达时，这条小径被拓宽并成为岛上的主要贸易道路之一，当时被称为de Heere Straat或绅士街。",
     "vocabulary": [
-      [
-        "colonists",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "arrived",
-        "重点词汇（结合本句理解）"
-      ]
+      ["colonists", "殖民者"],
+      ["arrived", "到达"]
     ],
     "highlights": [
       [
@@ -3772,14 +3481,8 @@ const noteData = {
     "sentence": "Following the British assumption of control in New York, the street was renamed Broadway.",
     "translation": "在英国接管纽约之后，这条街改名为百老汇。",
     "vocabulary": [
-      [
-        "Following",
-        "重点词汇（结合本句理解）"
-      ],
-      [
-        "British",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Following", "在……之后；随着"],
+      ["British", "英国人；英国的"]
     ],
     "highlights": [
       [
@@ -3804,10 +3507,7 @@ const noteData = {
         "grid-based",
         "基于网格的"
       ],
-      [
-        "Notably",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Notably", "值得注意的是"]
     ],
     "highlights": [
       [
@@ -3856,10 +3556,7 @@ const noteData = {
         "shortcut",
         "捷径"
       ],
-      [
-        "Contributors",
-        "重点词汇（结合本句理解）"
-      ]
+      ["Contributors", "参与者；投稿者"]
     ],
     "highlights": [
       [

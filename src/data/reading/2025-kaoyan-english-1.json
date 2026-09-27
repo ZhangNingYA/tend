@@ -451,6 +451,7 @@
     },
     "passageFive": {
       "title": "Writing prompt · Paul’s email",
+      "kind": "writing",
       "sentences": [
         "Dear Li Ming,",
         "I was really excited to hear that you’d invite some young craftsmen to demonstrate their innovative craft-making on campus.",

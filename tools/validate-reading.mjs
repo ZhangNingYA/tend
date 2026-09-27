@@ -10,7 +10,8 @@ const filePattern = /^cet4Reading\d{6}Set\d+\.ts$/;
 const pad = (value) => String(value + 1).padStart(2, '0');
 const normalizeQuotes = (value) => value
   .replace(/[‘’]/g, "'")
-  .replace(/[“”]/g, '"');
+  .replace(/[“”]/g, '"')
+  .replace(/\s*\([^()]*[\u4e00-\u9fff][^()]*\)/g, '');
 const normalizeSentence = (value) => normalizeQuotes(value)
   .toLowerCase()
   .replace(/[^a-z0-9]+/g, ' ')
@@ -43,11 +44,19 @@ const validateCloseReading = (paper, key, sentence, closeReading, validateVocabu
   if (!closeReading.structure?.pattern?.trim()) fail(paper, `${key} 的句型为空`);
   if (!closeReading.structure?.explanation?.trim()) fail(paper, `${key} 的结构说明为空`);
   if (!Array.isArray(closeReading.vocabulary)) fail(paper, `${key} 的重点词汇不是数组`);
-  if (validateVocabulary && Array.isArray(closeReading.vocabulary)) {
+  if (Array.isArray(closeReading.vocabulary)) {
     closeReading.vocabulary.forEach((item) => {
       if (!item.term?.trim() || !item.explanation?.trim()) {
         fail(paper, `${key} 存在空的重点词汇或释义`);
-      } else if (!vocabularyTermMatches(sentence, item.term)) {
+      }
+      if (item.explanation?.includes('重点词汇（结合本句理解）')) {
+        fail(paper, `${key} 仍使用未填写的词汇占位说明：${item.term}`);
+      }
+    });
+  }
+  if (validateVocabulary && Array.isArray(closeReading.vocabulary)) {
+    closeReading.vocabulary.forEach((item) => {
+      if (item.term?.trim() && item.explanation?.trim() && !vocabularyTermMatches(sentence, item.term)) {
         fail(paper, `${key} 的重点词汇无法匹配原句：${item.term}`);
       }
     });
@@ -489,7 +498,7 @@ const blogSpecifications = [
     paper: `2025-06 CET6 Set ${set}`,
     module: path.join(projectRoot, `src/data/closeReading/2025JuneSet${set}.ts`),
     exportName: `cet6CloseReadings202506Set${set}`,
-    mdx: path.join(projectRoot, `src/content/reading/2025-06-cet6-${set}.mdx`),
+    reading: path.join(projectRoot, `src/data/reading/2025-06-cet6-reading-${set}.json`),
     semantic: true,
     vocabularyQuality: true,
   })),
@@ -601,6 +610,9 @@ for (const specification of blogSpecifications) {
     if (!expectedKeys.has(key)) fail(specification.paper, `存在未使用的精读编号 ${key}`);
   }
   for (const [key, sentence] of sentenceEntries) {
+    if (/\([^()]*[\u4e00-\u9fff][^()]*\)/.test(sentence)) {
+      fail(specification.paper, `${key} 的英文原文仍含中文夹注`);
+    }
     const closeReading = closeReadings[key];
     validateCloseReading(
       specification.paper,

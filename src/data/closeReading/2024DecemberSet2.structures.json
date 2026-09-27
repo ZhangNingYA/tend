@@ -797,7 +797,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "This Weekend's AMAZING SUPERMOON,\"one headline"
+        "text": "This Weekend's AMAZING SUPERMOON,\" one headline"
       },
       {
         "role": "predicate",
@@ -807,7 +807,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "This Weekend's AMAZING SUPERMOON,\"one headline"
+        "text": "This Weekend's AMAZING SUPERMOON,\" one headline"
       },
       {
         "role": "predicate",
@@ -821,7 +821,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "Astronomy,\"another"
+        "text": "Astronomy,\" another"
       },
       {
         "role": "predicate",
@@ -831,7 +831,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "Astronomy,\"another"
+        "text": "Astronomy,\" another"
       },
       {
         "role": "predicate",
@@ -1220,7 +1220,7 @@
       },
       {
         "role": "object",
-        "text": "why you can always see the man on the moon(or the moon rabbit, depending on your cultural preferences) even as it spins around us",
+        "text": "why you can always see the man on the moon (or the moon rabbit, depending on your cultural preferences) even as it spins around us",
         "label": "宾语从句（整体）"
       }
     ],
@@ -1235,7 +1235,7 @@
       },
       {
         "role": "object",
-        "text": "why you can always see the man on the moon(or the moon rabbit, depending on your cultural preferences) even as it spins around us",
+        "text": "why you can always see the man on the moon (or the moon rabbit, depending on your cultural preferences) even as it spins around us",
         "label": "宾语从句（整体）"
       }
     ]
@@ -1453,7 +1453,7 @@
       },
       {
         "role": "complement",
-        "text": "the closest point perige(近地点)"
+        "text": "the closest point perigee (近地点)"
       },
       {
         "role": "subject",
@@ -1465,7 +1465,7 @@
       },
       {
         "role": "complement",
-        "text": "apogee(远地点).2018's closest perigee and most distant apogee"
+        "text": "apogee (远地点). 2018's closest perigee and most distant apogee"
       },
       {
         "role": "subject",
@@ -1491,7 +1491,7 @@
       },
       {
         "role": "complement",
-        "text": "the closest point perige(近地点)"
+        "text": "the closest point perigee (近地点)"
       },
       {
         "role": "subject",
@@ -1503,7 +1503,7 @@
       },
       {
         "role": "complement",
-        "text": "apogee(远地点).2018's closest perigee and most distant apogee"
+        "text": "apogee (远地点). 2018's closest perigee and most distant apogee"
       },
       {
         "role": "subject",

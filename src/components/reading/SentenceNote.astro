@@ -26,17 +26,16 @@ const {
   experience = 'blog',
 } = Astro.props;
 const isBlogExperience = experience === 'blog';
-// Some imported CET-4 source strings contain parenthetical Chinese glosses.
-// Keep the source data intact for auditing, but show clean English in game
-// pages because the same meaning is available through the click glossary.
-const cleanGameText = (value: string) => experience === 'game'
-  ? value.replace(/\s*\([^()]*[\u4e00-\u9fff][^()]*\)/g, '')
-  : value;
+// Imported exam texts sometimes contain Chinese glosses inside the English
+// sentence. Keep those source strings available for auditing, but render a
+// consistent English-only text in both reading collections.
+const cleanReadingText = (value: string) => value
+  .replace(/\s*\([^()]*[\u4e00-\u9fff][^()]*\)/g, '');
 const cleanHighlight = <T extends { text: string }>(item: T): T => ({
   ...item,
-  text: cleanGameText(item.text),
+  text: cleanReadingText(item.text),
 });
-const sentence = sourceSentence ? cleanGameText(sourceSentence) : sourceSentence;
+const sentence = sourceSentence ? cleanReadingText(sourceSentence) : sourceSentence;
 const closeReading = sourceCloseReading
   ? {
       ...sourceCloseReading,
@@ -44,7 +43,7 @@ const closeReading = sourceCloseReading
       trunk: sourceCloseReading.trunk?.map(cleanHighlight),
       segments: sourceCloseReading.segments?.map((segment) => ({
         ...segment,
-        source: cleanGameText(segment.source),
+        source: cleanReadingText(segment.source),
       })),
     }
   : sourceCloseReading;

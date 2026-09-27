@@ -484,7 +484,7 @@
       },
       {
         "role": "object",
-        "text": "direction as they pass through the water droplets, resulting in two processes: reflction and refraction ( 折射 )"
+        "text": "direction as they pass through the water droplets, resulting in two processes: reflection and refraction ( 折射 )"
       }
     ],
     "trunk": [
@@ -498,7 +498,7 @@
       },
       {
         "role": "object",
-        "text": "direction as they pass through the water droplets, resulting in two processes: reflction and refraction ( 折射 )"
+        "text": "direction as they pass through the water droplets, resulting in two processes: reflection and refraction ( 折射 )"
       }
     ],
     "structure": {
@@ -855,7 +855,7 @@
       },
       {
         "role": "complement",
-        "text": "to make up herwork during overtime"
+        "text": "to make up her work during overtime"
       }
     ],
     "trunk": [
@@ -869,7 +869,7 @@
       },
       {
         "role": "complement",
-        "text": "to make up herwork during overtime"
+        "text": "to make up her work during overtime"
       }
     ],
     "structure": {
@@ -891,7 +891,7 @@
       },
       {
         "role": "object",
-        "text": "“I was actually working more hoursthan I probably would have needed to get the work done,”",
+        "text": "“I was actually working more hours than I probably would have needed to get the work done,”",
         "label": "直接引语（整体）"
       }
     ],
@@ -906,7 +906,7 @@
       },
       {
         "role": "object",
-        "text": "“I was actually working more hoursthan I probably would have needed to get the work done,”",
+        "text": "“I was actually working more hours than I probably would have needed to get the work done,”",
         "label": "直接引语（整体）"
       }
     ],
@@ -1344,7 +1344,7 @@
       },
       {
         "role": "predicate",
-        "text": "has atracted"
+        "text": "has attracted"
       },
       {
         "role": "object",
@@ -1358,7 +1358,7 @@
       },
       {
         "role": "predicate",
-        "text": "has atracted"
+        "text": "has attracted"
       },
       {
         "role": "object",
@@ -2309,7 +2309,7 @@
       },
       {
         "role": "object",
-        "text": "a good place to startis asking ourselves ifour meetings are even necessary in the first place",
+        "text": "a good place to start is asking ourselves if our meetings are even necessary in the first place",
         "label": "宾语从句（整体）"
       }
     ],
@@ -2324,7 +2324,7 @@
       },
       {
         "role": "object",
-        "text": "a good place to startis asking ourselves ifour meetings are even necessary in the first place",
+        "text": "a good place to start is asking ourselves if our meetings are even necessary in the first place",
         "label": "宾语从句（整体）"
       }
     ],
@@ -2444,7 +2444,7 @@
     "highlights": [
       {
         "role": "adverbial",
-        "text": "If they don't actually have some kind ofimmediate input",
+        "text": "If they don't actually have some kind of immediate input",
         "label": "状语从句（整体）"
       },
       {
@@ -2490,11 +2490,11 @@
       },
       {
         "role": "predicate",
-        "text": "meetingswould ultimately lead"
+        "text": "meetings would ultimately lead"
       },
       {
         "role": "complement",
-        "text": "to more employee engagement in the meetings theydo attend, which experts agree is a proven remedy for MRS"
+        "text": "to more employee engagement in the meetings they do attend, which experts agree is a proven remedy for MRS"
       }
     ],
     "trunk": [
@@ -2504,11 +2504,11 @@
       },
       {
         "role": "predicate",
-        "text": "meetingswould ultimately lead"
+        "text": "meetings would ultimately lead"
       },
       {
         "role": "complement",
-        "text": "to more employee engagement in the meetings theydo attend, which experts agree is a proven remedy for MRS"
+        "text": "to more employee engagement in the meetings they do attend, which experts agree is a proven remedy for MRS"
       }
     ],
     "structure": {
@@ -2996,7 +2996,7 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "Having the skills to foresee potential trapsand treat employees' endurance with care",
+        "text": "Having the skills to foresee potential traps and treat employees' endurance with care",
         "label": "主语成分（整体）"
       },
       {
@@ -3012,7 +3012,7 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "Having the skills to foresee potential trapsand treat employees' endurance with care",
+        "text": "Having the skills to foresee potential traps and treat employees' endurance with care",
         "label": "主语成分（整体）"
       },
       {
@@ -3799,11 +3799,11 @@
     "highlights": [
       {
         "role": "subject",
-        "text": "Itmay"
+        "text": "It may"
       },
       {
         "role": "predicate",
-        "text": "be betterused"
+        "text": "be better used"
       },
       {
         "role": "complement",
@@ -3813,11 +3813,11 @@
     "trunk": [
       {
         "role": "subject",
-        "text": "Itmay"
+        "text": "It may"
       },
       {
         "role": "predicate",
-        "text": "be betterused"
+        "text": "be better used"
       },
       {
         "role": "complement",
@@ -3893,7 +3893,7 @@
       },
       {
         "role": "object",
-        "text": "an element ofhumor"
+        "text": "an element of humor"
       }
     ],
     "trunk": [
@@ -3915,7 +3915,7 @@
       },
       {
         "role": "object",
-        "text": "an element ofhumor"
+        "text": "an element of humor"
       }
     ],
     "structure": {
@@ -4983,7 +4983,7 @@
       },
       {
         "role": "object",
-        "text": "that more variable input can highlight which aspects of atask are relevant and which are not",
+        "text": "that more variable input can highlight which aspects of a task are relevant and which are not",
         "label": "宾语从句（整体）"
       }
     ],
@@ -4998,7 +4998,7 @@
       },
       {
         "role": "object",
-        "text": "that more variable input can highlight which aspects of atask are relevant and which are not",
+        "text": "that more variable input can highlight which aspects of a task are relevant and which are not",
         "label": "宾语从句（整体）"
       }
     ],

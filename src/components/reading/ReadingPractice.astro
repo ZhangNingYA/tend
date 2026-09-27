@@ -13,6 +13,7 @@ interface Passage {
   questions?: readonly ReadingQuestion[];
   wordBank?: readonly { key: string; word: string }[];
   answerRange?: string;
+  kind?: 'reading' | 'writing';
   answers?: readonly {
     number: number;
     key: string;
@@ -77,7 +78,7 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
 ));
 ---
 
-{(timerVariant === 'focus' || (experience === 'game' && hasStructureModes)) && (
+{(experience === 'blog' || timerVariant === 'focus' || (experience === 'game' && hasStructureModes)) && (
   <section class="reading-guide" aria-label="精读使用说明">
     <div class="reading-guide-heading">
       <span class="reading-guide-kicker">How to read</span>
@@ -137,7 +138,7 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
   </script>
 )}
 
-<h2 id="word-bank-cloze">Word Bank Cloze</h2>
+<h2 id="word-bank-cloze">选词填空原文</h2>
 
 <h3>{cloze.title}</h3>
 
@@ -170,7 +171,7 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
   />
 ))}
 
-<h2 id="paragraph-matching">Paragraph Matching</h2>
+<h2 id="paragraph-matching">段落匹配原文</h2>
 
 <h3>{matching.title}</h3>
 
@@ -203,12 +204,14 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
   <ReadingSectionAnswers variant="matching" questions={matching.questions} />
 )}
 
-<h2 id="reading-passages">Reading Passages</h2>
+<h2 id="reading-passages">阅读文章原文</h2>
 
 {passages.map((passage, passageIndex) => (
   <>
     <h3>{passage.title}</h3>
-    {(experience === 'blog' || timerVariant === 'focus') && (
+    {passage.kind === 'writing' ? (
+      <p class="reading-material-label">写作题材料 · 本段用于阅读与表达训练</p>
+    ) : (experience === 'blog' || timerVariant === 'focus') && (
       <ReadingTimer
         timerId={`passage-${passageIndex + 1}`}
         label={passage.title}
@@ -238,6 +241,14 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
 ))}
 
 <style>
+  .reading-material-label {
+    margin: -8px 0 18px;
+    color: #3b8061;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
   .reading-guide {
     display: grid;
     gap: 12px;
@@ -376,7 +387,7 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
   }
 
   @media (max-width: 640px) {
-    .reading-guide {
+  .reading-guide {
       margin-bottom: 36px;
       padding: 16px 15px 17px;
       border-radius: 12px;

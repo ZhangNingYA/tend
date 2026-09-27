@@ -92,9 +92,9 @@ const getCourseCopy = (study) => courseCopy[study.id] ?? {
     <main class="study-index-shell">
       <header class="study-index-intro" aria-labelledby="study-hero-title">
         <div class="study-intro-copy">
-          <div class="study-hero-kicker"><span>Study / {String(studies.length).padStart(2, '0')} reading units</span><span>Personal curriculum</span></div>
-          <h1 id="study-hero-title">Make the next step <em>small enough to take.</em></h1>
-          <p class="study-index-lede">A growing set of interactive textbooks for turning difficult ideas into questions, evidence, and better explanations.</p>
+          <div class="study-hero-kicker"><span>Study / {String(studies.length).padStart(2, '0')} conversation records</span><span>Personal archive</span></div>
+          <h1 id="study-hero-title">Keep the useful conversations <em>close at hand.</em></h1>
+          <p class="study-index-lede">This space is reserved for your AI conversation records: notes, decisions, explanations, and ideas you want to revisit online.</p>
         </div>
         <div class="study-intro-index" aria-label="Study desk index">
           <span class="study-section-kicker">Desk index</span>
@@ -106,11 +106,11 @@ const getCourseCopy = (study) => courseCopy[study.id] ?? {
       <div class="study-dashboard">
         <section class="study-catalog" aria-labelledby="study-list-title">
           <div class="study-dashboard-header">
-            <div><span class="study-section-kicker">The catalogue</span><h2 id="study-list-title">Open a course</h2></div>
+            <div><span class="study-section-kicker">The archive</span><h2 id="study-list-title">AI conversation records</h2></div>
             <span class="study-dashboard-count">{String(studies.length).padStart(2, '0')} available</span>
           </div>
           <div class="study-card-list">
-            {studies.map((study, index) => {
+            {studies.length > 0 ? studies.map((study, index) => {
               const copy = getCourseCopy(study);
               return (
                 <a class:list={['study-card', index === 0 && 'study-card-featured']} href={`/study/${study.id}/`}>
@@ -127,7 +127,13 @@ const getCourseCopy = (study) => courseCopy[study.id] ?? {
                   <div class="study-card-mark" aria-hidden="true">→</div>
                 </a>
               );
-            })}
+            }) : (
+              <div class="study-empty-state">
+                <span class="study-section-kicker">Ready for your records</span>
+                <h3>还没有保存的 AI 对话</h3>
+                <p>之后可以把想长期保留的对话整理到这里，按主题、日期或项目在线浏览。</p>
+              </div>
+            )}
           </div>
         </section>
 

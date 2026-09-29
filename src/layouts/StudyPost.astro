@@ -3,8 +3,6 @@ import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseHead from '../components/BaseHead.astro';
 import BlogHeader from '../components/blog/BlogHeader.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import 'katex/dist/katex.min.css';
 import '../styles/study.css';
 
 type Props = CollectionEntry<'study'>['data'] & {
@@ -16,33 +14,15 @@ const {
   description,
   pubDate,
   updatedDate,
-  mode = 'lab',
-  subject = 'Guided study',
-  part,
-  estimatedMinutes: providedEstimatedMinutes,
+  subject = '学习记录',
+  estimatedMinutes,
   headings = [],
 } = Astro.props;
 
-const modeLabels = {
-  lab: 'Concept lab',
-  reading: 'Close reading',
-  derivation: 'Derivation notebook',
-  build: 'Build lab',
-} as const;
-
 const sections = headings.filter((heading) => heading.depth === 2);
-const estimatedMinutes = providedEstimatedMinutes ?? (part ? Math.max(35, sections.length * 10) : Math.max(10, sections.length * 3));
-const kalmanSequence = [
-  { href: '/study/kalman-filter/', title: '课程地图' },
-  { href: '/study/kalman-filter-foundations/', title: '状态、证据与概率模型' },
-  { href: '/study/kalman-filter-recursion/', title: '把递推式推导出来' },
-  { href: '/study/kalman-filter-tuning/', title: 'Q、R、P 与动态响应' },
-  { href: '/study/kalman-filter-diagnostics/', title: '创新检验与失效模式' },
-  { href: '/study/kalman-filter-implementation/', title: '从方程到可靠软件' },
-];
-const sequenceIndex = Astro.url.pathname.startsWith('/study/kalman-filter') ? (part ?? 0) : -1;
-const previousChapter = sequenceIndex > 0 ? kalmanSequence[sequenceIndex - 1] : undefined;
-const nextChapter = sequenceIndex >= 0 ? kalmanSequence[sequenceIndex + 1] : undefined;
+const displayDate = updatedDate ?? pubDate;
+const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*\/\s*/, '');
 ---
 
 <!doctype html>
@@ -50,148 +30,71 @@ const nextChapter = sequenceIndex >= 0 ? kalmanSequence[sequenceIndex + 1] : und
   <head>
     <BaseHead title={title} description={description} />
   </head>
-  <body
-    class="textbook-page"
-    data-study-page
-    data-study-course={Astro.url.pathname}
-    data-study-title={title}
-  >
+  <body class="study-page study-article-page" data-study-page data-study-course={Astro.url.pathname} data-study-title={title}>
     <BlogHeader active="study" />
 
-    <header class="textbook-cover">
-      <div class="textbook-cover-inner">
-        <a class="textbook-back" href="/study/">
-          <span aria-hidden="true">←</span> Study desk
-        </a>
-        <div class="textbook-cover-grid">
-          <div class="textbook-cover-copy">
-            <div class="textbook-overline"><span>{part ? `Chapter ${String(part).padStart(2, '0')}` : 'Course map'}</span><span>{modeLabels[mode]}</span><span>{subject}</span></div>
-            <h1>{title}</h1>
-            <p class="textbook-subtitle">{description}</p>
-            <div class="textbook-cover-actions">
-              <a class="textbook-primary-action" href={`#${sections[0]?.slug ?? ''}`}>从第一节开始 <span aria-hidden="true">↓</span></a>
-              <span class="textbook-reading-time">约 {estimatedMinutes} 分钟 · {sections.length} 个单元</span>
-            </div>
-          </div>
-        </div>
-        <div class="textbook-cover-footer">
-          <span>Published <FormattedDate date={pubDate} /></span>
-          {updatedDate && <span>Updated <FormattedDate date={updatedDate} /></span>}
-          <span>阅读时请边做推导，边完成检查。</span>
-        </div>
-      </div>
-    </header>
+    <main class="study-article-shell">
+      <div class="study-article-breadcrumb"><a href="/study/">学习记录</a><span aria-hidden="true">/</span><span>{subject}</span></div>
 
-    <main class="textbook-layout">
-      <aside class="textbook-rail" aria-label="章节导航">
-        <div class="rail-sticky">
-          <div class="rail-heading">
-            <span class="rail-heading-label"><span>Contents</span><b>{String(sections.length).padStart(2, '0')}</b></span>
-            <button
-              class="textbook-rail-toggle"
-              type="button"
-              aria-expanded="true"
-              aria-controls="study-contents-list"
-              aria-label="隐藏章节目录"
-              data-study-rail-toggle
-            >隐藏</button>
-          </div>
-          <ol id="study-contents-list">
-            {sections.map((heading, index) => (
-              <li>
-                <a href={`#${heading.slug}`} data-study-nav-link={heading.slug}>
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                  <em>{heading.text.replace(/^\d+\s*\/\s*/, '')}</em>
-                </a>
-              </li>
-            ))}
-          </ol>
+      <header class="study-article-header">
+        <span class="study-eyebrow">{subject}</span>
+        <h1>{title}</h1>
+        <p>{description}</p>
+        <div class="study-article-meta">
+          <time datetime={displayDate.toISOString()}>{formatDate(displayDate)}</time>
+          {estimatedMinutes && <span>约 {estimatedMinutes} 分钟</span>}
+          {sections.length > 0 && <span>{sections.length} 个章节</span>}
         </div>
-      </aside>
+      </header>
 
-      <article
-        class="textbook-content"
-        data-study-document
-        data-study-title={title}
-        data-study-description={description}
-      >
-        <slot />
-        {sequenceIndex >= 0 && (
-          <nav class="textbook-course-nav" aria-label="课程章节导航">
-            {previousChapter ? (
-              <a href={previousChapter.href} rel="prev"><span>← 上一章</span><strong>{previousChapter.title}</strong></a>
-            ) : <span></span>}
-            {nextChapter ? (
-              <a class="is-next" href={nextChapter.href} rel="next"><span>下一章 →</span><strong>{nextChapter.title}</strong></a>
-            ) : (
-              <a class="is-next" href="/study/kalman-filter/"><span>课程完成</span><strong>回到课程地图</strong></a>
-            )}
+      {sections.length > 0 && (
+        <details class="study-mobile-toc">
+          <summary>文章目录 <span>{sections.length} 节</span></summary>
+          <nav aria-label="文章目录">
+            <ol>
+              {sections.map((heading) => <li><a href={`#${heading.slug}`}>{sectionTitle(heading)}</a></li>)}
+            </ol>
           </nav>
-        )}
-      </article>
+        </details>
+      )}
 
+      <div class="study-article-layout">
+        {sections.length > 0 && (
+          <aside class="study-desktop-toc" aria-label="文章目录">
+            <nav>
+              <span class="study-toc-label">目录 <span>{sections.length}</span></span>
+              <ol>
+                {sections.map((heading) => (
+                  <li><a href={`#${heading.slug}`} data-study-nav-link={heading.slug}>{sectionTitle(heading)}</a></li>
+                ))}
+              </ol>
+            </nav>
+          </aside>
+        )}
+
+        <article class="study-document" data-study-document data-study-title={title} data-study-description={description}>
+          <slot />
+          <footer class="study-article-footer"><a href="/study/">← 返回全部记录</a></footer>
+        </article>
+      </div>
     </main>
 
-    <script
-      type="application/json"
-      id="study-document-meta"
-      set:html={JSON.stringify({
-        title,
-        description,
-        course: Astro.url.pathname,
-        sections: sections.map((section) => ({ id: section.slug, title: section.text })),
-      })}
-    ></script>
-
-    <script define:vars={{ sectionSlugs: sections.map((section) => section.slug) }}>
-      const headings = Array.from(document.querySelectorAll('.textbook-content h2'));
-      const navLinks = Array.from(document.querySelectorAll('[data-study-nav-link]'));
-      const layout = document.querySelector('.textbook-layout');
-      const railToggle = document.querySelector('[data-study-rail-toggle]');
-      const railStorageKey = 'study-contents-collapsed';
-
-      const setRailCollapsed = (collapsed) => {
-        if (!layout || !railToggle) return;
-        layout.classList.toggle('is-rail-collapsed', collapsed);
-        railToggle.setAttribute('aria-expanded', String(!collapsed));
-        railToggle.setAttribute('aria-label', collapsed ? '显示章节目录' : '隐藏章节目录');
-        railToggle.textContent = collapsed ? '显示' : '隐藏';
-      };
-
-      try {
-        setRailCollapsed(window.localStorage.getItem(railStorageKey) === 'true');
-      } catch {
-        setRailCollapsed(false);
-      }
-
-      railToggle?.addEventListener('click', () => {
-        const collapsed = !layout?.classList.contains('is-rail-collapsed');
-        setRailCollapsed(collapsed);
-        try {
-          window.localStorage.setItem(railStorageKey, String(collapsed));
-        } catch {
-          // The toggle remains usable when storage is unavailable.
-        }
-      });
-
-      const setCurrent = (slug) => {
-        if (!document.getElementById(slug)) return;
-        navLinks.forEach((link) => link.classList.toggle('is-current', link.dataset.studyNavLink === slug));
-      };
-
-      if ('IntersectionObserver' in window) {
+    <script>
+      const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-study-nav-link]'));
+      const headings = Array.from(document.querySelectorAll<HTMLElement>('.study-document h2'));
+      if (links.length && headings.length && 'IntersectionObserver' in window) {
         const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            const slug = entry.target.getAttribute('id');
-            setCurrent(slug);
-          });
-        }, { rootMargin: '-15% 0px -65% 0px', threshold: 0 });
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const id = entry.target.id;
+            links.forEach((link) => {
+              if (link.dataset.studyNavLink === id) link.setAttribute('aria-current', 'location');
+              else link.removeAttribute('aria-current');
+            });
+          }
+        }, { rootMargin: '-12% 0px -72% 0px' });
         headings.forEach((heading) => observer.observe(heading));
       }
-
-      navLinks.forEach((link) => link.addEventListener('click', () => setCurrent(link.dataset.studyNavLink)));
-      setCurrent(sectionSlugs[0]);
     </script>
   </body>
 </html>

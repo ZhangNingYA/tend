@@ -140,7 +140,6 @@ html { scroll-behavior: smooth; }
 }
 .button:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(23, 35, 31, .1); }
 .button-primary { color: #fff !important; background: var(--library-green); border-color: var(--library-green); }
-.button-quiet { background: rgba(255, 255, 255, .48); }
 
 .hub-visual {
   position: relative;
@@ -177,39 +176,6 @@ html { scroll-behavior: smooth; }
 .sheet-front i:nth-of-type(4) { width: 68%; }
 .sheet-front b { position: absolute; right: 25px; bottom: 25px; color: var(--library-green); font-size: 10px; letter-spacing: .16em; }
 
-.rabbit-board {
-  width: 278px;
-  height: 240px;
-  padding: 34px;
-  transform: rotate(-3deg);
-  border-radius: 32px 10px 32px 10px;
-  color: #f6f4ed;
-  background: var(--library-green);
-  box-shadow: 0 28px 60px rgba(23, 58, 51, .25);
-}
-.rabbit-board > span { color: #9ed6c0; font-size: 9px; font-weight: 750; letter-spacing: .2em; }
-.rabbit-board > strong { display: block; margin: 27px 0 35px; font-family: 'Source Serif 4 Variable', serif; font-size: 49px; font-weight: 450; }
-.rabbit-board > strong i { color: var(--library-orange); font-style: normal; }
-.rabbit-board > div { display: flex; gap: 9px; }
-.rabbit-board b { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.25); border-radius: 50%; font-size: 12px; }
-.rabbit-dot {
-  position: absolute;
-  right: 38px;
-  bottom: 30px;
-  width: 74px;
-  height: 74px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  color: #fff;
-  background: var(--library-orange);
-  border: 8px solid var(--library-paper);
-  font-family: 'Source Serif 4 Variable', serif;
-  font-size: 31px;
-  font-style: italic;
-  box-shadow: 0 8px 24px rgba(42, 38, 28, .14);
-}
-
 .hub-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -243,7 +209,6 @@ html { scroll-behavior: smooth; }
 .hub-section-heading h2 { margin: 9px 0 0; font-family: 'Source Serif 4 Variable', serif; font-size: 43px; font-weight: 520; letter-spacing: -.03em; }
 .hub-section-heading > span { color: var(--library-muted); font-size: 11px; letter-spacing: .08em; }
 .entry-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.entry-grid--lessons { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .entry-card {
   position: relative;
   min-height: 360px;
@@ -267,8 +232,6 @@ html { scroll-behavior: smooth; }
 .entry-summary { margin: 15px 0 20px; color: var(--library-muted); font-size: 12px; line-height: 1.75; }
 .entry-tags { display: flex; flex-wrap: wrap; gap: 9px 14px; margin-top: auto; padding-top: 12px; }
 .entry-tags span { display: inline-flex; align-items: center; gap: 5px; color: #52615b; font-size: 10px; }
-.entry-topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
-.entry-topics span { padding: 5px 8px; border-radius: 999px; color: #285a4f; background: #e1eee8; font-size: 9px; }
 .entry-open { position: relative; z-index: 1; margin-top: 24px; padding-top: 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--library-line); color: #1c4f44; font-size: 11px; font-weight: 720; }
 
 .library-footer {
@@ -304,7 +267,6 @@ html { scroll-behavior: smooth; }
 }
 .index-category:hover { transform: translateY(-7px); box-shadow: 0 30px 64px rgba(24, 48, 41, .14); }
 .index-category--exam { color: #eff6f2; background: var(--library-green); }
-.index-category--rabbit { color: #26342f; background: #e7ac7b; }
 .index-category-head { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; }
 .index-category-icon { width: 50px; height: 50px; display: grid; place-items: center; border: 1px solid currentColor; border-radius: 16px; opacity: .88; }
 .index-category-no { font-family: 'Source Serif 4 Variable', serif; font-size: 45px; opacity: .38; }
@@ -322,7 +284,6 @@ html { scroll-behavior: smooth; }
 @media (max-width: 900px) {
   .hub-hero { grid-template-columns: 1fr; gap: 20px; padding-top: 80px; }
   .hub-visual { min-height: 380px; }
-  .entry-grid--lessons { grid-template-columns: 1fr; }
   .index-hero { grid-template-columns: 1fr; }
   .index-hero-side { max-width: 520px; }
 }

@@ -4,11 +4,10 @@ import BaseHead from '../../components/BaseHead.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-// Keep the original diary index intact. Reading papers and individual
-// grammar lessons live behind the two collection entries instead of being
-// mixed into the timeline one by one.
+// Keep the original diary index intact. Reading papers live behind the
+// collection entry instead of being mixed into the timeline one by one.
 const posts = (await getCollection('games'))
-    .filter((post) => post.data.pageLayout !== 'reading' && post.data.pageLayout !== 'grammar')
+    .filter((post) => post.data.pageLayout !== 'reading')
     .sort((a, b) => (
         b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
         || a.id.localeCompare(b.id)

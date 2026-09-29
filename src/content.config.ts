@@ -17,21 +17,9 @@ const games = defineCollection({
         title: z.string(),
         description: z.string(),
         pubDate: z.coerce.date(),
-        pageLayout: z.enum(['experience', 'reading', 'library', 'grammar']).optional(),
-        libraryKind: z.enum(['exam-papers', 'english-rabbit']).optional(),
+        pageLayout: z.enum(['experience', 'reading', 'library']).optional(),
         answerCoverage: z.enum(['full', 'passage-only', 'none']).optional(),
         hasStructureModes: z.boolean().optional(),
-        series: z.string().optional(),
-        part: z.number().int().positive().optional(),
-        videoPart: z.number().int().positive().optional(),
-        videoDuration: z.string().optional(),
-        estimatedMinutes: z.number().int().positive().optional(),
-        sourceUrl: z.string().url().optional(),
-        topics: z.array(z.string()).optional(),
-        sections: z.array(z.object({
-            id: z.string(),
-            label: z.string(),
-        })).optional(),
     }),
 });
 

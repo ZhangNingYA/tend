@@ -471,6 +471,136 @@ for (const file of files) {
   );
 }
 
+// Validate the public Games pages as well as their data modules. The data
+// checks above cannot catch a page that points at the wrong set, omits the
+// inline glossary, or silently falls back to a non-reading Games layout.
+const gamesContentDirectory = path.join(projectRoot, 'src/content/games');
+const gamePagePattern = /^(\d{4})-(06|12)-cet4-reading-([1-3])\.mdx$/;
+const gamePageFiles = (await readdir(gamesContentDirectory))
+  .filter((file) => gamePagePattern.test(file))
+  .sort();
+const gameDataBySlug = new Map(files.map((file) => {
+  const match = file.match(/^cet4Reading(\d{4})(\d{2})Set([1-3])\.ts$/);
+  return [match ? `${match[1]}-${match[2]}-cet4-reading-${match[3]}` : file, file];
+}));
+
+const importStatements = (source) => [...source.matchAll(
+  /import\s+\{([\s\S]*?)\}\s+from\s+['"]([^'"]+)['"]/g,
+)].map((match) => ({
+  names: match[1].split(',').map((name) => name.trim()).filter(Boolean),
+  source: match[2],
+}));
+
+const importedFrom = (source, symbol) => importStatements(source)
+  .find((statement) => statement.names.includes(symbol))?.source;
+
+const resolveTypeScriptImport = (importer, importPath) => {
+  const resolved = path.resolve(path.dirname(importer), importPath);
+  return path.extname(resolved) ? resolved : `${resolved}.ts`;
+};
+
+const frontmatterValue = (frontmatter, key) => frontmatter
+  .match(new RegExp(`^${key}:\\s*['"]?([^'"\\n]+?)['"]?\\s*$`, 'm'))?.[1]?.trim();
+
+for (const file of gamePageFiles) {
+  const match = file.match(gamePagePattern);
+  if (!match) continue;
+  const [, year, month, set] = match;
+  const slug = `${year}-${month}-cet4-reading-${set}`;
+  const paper = `${slug} Games page`;
+  const pageFile = path.join(gamesContentDirectory, file);
+  const source = await readFile(pageFile, 'utf8');
+  const frontmatter = source.match(/^---\s*([\s\S]*?)\s*---/m)?.[1] ?? '';
+  const readingExport = `cet4Reading${year}${month}Set${set}`;
+  const closeReadingExport = `cet4CloseReadings${year}${month}Set${set}`;
+  const inlineGlossaryExport = `cet4InlineGlossary${year}${month}Set${set}`;
+  const expectedDataFile = path.join(dataDirectory, `${readingExport}.ts`);
+  const expectedDataName = `${readingExport}.ts`;
+
+  if (!gameDataBySlug.has(slug)) {
+    fail(paper, `缺少对应数据模块 src/data/${expectedDataName}`);
+    continue;
+  }
+  if (frontmatterValue(frontmatter, 'pageLayout') !== 'reading') {
+    fail(paper, '必须声明 pageLayout: reading，否则不会进入四级真题目录');
+  }
+
+  const answerCoverage = frontmatterValue(frontmatter, 'answerCoverage');
+  const hasStructureModes = frontmatterValue(frontmatter, 'hasStructureModes') === 'true';
+  const module = await importTypeScript(expectedDataFile);
+  const reading = module[readingExport];
+  const closeReadings = module[closeReadingExport];
+  if (!reading || !closeReadings) {
+    fail(paper, `数据模块缺少 ${readingExport} 或 ${closeReadingExport} 导出`);
+    continue;
+  }
+
+  const dataImportPath = importedFrom(source, readingExport);
+  if (!dataImportPath) {
+    fail(paper, `没有导入 ${readingExport}`);
+  } else if (resolveTypeScriptImport(pageFile, dataImportPath) !== expectedDataFile) {
+    fail(paper, `${readingExport} 没有从对应的数据模块导入`);
+  }
+  if (!source.includes(`closeReadings={${closeReadingExport}}`)) {
+    fail(paper, `没有把 ${closeReadingExport} 传给 ReadingPractice`);
+  }
+  if (!source.includes(`inlineGlossary={${inlineGlossaryExport}}`)) {
+    fail(paper, `没有把 ${inlineGlossaryExport} 传给 ReadingPractice`);
+  }
+  if (!source.includes('experience="game"')) fail(paper, 'ReadingPractice 必须声明 experience="game"');
+
+  const glossaryImportPath = importedFrom(source, inlineGlossaryExport);
+  if (!glossaryImportPath) {
+    fail(paper, `没有导入 ${inlineGlossaryExport}`);
+  } else {
+    const glossaryFile = resolveTypeScriptImport(pageFile, glossaryImportPath);
+    const glossaryExists = await access(glossaryFile).then(() => true).catch(() => false);
+    if (!glossaryExists) {
+      fail(paper, `词典模块不存在：${glossaryFile}`);
+    } else {
+      const glossaryModule = await importTypeScript(glossaryFile);
+      const glossary = glossaryModule[inlineGlossaryExport];
+      if (!glossary?.words || typeof glossary.words !== 'object') {
+        fail(paper, `${inlineGlossaryExport} 缺少 words 词典`);
+      } else {
+        Object.entries(glossary.words).forEach(([term, entry]) => {
+          if (!term.trim() || !entry?.partOfSpeech?.trim() || !entry?.meaning?.trim()) {
+            fail(paper, `${inlineGlossaryExport} 存在空的词条、词性或释义：${term}`);
+          }
+        });
+      }
+    }
+  }
+
+  const actualStructureModes = Object.values(closeReadings).some((item) => (
+    Boolean(item.trunk?.length)
+    && item.highlights.some((highlight) => highlight.label?.includes('从句'))
+  ));
+  if (actualStructureModes !== hasStructureModes) {
+    fail(paper, `hasStructureModes=${hasStructureModes} 与精读数据实际值 ${actualStructureModes} 不一致`);
+  }
+
+  const hasClozeAnswers = (reading.cloze?.answers?.length ?? 0) > 0;
+  const hasMatchingAnswers = (reading.matching?.questions?.length ?? 0) > 0;
+  const hasPassageAnswers = reading.passages?.some((passage) => (passage.questions?.length ?? 0) > 0);
+  const expectedCoverage = hasClozeAnswers && hasMatchingAnswers && hasPassageAnswers
+    ? 'full'
+    : !hasClozeAnswers && !hasMatchingAnswers && hasPassageAnswers
+      ? 'passage-only'
+      : !hasClozeAnswers && !hasMatchingAnswers && !hasPassageAnswers
+        ? 'none'
+        : undefined;
+  if (expectedCoverage && answerCoverage !== expectedCoverage) {
+    fail(paper, `answerCoverage=${answerCoverage ?? '(缺失)'}，实际应为 ${expectedCoverage}`);
+  }
+}
+
+const expectedGameSlugs = new Set(gamePageFiles.map((file) => file.replace(/\.mdx$/, '')));
+for (const slug of gameDataBySlug.keys()) {
+  if (!expectedGameSlugs.has(slug)) fail(slug, '数据模块没有对应的 Games MDX 页面');
+}
+console.log(`✓ Games CET-4 页面接线校验通过：${gamePageFiles.length} 个页面`);
+
 const blogSpecifications = [
   ...['2015-06', '2015-12'].flatMap((date) => [1, 2, 3].map((set) => ({
     paper: `${date} CET6 Set ${set}`,

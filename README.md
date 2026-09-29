@@ -51,6 +51,11 @@ src/pages/      Site routes
 src/styles/     Shared styles
 ```
 
+## CET-4 reading maintenance
+
+新增或补充四级阅读真题前，先阅读
+[CET-4 阅读真题维护说明](docs/cet4-reading-maintenance.md)。其中记录了文件命名、MDX 元数据、句子编号、精读字段、词汇点击和提交前检查要求。
+
 ## Deployment
 
 Pushes to `master` are built and deployed to GitHub Pages by

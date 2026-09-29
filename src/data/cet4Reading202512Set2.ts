@@ -1,6 +1,6 @@
 import type { CloseReading, InlineGlossary } from '../types/closeReading';
 import type { ReadingQuestion } from '../types/readingQuestion';
-import { cet4InlineGlossary202606Set2 } from './cet4InlineGlossary202606Set2';
+import { cet4CommonInlineGlossaryWords } from './cet4CommonInlineGlossary';
 import { describeReadingStructure, readingStructurePattern } from './describeReadingStructure';
 import {
   cet4ClozeExercise202512Set2,
@@ -466,7 +466,7 @@ export const cet4CloseReadings202512Set2 = closeReadings satisfies Record<string
 
 export const cet4InlineGlossary202512Set2: InlineGlossary = {
   words: {
-    ...cet4InlineGlossary202606Set2.words,
+    ...cet4CommonInlineGlossaryWords,
     inspire: { partOfSpeech: 'v', meaning: '激励；鼓舞；启发' },
     move: { partOfSpeech: 'v', meaning: '使感动；使行动；移动' },
     foot: { partOfSpeech: 'n', meaning: '脚；足部' },

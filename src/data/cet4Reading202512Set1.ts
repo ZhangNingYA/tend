@@ -1,6 +1,6 @@
 import type { CloseReading, InlineGlossary } from '../types/closeReading';
 import type { ReadingQuestion } from '../types/readingQuestion';
-import { cet4InlineGlossary202606Set2 } from './cet4InlineGlossary202606Set2';
+import { cet4CommonInlineGlossaryWords } from './cet4CommonInlineGlossary';
 import { describeReadingStructure } from './describeReadingStructure';
 import {
   cet4ClozeExercise202512Set1,
@@ -702,7 +702,7 @@ export const cet4CloseReadings202512Set1 = allCloseReadings satisfies Record<str
 
 export const cet4InlineGlossary202512Set1: InlineGlossary = {
   words: {
-    ...cet4InlineGlossary202606Set2.words,
+    ...cet4CommonInlineGlossaryWords,
     choice: { partOfSpeech: 'n', meaning: '选择；选项' },
     decision: { partOfSpeech: 'n', meaning: '决定；决策' },
     confused: { partOfSpeech: 'adj', meaning: '困惑的' },

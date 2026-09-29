@@ -1,6 +1,6 @@
 import type { CloseReading, InlineGlossary } from '../types/closeReading';
 import type { ReadingQuestion } from '../types/readingQuestion';
-import { cet4InlineGlossary202606Set2 } from './cet4InlineGlossary202606Set2';
+import { cet4CommonInlineGlossaryWords } from './cet4CommonInlineGlossary';
 import { describeReadingStructure, readingStructurePattern } from './describeReadingStructure';
 import {
   cet4ClozeExercise202512Set3,
@@ -457,7 +457,7 @@ export const cet4CloseReadings202512Set3 = closeReadings satisfies Record<string
 
 export const cet4InlineGlossary202512Set3: InlineGlossary = {
   words: {
-    ...cet4InlineGlossary202606Set2.words,
+    ...cet4CommonInlineGlossaryWords,
     annual: { partOfSpeech: 'adj', meaning: '每年的；一年一度的' },
     honor: { partOfSpeech: 'v / n', meaning: '表彰；给予荣誉；荣誉' },
     achievement: { partOfSpeech: 'n', meaning: '成就；成绩' },

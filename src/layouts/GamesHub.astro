@@ -4,10 +4,9 @@ import {
   ArrowLeft,
   ArrowUpRight,
   CheckCircle2,
-  FileQuestion,
+  Clock3,
   Languages,
   Layers3,
-  Timer,
 } from 'lucide-astro';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/source-serif-4';
@@ -20,21 +19,47 @@ type Props = {
 };
 
 const { title, description } = Astro.props;
-const allGames = await getCollection('games');
-const entries = allGames
-  .filter((post) => post.data.pageLayout === 'reading')
-  .sort((a, b) => b.id.localeCompare(a.id));
-const answerEntries = entries.filter((post) => post.data.answerCoverage && post.data.answerCoverage !== 'none');
 
 const getPaperMeta = (id: string) => {
   const match = id.match(/^(\d{4})-(\d{2})-cet4-reading-(\d+)$/);
-  if (!match) return { session: 'CET-4', set: 'Reading' };
+  if (!match) {
+    return { year: 0, month: 0, set: 0, session: '其他真题' };
+  }
+
+  const [, year, month, set] = match;
   return {
-    session: `${match[1]} 年 ${Number(match[2])} 月`,
-    set: `第 ${match[3]} 套`,
+    year: Number(year),
+    month: Number(month),
+    set: Number(set),
+    session: `${year} 年 ${Number(month)} 月`,
   };
 };
 
+const papers = (await getCollection('games'))
+  .filter((post) => post.data.pageLayout === 'reading')
+  .map((post) => ({ post, meta: getPaperMeta(post.id) }))
+  .sort((a, b) => (
+    b.meta.year - a.meta.year
+    || b.meta.month - a.meta.month
+    || a.meta.set - b.meta.set
+  ));
+
+const sessionMap = new Map<string, typeof papers>();
+papers.forEach((paper) => {
+  const group = sessionMap.get(paper.meta.session) ?? [];
+  group.push(paper);
+  sessionMap.set(paper.meta.session, group);
+});
+const sessions = Array.from(sessionMap, ([label, entries]) => ({ label, entries }));
+
+const answerEntries = papers.filter(({ post }) => post.data.answerCoverage && post.data.answerCoverage !== 'none');
+const structureEntries = papers.filter(({ post }) => post.data.hasStructureModes);
+
+const getCoverageLabel = (coverage: 'full' | 'passage-only' | 'none' | undefined) => {
+  if (coverage === 'full') return '完整答案';
+  if (coverage === 'passage-only') return '仔细阅读答案';
+  return '暂未附答案';
+};
 ---
 
 <!doctype html>
@@ -43,90 +68,94 @@ const getPaperMeta = (id: string) => {
     <BaseHead {title} {description} />
   </head>
   <body class="games-hub-page">
-    <div class="library-ambient" aria-hidden="true"><span></span><span></span><span></span></div>
+    <a class="skip-link" href="#paper-list">跳到真题列表</a>
 
-    <header class="library-topbar">
-      <a class="library-brand" href="/games/">
+    <header class="library-header">
+      <a class="library-brand" href="/games/" aria-label="返回 Games">
         <span class="library-brand-mark">T</span>
-        <span><strong>Tend Study</strong><small>Learning archive</small></span>
+        <span><strong>四级阅读</strong><small>Tend Study</small></span>
       </a>
       <nav aria-label="页面导航">
-        <a href="/games/"><ArrowLeft size={16} aria-hidden="true" />资料库</a>
+        <a href="/games/"><ArrowLeft size={15} aria-hidden="true" />返回 Games</a>
         <a href="/">首页</a>
       </nav>
     </header>
 
-    <main class="hub-shell">
-      <section class="hub-hero">
-        <div class="hub-copy">
-          <p class="hub-kicker">EXAM READING LAB</p>
-          <h1>真题，拿来<em>读透</em></h1>
-          <p class="hub-description">{description}</p>
-          <div class="hub-actions">
-            <a class="button button-primary" href="#library-entries">开始学习 <ArrowUpRight size={17} aria-hidden="true" /></a>
+    <main class="library-shell">
+      <section class="library-hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">CET-4 · READING ARCHIVE</p>
+          <h1 id="page-title">把四级阅读，<br /><em>一篇篇读懂。</em></h1>
+          <p class="hero-description">{description}</p>
+          <a class="hero-link" href="#paper-list">
+            选择一套开始 <ArrowUpRight size={16} aria-hidden="true" />
+          </a>
+        </div>
+
+        <aside class="study-guide" aria-labelledby="guide-title">
+          <p class="eyebrow">A QUIET ROUTINE</p>
+          <h2 id="guide-title">一次练习，分三步。</h2>
+          <ol>
+            <li><span>01</span><div><strong>先限时完成</strong><small>保留真实做题节奏</small></div></li>
+            <li><span>02</span><div><strong>再核对答案</strong><small>找到判断失误的位置</small></div></li>
+            <li><span>03</span><div><strong>最后逐句精读</strong><small>读懂词义与句子结构</small></div></li>
+          </ol>
+        </aside>
+      </section>
+
+      <dl class="library-summary" aria-label="资料概况">
+        <div><dt>{String(papers.length).padStart(2, '0')}</dt><dd>套阅读真题</dd></div>
+        <div><dt>{answerEntries.length}</dt><dd>套附答案</dd></div>
+        <div><dt>{structureEntries.length}</dt><dd>套含结构双模式</dd></div>
+      </dl>
+
+      <section class="paper-archive" id="paper-list" aria-labelledby="archive-title">
+        <header class="archive-heading">
+          <div>
+            <p class="eyebrow">PRACTICE PAPERS</p>
+            <h2 id="archive-title">选择一套真题</h2>
           </div>
-        </div>
-
-        <div class="hub-visual" aria-hidden="true">
-          <span class="visual-orbit orbit-a"></span><span class="visual-orbit orbit-b"></span>
-          <div class="exam-sheet sheet-back"></div>
-          <div class="exam-sheet sheet-front">
-            <span>READING</span><strong>CET-4</strong>
-            <i></i><i></i><i></i><i></i>
-            <b>ABCD</b>
-          </div>
-        </div>
-      </section>
-
-      <section class="hub-stats" aria-label="资料概况">
-        <div><strong>{String(entries.length).padStart(2, '0')}</strong><span>套阅读真题</span></div>
-        <div><strong>03</strong><span>种阅读题型</span></div>
-        <div><strong>{answerEntries.length}/{entries.length}</strong><span>套含答案核对</span></div>
-      </section>
-
-      <section class="hub-intro-card">
-        <div class="intro-icon"><FileQuestion size={24} /></div>
-        <div>
-          <p>HOW TO USE</p>
-          <h2>先通读，再按页面范围精读</h2>
-          <span>每套都会标明当前整理范围，并提供计时、逐句翻译、词义和句子结构；答案与结构双模式按页面实际标注为准。</span>
-        </div>
-      </section>
-
-      <section class="hub-entries" id="library-entries">
-        <header class="hub-section-heading">
-          <div><p>COLLECTION</p><h2>阅读真题</h2></div>
-          <span>{entries.length} entries · 持续整理</span>
+          <p>从新到旧排列，每套都可计时并逐句精读。</p>
         </header>
 
-        <div class="entry-grid">
-          {entries.map((post, index) => {
-            const paper = getPaperMeta(post.id);
-            const number = String(index + 1).padStart(2, '0');
-            return (
-              <a class="entry-card" href={`/games/${post.id}/`}>
-                <div class="entry-card-top">
-                  <span class="entry-number">{number}</span>
-                  <span class="entry-status"><CheckCircle2 size={14} aria-hidden="true" /> 已整理</span>
-                </div>
-                <p class="entry-overline">{paper.session} · {paper.set}</p>
-                <h3>{paper.session} 四级阅读 {paper.set}</h3>
-                <p class="entry-summary">{post.data.description}</p>
-                <div class="entry-tags">
-                  <span><Timer size={14} />计时</span>
-                  <span><Languages size={14} />逐句精读</span>
-                  {post.data.answerCoverage === 'full' && <span><CheckCircle2 size={14} />答案核对</span>}
-                  {post.data.answerCoverage === 'passage-only' && <span><CheckCircle2 size={14} />仔细阅读答案</span>}
-                  {post.data.hasStructureModes && <span><Layers3 size={14} />结构双模式</span>}
-                </div>
-                <div class="entry-open"><span>进入练习</span><ArrowUpRight size={18} aria-hidden="true" /></div>
-              </a>
-            );
-          })}
+        <div class="session-list">
+          {sessions.map((session) => (
+            <section class="session-group" aria-labelledby={`session-${session.entries[0].meta.year}-${session.entries[0].meta.month}`}>
+              <header class="session-heading">
+                <h3 id={`session-${session.entries[0].meta.year}-${session.entries[0].meta.month}`}>{session.label}</h3>
+                <span>{session.entries.length} 套</span>
+              </header>
+
+              <div class="paper-grid">
+                {session.entries.map(({ post, meta }) => (
+                  <a class="paper-card" href={`/games/${post.id}/`}>
+                    <div class="paper-card-top">
+                      <span>SET {String(meta.set).padStart(2, '0')}</span>
+                      <span class={post.data.answerCoverage && post.data.answerCoverage !== 'none' ? 'coverage' : 'coverage coverage--muted'}>
+                        {getCoverageLabel(post.data.answerCoverage)}
+                      </span>
+                    </div>
+                    <h4>第 {meta.set} 套阅读</h4>
+                    <p>{post.data.description}</p>
+                    <ul class="paper-features" aria-label="练习功能">
+                      <li><Clock3 size={14} aria-hidden="true" />计时练习</li>
+                      <li><Languages size={14} aria-hidden="true" />逐句精读</li>
+                      {post.data.hasStructureModes && <li><Layers3 size={14} aria-hidden="true" />结构双模式</li>}
+                      {post.data.answerCoverage === 'full' && <li><CheckCircle2 size={14} aria-hidden="true" />答案核对</li>}
+                    </ul>
+                    <span class="paper-open">打开练习 <ArrowUpRight size={16} aria-hidden="true" /></span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
       </section>
     </main>
 
-    <footer class="library-footer"><span>Tend Study Archive</span><span>Built for deliberate practice · {new Date().getFullYear()}</span></footer>
+    <footer class="library-footer">
+      <span>Tend Study · CET-4 Reading</span>
+      <span>{papers.length} papers · {new Date().getFullYear()}</span>
+    </footer>
   </body>
 </html>

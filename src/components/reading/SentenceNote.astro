@@ -248,13 +248,13 @@ const glossaryMatches = (): Array<{
   explanation: string;
   partOfSpeech: string;
 }> => {
-  if (!sentence || !closeReading || !effectiveInlineGlossary) return [];
+  if (!sentence || !effectiveInlineGlossary || (isBlogExperience && !closeReading)) return [];
 
   const normalizedSentence = normalizeForMatch(sentence).toLowerCase();
   const sentenceWords = wordTokens(sentence);
   const candidates: GlossaryMatch[][] = [];
   const vocabulary = [
-    ...closeReading.vocabulary.map((item) => ({ ...item, allowFlexibleMatch: true })),
+    ...(closeReading?.vocabulary ?? []).map((item) => ({ ...item, allowFlexibleMatch: true })),
     // Shared phrases come from the page-level glossary. Allow ordinary
     // inflection and template matching here as well, so entries such as
     // “come out of” can match “comes out of”, and “bring ... back to” can
@@ -576,14 +576,17 @@ const glossaryMatches = (): Array<{
     )))
     .flatMap((token) => {
       const entry = inlineGlossaryEntry(token.text);
-      if (!entry) return [];
+      if (!entry && experience !== 'game') return [];
       return [{
         start: token.start,
         end: token.end,
         term: token.raw,
-        explanation: entry.meaning,
-        partOfSpeech: partOfSpeechLabel(entry.partOfSpeech),
-        priority: 0,
+        explanation: entry?.meaning ?? '本句暂未提供词典释义，请结合下方精读理解。',
+        partOfSpeech: entry ? partOfSpeechLabel(entry.partOfSpeech) : '词汇',
+        // Keep curated glossary entries ahead of fallback words when ranges
+        // overlap. Game pages intentionally make every word discoverable so
+        // a missing dictionary entry never makes part of a sentence dead text.
+        priority: entry ? 0 : -100,
       }];
     });
 

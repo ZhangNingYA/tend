@@ -1,0 +1,23 @@
+---
+title: '2025-06 Reading Practice · CET-4 Set 1'
+description: '2025 年 6 月大学英语四级第 1 套阅读练习，包含选词填空、段落匹配、仔细阅读、参考答案与逐段精读。'
+pubDate: '2026-09-30'
+pageLayout: 'reading'
+answerCoverage: 'full'
+hasStructureModes: false
+---
+
+import ReadingPractice from '../../components/reading/ReadingPractice.astro';
+import {
+  cet4CloseReadings202506Set1,
+  cet4InlineGlossary202506Set1,
+  cet4Reading202506Set1,
+} from '../../data/cet4Reading202506Set1';
+
+<ReadingPractice
+  {...cet4Reading202506Set1}
+  closeReadings={cet4CloseReadings202506Set1}
+  inlineGlossary={cet4InlineGlossary202506Set1}
+  experience="game"
+  timerVariant="focus"
+/>

@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
+import { ArrowLeft, ArrowUpRight, BookOpen } from 'lucide-astro';
 import BaseHead from '../components/BaseHead.astro';
 import BlogHeader from '../components/blog/BlogHeader.astro';
 import '../styles/study.css';
@@ -37,13 +38,15 @@ const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*
       <div class="study-article-breadcrumb"><a href="/study/">学习记录</a><span aria-hidden="true">/</span><span>{subject}</span></div>
 
       <header class="study-article-header">
-        <span class="study-eyebrow">{subject}</span>
-        <h1>{title}</h1>
-        <p>{description}</p>
-        <div class="study-article-meta">
-          <time datetime={displayDate.toISOString()}>{formatDate(displayDate)}</time>
-          {estimatedMinutes && <span>约 {estimatedMinutes} 分钟</span>}
-          {sections.length > 0 && <span>{sections.length} 个章节</span>}
+        <div class="study-article-header-inner">
+          <span class="study-article-kicker"><BookOpen size={16} stroke-width={1.8} /> {subject}</span>
+          <h1>{title}</h1>
+          <p>{description}</p>
+          <div class="study-article-meta">
+            <time datetime={displayDate.toISOString()}>{formatDate(displayDate)}</time>
+            {estimatedMinutes && <span>约 {estimatedMinutes} 分钟</span>}
+            {sections.length > 0 && <span>{sections.length} 个章节</span>}
+          </div>
         </div>
       </header>
 
@@ -74,7 +77,7 @@ const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*
 
         <article class="study-document" data-study-document data-study-title={title} data-study-description={description}>
           <slot />
-          <footer class="study-article-footer"><a href="/study/">← 返回全部记录</a></footer>
+        <footer class="study-article-footer"><a href="/study/"><ArrowLeft size={16} stroke-width={1.8} /> 返回全部记录 <ArrowUpRight size={14} stroke-width={1.8} /></a></footer>
         </article>
       </div>
     </main>

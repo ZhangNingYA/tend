@@ -1,5 +1,5 @@
 ---
-import { ArrowUpRight, BookOpenText, Search } from 'lucide-astro';
+import { ArrowLeft, ArrowUpRight } from 'lucide-astro';
 import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import '../styles/games-library.css';
@@ -13,10 +13,15 @@ const { title, description } = Astro.props;
 
 const getPaperMeta = (id: string) => {
   const match = id.match(/^(\d{4})-(\d{2})-cet4-reading-(\d+)$/);
-  if (!match) return { year: 0, month: 0, set: 0, level: 'CET-4' };
+  if (!match) return { year: 0, month: 0, set: 0, session: '其他' };
 
   const [, year, month, set] = match;
-  return { year: Number(year), month: Number(month), set: Number(set), level: 'CET-4' };
+  return {
+    year: Number(year),
+    month: Number(month),
+    set: Number(set),
+    session: `${year} 年 ${Number(month)} 月`,
+  };
 };
 
 const papers = (await getCollection('games'))
@@ -27,105 +32,77 @@ const papers = (await getCollection('games'))
     || b.meta.month - a.meta.month
     || a.meta.set - b.meta.set
   ));
+
+const sessionMap = new Map<string, typeof papers>();
+papers.forEach((paper) => {
+  const group = sessionMap.get(paper.meta.session) ?? [];
+  group.push(paper);
+  sessionMap.set(paper.meta.session, group);
+});
+const sessions = Array.from(sessionMap, ([label, entries]) => ({ label, entries }));
+
+const getCoverageLabel = (coverage: 'full' | 'passage-only' | 'none' | undefined) => {
+  if (coverage === 'full') return '有答案';
+  if (coverage === 'passage-only') return '部分答案';
+  return '';
+};
 ---
 
 <!doctype html>
 <html lang="zh-CN">
   <head>
-    <BaseHead title="CET Reading · 四级阅读" description={description} />
+    <BaseHead {title} {description} />
   </head>
-  <body class="games-hub-page" id="top">
-    <a class="skip-link" href="#library">跳转到阅读题库</a>
+  <body class="games-hub-page">
+    <a class="skip-link" href="#paper-list">跳到列表</a>
 
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="brand" href="/games/" aria-label="CET Reading 首页">
-          <span class="brand-mark" aria-hidden="true"><BookOpenText size={21} stroke-width={1.7} /></span>
-          <span class="brand-name">CET<span>READING</span></span>
-        </a>
-      </div>
+    <header class="library-header">
+      <a class="library-brand" href="/games/" aria-label="阅读练习首页">
+        <span class="library-brand-mark" aria-hidden="true">阅</span>
+        <strong>阅读练习</strong>
+      </a>
+      <nav aria-label="页面导航">
+        <a href="/"><ArrowLeft size={15} aria-hidden="true" />首页</a>
+      </nav>
     </header>
 
-    <main>
-      <section class="library-section container" id="library" aria-labelledby="library-title">
-        <div class="section-heading">
-          <h1 id="library-title">阅读题库</h1>
-        </div>
+    <main class="library-shell">
+      <header class="library-intro">
+        <span class="eyebrow">四级</span>
+        <h1 id="page-title">阅读</h1>
+      </header>
 
-        <div class="library-toolbar">
-          <label class="paper-search">
-            <Search size={16} stroke-width={1.6} aria-hidden="true" />
-            <span class="sr-only">搜索文章标题或年份</span>
-            <input id="paper-search" type="search" placeholder="搜索标题或年份" autocomplete="off" />
-          </label>
-        </div>
+      <section class="paper-archive" id="paper-list" aria-labelledby="archive-title">
+        <header class="archive-heading">
+          <h2 id="archive-title">选择一套</h2>
+          <span>{papers.length} 套</span>
+        </header>
 
-        <div class="library-content">
-          <div class="library-results" id="library-results">
-            <div class="library-status">
-              <p id="status">选择一篇文章，开始阅读。</p>
-              <span class="result-count" id="paper-count">共 {papers.length} 篇</span>
-            </div>
+        <div class="session-list">
+          {sessions.map((session) => (
+            <section class="session-group" aria-labelledby={`session-${session.entries[0].meta.year}-${session.entries[0].meta.month}`}>
+              <header class="session-heading">
+                <h3 id={`session-${session.entries[0].meta.year}-${session.entries[0].meta.month}`}>{session.label}</h3>
+                <span>{session.entries.length} 套</span>
+              </header>
 
-            <div class="paper-grid" id="papers">
-              {papers.map(({ post, meta }) => (
-                <a
-                  class="paper-card"
-                  href={`/games/${post.id}/`}
-                  data-paper-search={`${post.data.title} ${meta.year} ${meta.month} ${meta.set}`}
-                >
-                  <div class="paper-card-top">
-                    <span class="paper-level">四级 <small>{meta.level}</small></span>
-                    <ArrowUpRight class="paper-arrow" size={18} stroke-width={1.6} aria-hidden="true" />
-                  </div>
-                  <h2>{post.data.title.replace(/\s*·\s*CET-4 Set \d+$/i, '')}</h2>
-                  <div class="paper-card-bottom">
-                    <span>{meta.year} · {String(meta.month).padStart(2, '0')} · 第 {meta.set} 套</span>
-                    <span class="paper-type">阅读练习</span>
-                  </div>
-                </a>
-              ))}
-            </div>
-            <p class="empty-state" id="empty-state" hidden>暂时没有匹配的文章。</p>
-          </div>
+              <div class="paper-grid">
+                {session.entries.map(({ post, meta }) => {
+                  const coverage = getCoverageLabel(post.data.answerCoverage);
+                  return (
+                    <a class="paper-card" href={`/games/${post.id}/`} aria-label={`${session.label} 第 ${meta.set} 套`}>
+                      <span class="paper-number">{String(meta.set).padStart(2, '0')}</span>
+                      <span class="paper-title">第 {meta.set} 套</span>
+                      {coverage && <span class="paper-status">{coverage}</span>}
+                      <ArrowUpRight class="paper-arrow" size={17} stroke-width={1.7} aria-hidden="true" />
+                    </a>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
         </div>
       </section>
     </main>
-
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <div>
-          <p class="footer-brand">CET READING</p>
-          <p>把每一句，读成自己的积累。</p>
-        </div>
-        <div class="footer-right">
-          <span>专注英语四级阅读</span>
-          <a href="#top">回到顶部 <span aria-hidden="true">↑</span></a>
-        </div>
-      </div>
-    </footer>
-
-    <script>
-      const search = document.querySelector<HTMLInputElement>('#paper-search');
-      const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-paper-search]'));
-      const count = document.querySelector<HTMLElement>('#paper-count');
-      const empty = document.querySelector<HTMLElement>('#empty-state');
-      const status = document.querySelector<HTMLElement>('#status');
-
-      const filterPapers = () => {
-        const query = search?.value.trim().toLowerCase() ?? '';
-        let visible = 0;
-        cards.forEach((card) => {
-          const matches = !query || card.dataset.paperSearch?.toLowerCase().includes(query);
-          card.hidden = !matches;
-          if (matches) visible += 1;
-        });
-        if (count) count.textContent = `共 ${visible} 篇`;
-        if (empty) empty.hidden = visible > 0;
-        if (status) status.textContent = query ? `找到 ${visible} 篇文章。` : '选择一篇文章，开始阅读。';
-      };
-
-      search?.addEventListener('input', filterPapers);
-    </script>
   </body>
 </html>

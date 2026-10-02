@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
-import { ArrowLeft, ArrowUpRight, BookOpen } from 'lucide-astro';
+import { ArrowLeft, ArrowUpRight } from 'lucide-astro';
 import BaseHead from '../components/BaseHead.astro';
 import BlogHeader from '../components/blog/BlogHeader.astro';
 import '../styles/study.css';
@@ -39,7 +39,7 @@ const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*
 
       <header class="study-article-header">
         <div class="study-article-header-inner">
-          <span class="study-article-kicker"><BookOpen size={16} stroke-width={1.8} /> {subject}</span>
+          <span class="study-article-kicker">学习札记 <span aria-hidden="true">·</span> {subject}</span>
           <h1>{title}</h1>
           <p>{description}</p>
           <div class="study-article-meta">

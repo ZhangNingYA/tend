@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { ArrowUpRight, BookOpen, Clock3, LibraryBig } from 'lucide-astro';
+import { ArrowUpRight } from 'lucide-astro';
 import BaseHead from '../../components/BaseHead.astro';
 import BlogHeader from '../../components/blog/BlogHeader.astro';
 import '../../styles/study.css';
@@ -24,21 +24,21 @@ const latestDate = latestStudy ? latestStudy.data.updatedDate ?? latestStudy.dat
     <main class="study-index">
       <section class="study-index-hero" aria-labelledby="study-index-title">
         <div class="study-hero-copy">
-          <span class="study-kicker"><BookOpen size={15} stroke-width={1.8} /> TEND / STUDY</span>
+          <span class="study-kicker"><span class="study-kicker-mark" aria-hidden="true">学</span>学习札记</span>
           <h1 id="study-index-title">把学到的东西，<em>整理成下一步。</em></h1>
           <p>给有用的对话、学习笔记和实践路线一个安静的落点。下次回来时，从这里继续。</p>
           <div class="study-hero-meta" aria-label="学习记录概览">
-            <span><LibraryBig size={15} stroke-width={1.8} /> {studies.length} 条记录</span>
-            <span><Clock3 size={15} stroke-width={1.8} /> 按最近更新排列</span>
+            <span>共 {studies.length} 条记录</span>
+            <span>按最近更新排列</span>
           </div>
         </div>
 
         {latestStudy && latestDate ? (
           <a class="study-feature" href={`/study/${latestStudy.id}/`}>
-            <span class="study-feature-label">最近更新</span>
+            <span class="study-feature-label">最近整理</span>
             <strong>{latestStudy.data.title}</strong>
             <span class="study-feature-meta">{formatDate(latestDate)} · {latestStudy.data.subject ?? '学习记录'}</span>
-            <span class="study-feature-link">打开记录 <ArrowUpRight size={17} stroke-width={1.8} aria-hidden="true" /></span>
+            <span class="study-feature-link">阅读全文 <ArrowUpRight size={17} stroke-width={1.8} aria-hidden="true" /></span>
           </a>
         ) : (
           <div class="study-feature study-feature-empty">
@@ -51,8 +51,8 @@ const latestDate = latestStudy ? latestStudy.data.updatedDate ?? latestStudy.dat
       <section class="study-index-section" aria-labelledby="study-list-title">
         <div class="study-section-heading">
           <div>
-            <span class="study-section-label">Library</span>
-            <h2 id="study-list-title">近期记录</h2>
+            <span class="study-section-label">记录目录</span>
+            <h2 id="study-list-title">近期整理</h2>
           </div>
           <span class="study-section-count">{studies.length} 条</span>
         </div>

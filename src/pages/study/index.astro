@@ -9,8 +9,6 @@ const studies = (await getCollection('study')).sort(
   (a, b) => (b.data.updatedDate ?? b.data.pubDate).valueOf() - (a.data.updatedDate ?? a.data.pubDate).valueOf(),
 );
 const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
-const latestStudy = studies[0];
-const latestDate = latestStudy ? latestStudy.data.updatedDate ?? latestStudy.data.pubDate : null;
 ---
 
 <!doctype html>
@@ -22,37 +20,20 @@ const latestDate = latestStudy ? latestStudy.data.updatedDate ?? latestStudy.dat
     <BlogHeader active="study" />
 
     <main class="study-index">
-      <section class="study-index-hero" aria-labelledby="study-index-title">
-        <div class="study-hero-copy">
+      <header class="study-index-header">
+        <div class="study-index-header-top">
           <span class="study-kicker"><span class="study-kicker-mark" aria-hidden="true">学</span>学习札记</span>
-          <h1 id="study-index-title">把学到的东西，<em>整理成下一步。</em></h1>
-          <p>给有用的对话、学习笔记和实践路线一个安静的落点。下次回来时，从这里继续。</p>
-          <div class="study-hero-meta" aria-label="学习记录概览">
-            <span>共 {studies.length} 条记录</span>
-            <span>按最近更新排列</span>
-          </div>
+          <span class="study-section-count">共 {studies.length} 条</span>
         </div>
-
-        {latestStudy && latestDate ? (
-          <a class="study-feature" href={`/study/${latestStudy.id}/`}>
-            <span class="study-feature-label">最近整理</span>
-            <strong>{latestStudy.data.title}</strong>
-            <span class="study-feature-meta">{formatDate(latestDate)} · {latestStudy.data.subject ?? '学习记录'}</span>
-            <span class="study-feature-link">阅读全文 <ArrowUpRight size={17} stroke-width={1.8} aria-hidden="true" /></span>
-          </a>
-        ) : (
-          <div class="study-feature study-feature-empty">
-            <span class="study-feature-label">从这里开始</span>
-            <strong>下一条学习记录，会出现在这里。</strong>
-          </div>
-        )}
-      </section>
+        <h1 id="study-index-title">把学到的东西，整理成下一步。</h1>
+        <p>记录有用的对话、学习笔记与实践路线，方便下次回来继续。</p>
+      </header>
 
       <section class="study-index-section" aria-labelledby="study-list-title">
         <div class="study-section-heading">
           <div>
             <span class="study-section-label">记录目录</span>
-            <h2 id="study-list-title">近期整理</h2>
+            <h2 id="study-list-title">最近更新</h2>
           </div>
           <span class="study-section-count">{studies.length} 条</span>
         </div>

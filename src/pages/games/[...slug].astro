@@ -53,11 +53,11 @@ const { Content } = await render(post);
 	<ReadingPost
 		{...post.data}
 		archiveHref="/games/exam-papers/"
-		archiveLabel="真题 / CET-4 Reading"
-		allLabel="返回真题目录"
+		archiveLabel="阅读"
+		allLabel="目录"
 		markReadingNav={false}
 		showHeader={false}
-		metaDescription={post.data.description || '大学英语四级阅读练习，包含选词填空、段落匹配、阅读文章、逐句翻译与句子结构精读。'}
+		metaDescription={post.data.description || '大学英语四级阅读练习。'}
 		{previous}
 		{next}
 	>

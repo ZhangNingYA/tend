@@ -1,5 +1,4 @@
 ---
-import { BookOpenText } from 'lucide-astro';
 import SentenceNote from './SentenceNote.astro';
 import ReadingQuestions from './ReadingQuestions.astro';
 import ReadingSectionAnswers from './ReadingSectionAnswers.astro';
@@ -78,28 +77,13 @@ const hasStructureModes = Object.values(closeReadings ?? {}).some((item) => (
 ));
 ---
 
-{(experience === 'blog' || timerVariant === 'focus' || (experience === 'game' && hasStructureModes)) && (
-  <section class="reading-guide" aria-label="精读使用说明">
-    <div class="reading-guide-heading">
-      <span class="reading-guide-kicker">How to read</span>
-      <strong>本页使用说明</strong>
+{experience === 'game' && hasStructureModes && (
+  <section class="reading-structure-mode reading-guide-compact" data-structure-mode-control>
+    <span class="reading-structure-mode-label">句子结构</span>
+    <div class="reading-structure-mode-options" role="group" aria-label="句子结构显示范围">
+      <button type="button" data-structure-mode-option="main" aria-pressed="true">主句</button>
+      <button type="button" data-structure-mode-option="all" aria-pressed="false">主句＋从句</button>
     </div>
-    <p>先独立通读英文，再按需要展开提示：点击句末的书本图标查看翻译、重点词汇和句子结构；点击英文词或短语查看本句释义。计时器只记录首次通读用时，不是官方考试限时。</p>
-    <div class="reading-guide-items" aria-label="精读操作提示">
-      <span><i class="guide-icon guide-book" aria-hidden="true"><BookOpenText size={12} stroke-width={1.8} /></i>书本图标：展开精读</span>
-      <span><i class="guide-icon guide-word" aria-hidden="true">Aa</i>英文词语：点击查看释义</span>
-      <span><i class="guide-icon guide-clock" aria-hidden="true">◷</i>计时器：记录首读</span>
-    </div>
-    {experience === 'game' && hasStructureModes && (
-      <div class="reading-structure-mode" data-structure-mode-control>
-        <span class="reading-structure-mode-label">句子成分</span>
-        <div class="reading-structure-mode-options" role="group" aria-label="句子成分标记模式">
-          <button type="button" data-structure-mode-option="main" aria-pressed="true">仅标记主句</button>
-          <button type="button" data-structure-mode-option="all" aria-pressed="false">主句＋从句</button>
-        </div>
-        <span class="reading-structure-mode-hint">打开书本后，可切换原句颜色和结构分解的范围。</span>
-      </div>
-    )}
   </section>
 )}
 

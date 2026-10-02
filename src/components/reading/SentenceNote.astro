@@ -581,7 +581,7 @@ const glossaryMatches = (): Array<{
         start: token.start,
         end: token.end,
         term: token.raw,
-        explanation: entry?.meaning ?? '本句暂未提供词典释义，请结合下方精读理解。',
+        explanation: entry?.meaning ?? '本句暂未提供词典释义，请结合下方内容理解。',
         partOfSpeech: entry ? partOfSpeechLabel(entry.partOfSpeech) : '词汇',
         // Keep curated glossary entries ahead of fallback words when ranges
         // overlap. Game pages intentionally make every word discoverable so
@@ -992,8 +992,8 @@ const structureExplanation = reportedQuoteAnalysis?.explanation
           type="button"
           aria-expanded="false"
           aria-controls={detailId}
-          aria-label="展开精读"
-          title="精读"
+          aria-label="展开"
+          title="展开"
           data-close-reading-toggle
         >
           <BookOpenText size={14} stroke-width={1.8} aria-hidden="true" />
@@ -1155,7 +1155,7 @@ const structureExplanation = reportedQuoteAnalysis?.explanation
       const open = !note.hasAttribute('data-open');
       note.toggleAttribute('data-open', open);
       toggle.setAttribute('aria-expanded', String(open));
-      toggle.setAttribute('aria-label', open ? '收起精读' : '展开精读');
+      toggle.setAttribute('aria-label', open ? '收起' : '展开');
       detail.setAttribute('aria-hidden', String(!open));
       return;
     }

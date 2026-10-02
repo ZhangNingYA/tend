@@ -190,3 +190,160 @@ html { scroll-behavior: smooth; }
   .study-record,
   .study-record-arrow { transition: none; }
 }
+
+/* Quiet paper library for Chinese study notes. */
+.study-page {
+  background: #f5f2ec;
+  color: #292724;
+}
+
+.study-page .site-header {
+  border-bottom-color: rgba(41, 39, 36, 0.1);
+  background: rgba(245, 242, 236, 0.94);
+}
+
+.study-page .brand { color: #292724; }
+.study-page .site-nav a { color: #77716a; }
+.study-page .site-nav a:hover,
+.study-page .site-nav a[aria-current='page'] { color: #292724; }
+
+.study-index {
+  width: min(1160px, calc(100% - 64px));
+  padding: clamp(62px, 10vh, 104px) 0 100px;
+}
+
+.study-library { min-height: calc(100vh - 166px); }
+
+.study-library-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #ded9d0;
+}
+
+.study-library-heading h1 {
+  margin: 0;
+  color: #292724;
+  font-family: var(--study-serif);
+  font-size: clamp(2.2rem, 4vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.study-library-heading > span {
+  color: #a09a91;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.62rem;
+}
+
+.study-record-list { margin-top: 14px; }
+.study-record-list li { border-bottom-color: #ded9d0; }
+
+.study-record {
+  grid-template-columns: minmax(0, 1fr) 24px;
+  gap: 20px;
+  padding: 24px 20px;
+  background: rgba(251, 250, 247, 0.56);
+  transition: background-color 180ms ease, padding-inline 180ms ease;
+}
+
+.study-record:hover {
+  padding-inline: 25px;
+  color: #292724;
+  background: #fbfaf7;
+}
+
+.study-record-body { min-width: 0; }
+.study-record-meta { color: #a09a91; font-size: 0.62rem; }
+.study-record-meta span { color: #b95f44; font-weight: 500; }
+.study-record h3 {
+  margin-top: 12px;
+  color: #292724;
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  font-weight: 500;
+  line-height: 1.55;
+}
+.study-record-arrow { margin-top: 20px; color: #a09a91; }
+.study-record:hover .study-record-arrow { color: #d97757; }
+.study-empty { color: #77716a; }
+
+.study-article-shell {
+  width: min(1160px, calc(100% - 64px));
+  padding: 50px 0 90px;
+}
+
+.study-reader-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 21px;
+}
+
+.study-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #292724;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.study-back:hover { color: #b95f44; }
+.study-reader-topline > span {
+  color: #a09a91;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+}
+
+.study-reader-panel {
+  padding: 31px clamp(20px, 5vw, 64px) 52px;
+  border: 1px solid #ded9d0;
+  background: #fbfaf7;
+}
+
+.study-article-header {
+  margin: 0;
+  padding: 0 0 29px;
+  border-top: 0;
+  border-bottom: 1px solid #e7e1da;
+}
+
+.study-article-header-inner { max-width: 800px; }
+.study-article-meta { margin: 0 0 9px; gap: 8px 16px; color: #a09a91; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 0.58rem; }
+.study-article-meta span:first-child { color: #b95f44; }
+.study-article-header h1 {
+  margin: 0;
+  color: #292724;
+  font-size: clamp(1.7rem, 3.4vw, 2.55rem);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.study-article-header p { max-width: 700px; margin-top: 10px; color: #77716a; font-size: 0.78rem; line-height: 1.8; }
+
+.study-mobile-toc,
+.study-desktop-toc { display: none; }
+.study-article-layout { display: block; padding-top: 3px; }
+.study-document { max-width: 780px; margin: 0 auto; color: #3e3a36; font-size: 1.02rem; line-height: 2; }
+.study-document h2 { margin-top: 2.7rem; padding-top: 1.6rem; border-top-color: #e7e1da; font-size: clamp(1.3rem, 2.4vw, 1.7rem); font-weight: 500; }
+.study-document h3 { font-size: 1.06rem; font-weight: 600; }
+.study-document p { margin-bottom: 1.2rem; }
+.study-document blockquote { border-left-color: #d97757; color: #625b54; }
+.study-article-footer { display: none; }
+
+@media (max-width: 650px) {
+  .study-index,
+  .study-article-shell { width: min(100% - 36px, 1160px); }
+  .study-index { padding-top: 52px; }
+  .study-library-heading h1 { font-size: 2.15rem; }
+  .study-record { padding: 20px 14px; }
+  .study-record:hover { padding-inline: 18px; }
+  .study-article-shell { padding-top: 38px; }
+  .study-reader-panel { padding-inline: 17px; }
+  .study-article-header h1 { font-size: 1.78rem; }
+  .study-document { font-size: 1rem; }
+}

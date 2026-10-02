@@ -19,31 +19,18 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
   <body class="study-page">
     <BlogHeader active="study" />
 
-    <main class="study-index">
-      <header class="study-index-header">
-        <div class="study-index-header-top">
-          <span class="study-kicker"><span class="study-kicker-mark" aria-hidden="true">学</span>学习札记</span>
-          <span class="study-section-count">共 {studies.length} 条</span>
-        </div>
-        <h1 id="study-index-title">把学到的东西，整理成下一步。</h1>
-        <p>记录有用的对话、学习笔记与实践路线，方便下次回来继续。</p>
-      </header>
-
-      <section class="study-index-section" aria-labelledby="study-list-title">
-        <div class="study-section-heading">
-          <div>
-            <span class="study-section-label">记录目录</span>
-            <h2 id="study-list-title">最近更新</h2>
-          </div>
-          <span class="study-section-count">{studies.length} 条</span>
+    <main class="study-index" id="top">
+      <section class="study-library" aria-labelledby="study-list-title">
+        <div class="study-library-heading">
+          <h1 id="study-list-title">学习记录</h1>
+          <span>{studies.length} 篇</span>
         </div>
 
         {studies.length ? (
-          <ol class="study-record-list">
-            {studies.map((study, index) => (
+          <ol class="study-record-list" aria-label="学习记录列表">
+            {studies.map((study) => (
               <li>
                 <a class="study-record" href={`/study/${study.id}/`}>
-                  <span class="study-record-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                   <div class="study-record-body">
                     <div class="study-record-meta">
                       <span>{study.data.subject ?? '学习记录'}</span>
@@ -51,16 +38,15 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
                     </div>
                     <div>
                       <h3>{study.data.title}</h3>
-                      <p>{study.data.description}</p>
                     </div>
                   </div>
-                  <span class="study-record-arrow" aria-hidden="true"><ArrowUpRight size={20} stroke-width={1.7} /></span>
+                  <span class="study-record-arrow" aria-hidden="true"><ArrowUpRight size={18} stroke-width={1.7} /></span>
                 </a>
               </li>
             ))}
           </ol>
         ) : (
-          <p class="study-empty">这里还没有记录。新的 AI 对话和学习笔记会从这里开始。</p>
+          <p class="study-empty">暂无记录。</p>
         )}
       </section>
     </main>

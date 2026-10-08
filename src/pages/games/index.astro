@@ -499,7 +499,7 @@ const hoursTotal = daysPassed * 24;
         position: absolute;
         top: 50%; left: 50%;
         transform: translate(-50%, -50%);
-        width: 64%;
+        width: 72%;
         aspect-ratio: 1;
         border-radius: 50%;
         background:
@@ -527,29 +527,24 @@ const hoursTotal = daysPassed * 24;
         font-weight: 500;
     }
     .orbit-number {
-        display: flex; align-items: baseline; justify-content: center;
-        max-width: 100%;
-        gap: clamp(4px, 1vw, 8px);
-        line-height: 1;
+        display: flex; align-items: baseline; justify-content: center; gap: 8px;
+        width: 100%;
+        line-height: 0.85;
         white-space: nowrap;
     }
     .ndigits {
         font-family: 'Fraunces', serif;
-        font-style: normal; font-weight: 900;
-        font-size: clamp(3rem, 12vw, 8rem);
-        font-variant-numeric: tabular-nums;
-        line-height: 1;
-        white-space: nowrap;
-        padding-right: 0.06em;
+        font-style: italic; font-weight: 900;
+        font-size: clamp(4rem, 13vw, 8.5rem);
         background: linear-gradient(135deg, #d4467b 0%, #e89855 50%, #a87bd6 100%);
         -webkit-background-clip: text; background-clip: text;
         -webkit-text-fill-color: transparent;
-        letter-spacing: -0.03em;
+        letter-spacing: -0.05em;
     }
     .nunit {
         font-family: 'Fraunces', serif;
         font-weight: 300;
-        font-size: clamp(1.2rem, 3.5vw, 2rem);
+        font-size: clamp(1.4rem, 4vw, 2.4rem);
         color: rgba(58,36,71,0.5);
     }
     .orbit-since {

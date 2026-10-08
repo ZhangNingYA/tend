@@ -166,7 +166,7 @@ const hoursTotal = daysPassed * 24;
                             <span class="eb-count">{String(posts.length).padStart(2, '0')}</span>
                         </div>
                         <h2 class="tl-title">
-                            一些<br/>日常与心动
+                            一些<em>琐碎</em>的<br/>日常与心动
                         </h2>
                         <p class="tl-lead">挑一段往下读，时间会替我们记住。</p>
                     </header>
@@ -749,7 +749,8 @@ const hoursTotal = daysPassed * 24;
         margin-bottom: 14px;
     }
     .tl-title em {
-        font-style: italic;
+        font-style: normal;
+        letter-spacing: 0;
         font-weight: 700;
         background: linear-gradient(135deg, #d4467b, #e89855, #a87bd6);
         -webkit-background-clip: text; background-clip: text;

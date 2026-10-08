@@ -166,7 +166,7 @@ const hoursTotal = daysPassed * 24;
                             <span class="eb-count">{String(posts.length).padStart(2, '0')}</span>
                         </div>
                         <h2 class="tl-title">
-                            一些<em>琐碎</em>的<br/>日常与心动
+                            一些<br/>日常与心动
                         </h2>
                         <p class="tl-lead">挑一段往下读，时间会替我们记住。</p>
                     </header>
@@ -527,22 +527,29 @@ const hoursTotal = daysPassed * 24;
         font-weight: 500;
     }
     .orbit-number {
-        display: flex; align-items: baseline; gap: 8px;
-        line-height: 0.85;
+        display: flex; align-items: baseline; justify-content: center;
+        max-width: 100%;
+        gap: clamp(4px, 1vw, 8px);
+        line-height: 1;
+        white-space: nowrap;
     }
     .ndigits {
         font-family: 'Fraunces', serif;
-        font-style: italic; font-weight: 900;
-        font-size: clamp(4.5rem, 14vw, 9rem);
+        font-style: normal; font-weight: 900;
+        font-size: clamp(3rem, 12vw, 8rem);
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+        white-space: nowrap;
+        padding-right: 0.06em;
         background: linear-gradient(135deg, #d4467b 0%, #e89855 50%, #a87bd6 100%);
         -webkit-background-clip: text; background-clip: text;
         -webkit-text-fill-color: transparent;
-        letter-spacing: -0.05em;
+        letter-spacing: -0.03em;
     }
     .nunit {
         font-family: 'Fraunces', serif;
         font-weight: 300;
-        font-size: clamp(1.4rem, 4vw, 2.4rem);
+        font-size: clamp(1.2rem, 3.5vw, 2rem);
         color: rgba(58,36,71,0.5);
     }
     .orbit-since {

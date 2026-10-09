@@ -69,7 +69,10 @@ const hoursTotal = daysPassed * 24;
             <!-- ============== HERO · ORBITAL DIAL =============== -->
             <section class="orbit">
                 <p class="orbit-greeting">
-                    <span class="hand">致最甜的</span> <em>🐷</em>
+                    <span class="greeting-rule" aria-hidden="true"></span>
+                    <span class="hand">致最甜的</span>
+                    <span class="greeting-emoji" aria-hidden="true">💌</span>
+                    <span class="greeting-rule" aria-hidden="true"></span>
                 </p>
 
                 <div class="orbit-stage">
@@ -424,6 +427,10 @@ const hoursTotal = daysPassed * 24;
     }
 
     .orbit-greeting {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
         font-family: 'Fraunces', serif;
         font-style: italic; font-weight: 400;
         font-size: clamp(1rem, 2vw, 1.25rem);
@@ -433,11 +440,32 @@ const hoursTotal = daysPassed * 24;
         animation: fadeUp 0.9s 0.1s ease-out both;
     }
     .orbit-greeting .hand {
-        background: linear-gradient(90deg, transparent, rgba(255,212,180,0.35), transparent);
-        padding: 2px 10px;
-        border-radius: 100px;
+        padding: 0 2px;
+        white-space: nowrap;
     }
-    .orbit-greeting em { font-style: normal; font-size: 1.4em; vertical-align: -0.1em; }
+    .greeting-rule {
+        width: clamp(28px, 7vw, 58px);
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(212,70,123,0.42));
+    }
+    .greeting-rule:last-child {
+        background: linear-gradient(90deg, rgba(212,70,123,0.42), transparent);
+    }
+    .greeting-emoji {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.8em;
+        height: 1.8em;
+        border: 1px solid rgba(212,70,123,0.18);
+        border-radius: 50%;
+        background: rgba(255,255,255,0.38);
+        box-shadow: 0 5px 14px rgba(145,77,105,0.1);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8em;
+        font-style: normal;
+        transform: rotate(6deg);
+    }
 
     @keyframes fadeUp {
         from { opacity: 0; transform: translateY(16px); }

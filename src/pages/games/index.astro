@@ -13,12 +13,7 @@ const posts = (await getCollection('games'))
         || a.id.localeCompare(b.id)
     ));
 
-const togetherDate = new Date(2025, 9, 18);
-const now = new Date();
-const daysPassed = Math.floor((now.getTime() - togetherDate.getTime()) / 864e5);
-const weeks = Math.floor(daysPassed / 7);
-const months = Math.floor(daysPassed / 30);
-const hoursTotal = daysPassed * 24;
+const togetherDate = '2025-10-18';
 ---
 
 <!doctype html>
@@ -115,7 +110,7 @@ const hoursTotal = daysPassed * 24;
                     <div class="orbit-center">
                         <div class="orbit-eyebrow">DAYS TOGETHER</div>
                         <div class="orbit-number">
-                            <span class="ndigits">{daysPassed}</span>
+                            <span class="ndigits" data-days-together>—</span>
                             <span class="nunit">天</span>
                         </div>
                         <div class="orbit-since">since 2025·10·18</div>
@@ -143,10 +138,10 @@ const hoursTotal = daysPassed * 24;
 
                 <!-- Stat chips -->
                 <div class="chips">
-                    <div class="chip"><span class="chip-num">{months}</span><span class="chip-key">月</span></div>
-                    <div class="chip"><span class="chip-num">{weeks}</span><span class="chip-key">周</span></div>
-                    <div class="chip"><span class="chip-num">{daysPassed}</span><span class="chip-key">天</span></div>
-                    <div class="chip"><span class="chip-num">{hoursTotal.toLocaleString()}</span><span class="chip-key">小时</span></div>
+                    <div class="chip"><span class="chip-num" data-months-together>—</span><span class="chip-key">月</span></div>
+                    <div class="chip"><span class="chip-num" data-weeks-together>—</span><span class="chip-key">周</span></div>
+                    <div class="chip"><span class="chip-num" data-days-together>—</span><span class="chip-key">天</span></div>
+                    <div class="chip"><span class="chip-num" data-hours-together>—</span><span class="chip-key">小时</span></div>
                 </div>
             </section>
 
@@ -209,7 +204,7 @@ const hoursTotal = daysPassed * 24;
             </section>
         </main>
 
-        <script define:vars={{ togetherTime: togetherDate.getTime() }}>
+        <script define:vars={{ togetherDate }}>
             // -------- today's date in chip --------
             const today = new Date();
             const dateEl = document.getElementById('todayDate');
@@ -220,18 +215,41 @@ const hoursTotal = daysPassed * 24;
                 dateEl.textContent = `${y}.${m}.${d}`;
             }
 
+            // -------- elapsed time counters --------
+            // Calculate in the visitor's browser so static builds never go stale.
+            const togetherTime = new Date(`${togetherDate}T00:00:00`).getTime();
+            const daysNodes = document.querySelectorAll('[data-days-together]');
+            const monthsNode = document.querySelector('[data-months-together]');
+            const weeksNode = document.querySelector('[data-weeks-together]');
+            const hoursNode = document.querySelector('[data-hours-together]');
+            const updateCounters = () => {
+                const now = new Date();
+                const startDate = new Date(`${togetherDate}T00:00:00`);
+                const todayDay = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+                const startDay = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+                const daysPassed = Math.max(0, Math.floor((todayDay - startDay) / 864e5));
+                daysNodes.forEach((node) => { node.textContent = String(daysPassed); });
+                if (monthsNode) monthsNode.textContent = String(Math.floor(daysPassed / 30));
+                if (weeksNode) weeksNode.textContent = String(Math.floor(daysPassed / 7));
+                if (hoursNode) hoursNode.textContent = (daysPassed * 24).toLocaleString();
+            };
+            updateCounters();
+
             // -------- live ticker --------
             const ticker = document.getElementById('liveTicker');
             const updateTicker = () => {
                 if (!ticker) return;
-                const totalSec = Math.floor((Date.now() - togetherTime) / 1000);
+                const totalSec = Math.max(0, Math.floor((Date.now() - togetherTime) / 1000));
                 const h = Math.floor(totalSec / 3600);
                 const m = Math.floor((totalSec % 3600) / 60);
                 const s = totalSec % 60;
                 ticker.textContent = `${h.toLocaleString()}h ${String(m).padStart(2, '0')}m ${String(s).padStart(2, '0')}s`;
             };
             updateTicker();
-            setInterval(updateTicker, 1000);
+            window.setInterval(() => {
+                updateCounters();
+                updateTicker();
+            }, 1000);
 
             // -------- intersection-observer reveal --------
             const targets = document.querySelectorAll('[data-reveal]');

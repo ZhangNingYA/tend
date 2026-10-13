@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
 
+const compactStyles = '.postcard-copy h1{font-size:clamp(2.1rem,3.2vw,2.85rem);letter-spacing:-.04em;line-height:1.08}.postcard-copy h1 em{font-style:normal}.postcard-stage{min-height:550px;padding:46px 0 38px}.postcard-object-wrap{min-height:430px}.postcard-current-note p{font-size:1rem}.postcard-current-note em{font-size:.78rem}@media(max-width:820px){.postcard-copy h1{font-size:clamp(2.25rem,10vw,3.2rem)}.postcard-stage{min-height:0;padding:42px 0 28px}.postcard-object-wrap{min-height:390px}}';
+
 const tideNotes = [
   { time: '08:06', title: '海风先到了', text: '我们还没有见面，海风已经替我把想念吹到你身边。', mark: 'LOW TIDE' },
   { time: '12:30', title: '把午后折起来', text: '在礁石边坐了很久，听浪花一遍遍说同一句温柔的话。', mark: 'RISING' },
@@ -29,7 +31,7 @@ export default function PostcardMemory() {
 
   return (
     <main className="postcard-page">
-      <style>{styles}</style>
+      <style>{styles + compactStyles}</style>
       <div className="postcard-bubbles" aria-hidden="true"><i /><i /><i /></div>
       <div className="postcard-workbench">
         <nav className="postcard-nav"><a href="/games/">← 记忆索引</a><span>FIELD NOTE / 01</span><b>● LIVE TIDE</b></nav>
@@ -46,7 +48,7 @@ export default function PostcardMemory() {
             <div className={'postcard-object' + (dragging ? ' is-dragging' : '')} style={{ transform: 'translate3d(' + position.x + 'px,' + position.y + 'px,0) rotate(' + (position.x / 18) + 'deg)' }} onPointerDown={startDrag} onPointerMove={drag} onPointerUp={() => setDragging(false)} onPointerCancel={() => setDragging(false)}>
               <div className={'postcard-card' + (flipped ? ' is-flipped' : '')}>
                 <div className="postcard-face postcard-front">
-                  <div className="postcard-photo"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=88" alt="海边蓝色潮汐" /><span>COASTAL<br />MEMORY</span></div>
+                  <div className="postcard-photo"><img src="/images/games/postcard-coast.jpg" alt="海边蓝色潮汐" /><span>COASTAL<br />MEMORY</span></div>
                   <div className="postcard-front-meta"><span>青岛</span><span>06 / 08 / 26</span></div>
                   <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={() => setFlipped(true)}>读背面 <b>↻</b></button>
                 </div>

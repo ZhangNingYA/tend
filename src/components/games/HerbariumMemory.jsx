@@ -1,10 +1,12 @@
 import { useState } from 'react';
 
+const compactStyles = '.herbarium-header h1{font-size:clamp(1.95rem,3.4vw,2.75rem);letter-spacing:-.04em}.herbarium-record-title h2{font-size:1.45rem}.herbarium-ribbon p{font-size:1rem}.herbarium-desk{padding-bottom:58px}.herbarium-header{padding:58px 0 40px}@media(max-width:620px){.herbarium-header h1{font-size:2.25rem}.herbarium-ribbon p{font-size:.95rem}}';
+
 const specimens = [
-  { no: '01', title: '一片薄荷叶', latin: 'Mentha memory', date: '06.14 / 雨后', image: 'https://images.unsplash.com/photo-1628556270448-4d4c6e1f6d31?auto=format&fit=crop&w=1000&q=86', color: '#86a889', text: '你说它像夏天刚开门时的味道。我们把叶脉压平，连同那句“明天见”一起保存。', place: '厨房窗台', tag: '气味' },
-  { no: '02', title: '两张车票', latin: 'Via together', date: '06.21 / 黄昏', image: 'https://images.unsplash.com/photo-1518391846015-55a9cc003b25?auto=format&fit=crop&w=1000&q=86', color: '#ce9d72', text: '去同一个地方，路上就不算漫长。票根边缘有一点被雨打湿的皱褶，像一条小小的河。', place: '南站 3F', tag: '旅程' },
-  { no: '03', title: '一朵小雏菊', latin: 'Bellis for you', date: '06.28 / 晴', image: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1000&q=86', color: '#d7ae74', text: '被夹进书里以后，连沉默也变得温柔。它替我们看完了那一页，也替我记住你的笑。', place: '旧书店', tag: '花期' },
-  { no: '04', title: '一张便签', latin: 'Cura quotidiana', date: '07.03 / 清晨', image: 'https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&w=1000&q=86', color: '#b7776a', text: '“记得吃饭。”是最朴素的情话。纸背面还有一枚很轻的指纹，像有人刚刚离开。', place: '书页 208', tag: '日常' },
+  { no: '01', title: '一片薄荷叶', latin: 'Mentha memory', date: '06.14 / 雨后', image: '/images/games/herbarium-green.jpg', color: '#86a889', text: '你说它像夏天刚开门时的味道。我们把叶脉压平，连同那句“明天见”一起保存。', place: '厨房窗台', tag: '气味' },
+  { no: '02', title: '两张车票', latin: 'Via together', date: '06.21 / 黄昏', image: '/images/games/herbarium-green.jpg', color: '#ce9d72', text: '去同一个地方，路上就不算漫长。票根边缘有一点被雨打湿的皱褶，像一条小小的河。', place: '南站 3F', tag: '旅程' },
+  { no: '03', title: '一朵小雏菊', latin: 'Bellis for you', date: '06.28 / 晴', image: '/images/games/herbarium-daisy.jpg', color: '#d7ae74', text: '被夹进书里以后，连沉默也变得温柔。它替我们看完了那一页，也替我记住你的笑。', place: '旧书店', tag: '花期' },
+  { no: '04', title: '一张便签', latin: 'Cura quotidiana', date: '07.03 / 清晨', image: '/images/games/herbarium-desk.jpg', color: '#b7776a', text: '“记得吃饭。”是最朴素的情话。纸背面还有一枚很轻的指纹，像有人刚刚离开。', place: '书页 208', tag: '日常' },
 ];
 
 export default function HerbariumMemory() {
@@ -12,7 +14,7 @@ export default function HerbariumMemory() {
   const [open, setOpen] = useState(false);
   const item = specimens[selected];
 
-  return <main className="herbarium-page" style={{ '--specimen-color': item.color }}><style>{styles}</style><div className="herbarium-bg" aria-hidden="true" />
+  return <main className="herbarium-page" style={{ '--specimen-color': item.color }}><style>{styles + compactStyles}</style><div className="herbarium-bg" aria-hidden="true" />
     <div className="herbarium-shell">
       <nav className="herbarium-nav"><a href="/games/">← 记忆索引</a><span>FIELD NOTES / 04</span><b>ARCHIVE OPEN</b></nav>
       <header className="herbarium-header"><div><p className="herbarium-kicker">A POCKET HERBARIUM</p><h1>把喜欢，<span>存成证据。</span></h1></div><p className="herbarium-intro">四件被认真对待的小东西。它们不说话，却把那一天的温度留了下来。</p></header>

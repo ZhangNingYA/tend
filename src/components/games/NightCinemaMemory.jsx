@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 
+const compactStyles = '.cinema-film-head h1{font-size:clamp(1.7rem,2.8vw,2.4rem);letter-spacing:-.03em}.cinema-letter blockquote{font-size:clamp(1.35rem,2.4vw,2.1rem);letter-spacing:-.03em}.cinema-subtitle strong{font-size:clamp(1.15rem,2.2vw,2rem)}.cinema-console{padding:62px 0 58px}.cinema-film-section{padding-bottom:55px}.cinema-frame{grid-template-columns:12px minmax(0,1fr) 125px 12px}.cinema-frame-info{grid-column:3;grid-row:1}.cinema-frame img{grid-column:2;grid-row:1}@media(max-width:780px){.cinema-film-head h1{font-size:1.8rem}.cinema-letter blockquote{font-size:1.55rem}.cinema-console{padding:48px 0 42px}.cinema-projector-area{min-height:220px}.cinema-projector-note{top:184px}.cinema-frame{grid-template-columns:12px minmax(0,1fr) 110px 12px}}';
+
 const frames = [
-  { time: '19:40', label: '灯光暗下来', image: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1400&q=88', line: '电影还没开始，我们已经在黑暗里交换了今天的第一句悄悄话。', cue: 'FADE IN / 01' },
-  { time: '21:18', label: '片尾字幕', image: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1400&q=88', line: '没有人先起身。片尾曲轻轻响着，像把这一晚再延长五分钟。', cue: 'SOFT CUT / 02' },
-  { time: '22:06', label: '夜路回家', image: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1400&q=88', line: '街角的灯一盏一盏亮起来，我们把电影里的对白说给彼此听。', cue: 'END CREDITS / 03' },
+  { time: '19:40', label: '灯光暗下来', image: '/images/games/cinema-opening.jpg', line: '电影还没开始，我们已经在黑暗里交换了今天的第一句悄悄话。', cue: 'FADE IN / 01' },
+  { time: '21:18', label: '片尾字幕', image: '/images/games/cinema-ending.jpg', line: '没有人先起身。片尾曲轻轻响着，像把这一晚再延长五分钟。', cue: 'SOFT CUT / 02' },
+  { time: '22:06', label: '夜路回家', image: '/images/games/cinema-night.jpg', line: '街角的灯一盏一盏亮起来，我们把电影里的对白说给彼此听。', cue: 'END CREDITS / 03' },
 ];
 
 export default function NightCinemaMemory() {
@@ -16,7 +18,7 @@ export default function NightCinemaMemory() {
     return () => window.clearInterval(timer);
   }, [playing]);
 
-  return <main className="cinema-page"><style>{styles}</style><div className="cinema-grain" aria-hidden="true" /><div className="cinema-shell">
+  return <main className="cinema-page"><style>{styles + compactStyles}</style><div className="cinema-grain" aria-hidden="true" /><div className="cinema-shell">
     <nav className="cinema-nav"><a href="/games/">↖ 回到记录</a><span>SCREEN 02 / ONE NIGHT</span><b>{playing ? '● PROJECTOR ON' : '○ PAUSED'}</b></nav>
     <section className="cinema-console">
       <div className="cinema-projector-area"><div className={'cinema-beam' + (playing ? ' is-on' : '')} aria-hidden="true" />

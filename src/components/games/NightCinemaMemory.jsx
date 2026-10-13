@@ -1,0 +1,35 @@
+import { useEffect } from 'react';
+
+const scenes = [
+  ['19:40', '灯光暗下来', '电影还没开始，我们已经在黑暗里交换了今天的第一句悄悄话。'],
+  ['21:18', '片尾字幕', '没有人先起身。片尾曲轻轻响着，像把这一晚再延长五分钟。'],
+  ['22:06', '夜路回家', '街角的灯一盏一盏亮起来，我们把电影里的对白说给彼此听。'],
+];
+
+export default function NightCinemaMemory() {
+  useEffect(() => {
+    const nodes = document.querySelectorAll('[data-cinema-reveal]');
+    if (!('IntersectionObserver' in window)) return nodes.forEach((node) => node.classList.add('is-visible'));
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    }), { threshold: 0.14 });
+    nodes.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <main className="cinema-page"><style>{styles}</style><div className="cinema-noise" aria-hidden="true" /><div className="cinema-shell">
+      <nav className="cinema-nav" data-cinema-reveal><a href="/games/">↖ 回到记录</a><span>SCREEN 02 / ONE NIGHT</span></nav>
+      <section className="cinema-hero" data-cinema-reveal><div><p className="cinema-kicker">A FILM WE KEPT</p><p className="cinema-date">2026 · 06 · 21 / SATURDAY</p><h1>今晚，<br /><em>只看你。</em></h1><p className="cinema-lead">一场电影的长度，刚好够我们把一周的疲惫放下，重新坐回彼此身边。</p><span className="cinema-ticket">ADMIT ONE <b>♥</b> TO A SOFT NIGHT</span></div><figure className="cinema-poster"><img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1200&q=86" alt="电影院里的银幕光线" /><figcaption><span>FILM NO. 07</span><strong>after the rain</strong></figcaption></figure></section>
+      <section className="cinema-strip" data-cinema-reveal><span>DIRECTED BY</span><strong>两个慢慢靠近的人</strong><span>RUNTIME</span><strong>02 : 26 : 14</strong><span>MOOD</span><strong>soft / warm / close</strong></section>
+      <section className="cinema-scenes" data-cinema-reveal><header><p>THE SCREENING</p><h2>电影散场以后，<br /><em>故事还在继续。</em></h2></header><ol>{scenes.map(([time,title,text],index)=><li key={time}><div className="cinema-scene-time"><b>0{index+1}</b>{time}</div><div><h3>{title}</h3><p>{text}</p></div><span className="cinema-scene-mark">✦</span></li>)}</ol></section>
+      <section className="cinema-closing" data-cinema-reveal><p className="cinema-kicker">THE LAST FRAME</p><h2>“下次还看<br /><em>同一部吗？”</em></h2><p>当然。只要旁边的人还是你。</p><a href="/games/">保存这一帧　↗</a></section>
+    </div></main>
+  );
+}
+
+const styles = `
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#131621;color:#ede7da}.cinema-page{position:relative;min-height:100vh;padding:0 0 100px;background:radial-gradient(circle at 80% 12%,rgba(128,99,161,.22),transparent 28rem),#131621;font-family:Inter,system-ui,sans-serif;overflow:hidden}.cinema-noise{position:fixed;inset:0;pointer-events:none;opacity:.08;background-image:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.14) 4px),repeating-linear-gradient(90deg,transparent 0 5px,rgba(255,255,255,.08) 6px)}.cinema-shell{position:relative;z-index:1;width:min(1080px,calc(100vw - 48px));margin:auto}.cinema-page a{color:inherit;text-decoration:none}.cinema-nav{display:flex;justify-content:space-between;align-items:center;min-height:70px;border-bottom:1px solid rgba(237,231,218,.18);color:#aaa9b5;font-size:.75rem}.cinema-nav a{color:#e5b37c}.cinema-nav span{font-size:.66rem;letter-spacing:.15em}.cinema-hero{display:grid;grid-template-columns:minmax(0,.9fr) minmax(320px,1.1fr);gap:clamp(36px,8vw,110px);align-items:center;padding:clamp(72px,12vw,150px) 0 120px}.cinema-kicker{margin:0;color:#e5b37c;font-size:.7rem;font-weight:700;letter-spacing:.18em}.cinema-date{margin:18px 0 0;color:#9998a7;font-size:.72rem;letter-spacing:.05em}.cinema-hero h1{margin:28px 0 0;font-family:Georgia,serif;font-size:clamp(4rem,8vw,7.2rem);font-weight:400;letter-spacing:-.08em;line-height:.9}.cinema-hero h1 em,.cinema-scenes h2 em,.cinema-closing h2 em{color:#e5b37c;font-style:normal}.cinema-lead{max-width:26rem;margin:30px 0 0;color:#bcb8bf;font-family:Georgia,serif;font-size:1.02rem;line-height:1.9}.cinema-ticket{display:inline-block;margin-top:34px;padding:12px 16px;border:1px solid rgba(229,179,124,.5);color:#d8c6ae;font-size:.65rem;letter-spacing:.15em}.cinema-ticket b{margin:0 8px;color:#e5b37c}.cinema-poster{margin:0}.cinema-poster img{display:block;width:100%;aspect-ratio:.86;object-fit:cover;filter:grayscale(.15) sepia(.15) brightness(.82)}.cinema-poster figcaption{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;color:#8c8c9a;font-size:.68rem;letter-spacing:.12em}.cinema-poster figcaption strong{color:#e9ddcb;font-family:Georgia,serif;font-size:1.1rem;font-weight:400;letter-spacing:0}.cinema-strip{display:grid;grid-template-columns:repeat(6,auto);gap:14px 18px;align-items:baseline;padding:22px 0;border-top:1px solid rgba(237,231,218,.18);border-bottom:1px solid rgba(237,231,218,.18);color:#8f8e9d;font-size:.66rem;letter-spacing:.12em}.cinema-strip strong{color:#e9ddcb;font-family:Georgia,serif;font-size:1rem;font-weight:400;letter-spacing:0}.cinema-scenes{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(42px,9vw,128px);padding:112px 0}.cinema-scenes header h2{margin:22px 0 0;font-family:Georgia,serif;font-size:clamp(2.2rem,4.8vw,4.5rem);font-weight:400;letter-spacing:-.06em;line-height:1}.cinema-scenes ol{margin:0;padding:0;list-style:none}.cinema-scenes li{display:grid;grid-template-columns:76px minmax(0,1fr) 18px;gap:18px;padding:0 0 28px;border-bottom:1px solid rgba(237,231,218,.18)}.cinema-scenes li+li{padding-top:28px}.cinema-scene-time{color:#e5b37c;font-size:.72rem}.cinema-scene-time b{display:block;margin-bottom:8px;color:#9a99aa;font-size:.68rem;font-weight:400}.cinema-scenes h3{margin:0;color:#f0e7d8;font-family:Georgia,serif;font-size:1.35rem;font-weight:400}.cinema-scenes li p{margin:10px 0 0;color:#aaa9b5;font-family:Georgia,serif;line-height:1.8}.cinema-scene-mark{color:#e5b37c}.cinema-closing{padding:88px 0 20px;border-top:1px solid rgba(237,231,218,.18)}.cinema-closing h2{margin:24px 0 0;font-family:Georgia,serif;font-size:clamp(3rem,7vw,6.8rem);font-weight:400;letter-spacing:-.08em;line-height:.93}.cinema-closing>p:not(.cinema-kicker){margin:28px 0 0;color:#aaa9b5;font-family:Georgia,serif;font-size:1.1rem}.cinema-closing a{display:inline-block;margin-top:32px;color:#e5b37c;font-size:.76rem}[data-cinema-reveal]{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}[data-cinema-reveal].is-visible{opacity:1;transform:none}@media(max-width:760px){.cinema-shell{width:min(100% - 32px,620px)}.cinema-hero{grid-template-columns:1fr;gap:48px;padding:60px 0 78px}.cinema-hero h1{font-size:clamp(4rem,18vw,6.4rem)}.cinema-poster{width:min(100%,420px);margin-left:auto}.cinema-strip{grid-template-columns:repeat(2,auto);padding:20px 0}.cinema-scenes{grid-template-columns:1fr;gap:46px;padding:76px 0}.cinema-scenes li{grid-template-columns:64px minmax(0,1fr) 12px}}@media(prefers-reduced-motion:reduce){[data-cinema-reveal]{transition:none}}
+`;

@@ -20,19 +20,18 @@
 }
 
 .taishan-memory-wrap {
-  width: min(930px, 100%);
+  width: min(830px, 100%);
   margin: 0 auto;
 }
 
 .taishan-memory-nav {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto;
   align-items: center;
   min-height: 54px;
   border-bottom: 1px solid var(--memory-line);
-  color: var(--memory-faint);
-  font-size: 0.63rem;
-  letter-spacing: 0.12em;
+  color: var(--memory-muted);
+  font-size: 0.7rem;
 }
 
 .taishan-memory-nav a,
@@ -47,22 +46,16 @@
 }
 
 .taishan-memory-nav span {
-  justify-self: center;
-}
-
-.taishan-memory-nav b {
   justify-self: end;
-  color: var(--memory-rose);
-  font-size: 0.58rem;
-  font-weight: 500;
+  color: var(--memory-muted);
 }
 
 .taishan-memory-intro {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(240px, 0.72fr);
   align-items: center;
-  gap: clamp(34px, 7vw, 78px);
-  padding: 58px 0 62px;
+  gap: clamp(30px, 6vw, 62px);
+  padding: 43px 0 48px;
   border-bottom: 1px solid var(--memory-line);
 }
 
@@ -72,8 +65,8 @@
 .taishan-memory-letter > div > p {
   margin: 0;
   color: var(--memory-sage);
-  font-size: 0.62rem;
-  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
 }
 
 .taishan-memory-date {
@@ -83,11 +76,11 @@
 }
 
 .taishan-memory-intro h1 {
-  max-width: 470px;
-  margin: 18px 0 18px;
+  max-width: 420px;
+  margin: 15px 0 15px;
   color: var(--memory-ink);
   font-family: 'Source Serif 4', Georgia, serif;
-  font-size: clamp(2.55rem, 5vw, 3.85rem);
+  font-size: clamp(2.2rem, 4.2vw, 3rem);
   font-weight: 400;
   letter-spacing: -0.065em;
   line-height: 1.12;
@@ -99,12 +92,12 @@
 }
 
 .taishan-memory-lede {
-  max-width: 31rem;
+  max-width: 28rem;
   margin: 0;
   color: #706a63;
   font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 0.98rem;
-  line-height: 1.9;
+  font-size: 0.94rem;
+  line-height: 1.85;
 }
 
 .taishan-memory-facts {
@@ -143,7 +136,7 @@
 }
 
 .taishan-memory-cover {
-  width: min(100%, 282px);
+  width: min(100%, 245px);
   margin: 0 auto;
   padding: 13px;
   border: 1px solid #cfc5b7;
@@ -152,7 +145,7 @@
 
 .taishan-memory-cover-art {
   position: relative;
-  height: 252px;
+  height: 214px;
   overflow: hidden;
   background: linear-gradient(180deg, #e7e4dc 0%, #e8d8c5 60%, #c8d1c8 100%);
 }
@@ -214,26 +207,18 @@
 .taishan-memory-cover figcaption strong {
   color: #4e6258;
   font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 1.22rem;
+  font-size: 1.05rem;
   font-weight: 400;
 }
 
 .taishan-memory-cover figcaption span,
 .taishan-memory-cover small {
-  color: var(--memory-rose);
-  font-size: 0.54rem;
-  letter-spacing: 0.14em;
-}
-
-.taishan-memory-cover > small {
-  display: block;
-  margin-top: 17px;
   color: var(--memory-faint);
-  letter-spacing: 0.12em;
+  font-size: 0.68rem;
 }
 
 .taishan-memory-section {
-  padding: 48px 0 57px;
+  padding: 39px 0 44px;
   border-bottom: 1px solid var(--memory-line);
 }
 
@@ -250,7 +235,7 @@
   margin: 10px 0 0;
   color: var(--memory-ink);
   font-family: 'Source Serif 4', Georgia, serif;
-  font-size: clamp(1.65rem, 3vw, 2.25rem);
+  font-size: clamp(1.45rem, 2.5vw, 1.8rem);
   font-weight: 400;
   letter-spacing: -0.055em;
   line-height: 1.25;
@@ -259,7 +244,7 @@
 .taishan-memory-heading > span {
   padding-bottom: 3px;
   color: var(--memory-muted);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
 }
 
 .taishan-moments-layout {
@@ -275,10 +260,10 @@
 
 .taishan-moment {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) 18px;
+  grid-template-columns: 27px minmax(0, 1fr) 8px;
   gap: 10px;
   width: 100%;
-  padding: 14px 8px;
+  padding: 12px 8px;
   border: 0;
   border-bottom: 1px solid var(--memory-line);
   border-left: 2px solid transparent;
@@ -315,7 +300,7 @@
 
 .taishan-moment strong {
   font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 1.03rem;
+  font-size: 0.96rem;
   font-weight: 400;
 }
 
@@ -323,22 +308,27 @@
   margin-top: 5px;
   overflow: hidden;
   color: var(--memory-muted);
-  font-size: 0.67rem;
+  font-size: 0.69rem;
   line-height: 1.4;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.taishan-moment b {
+.taishan-moment-indicator {
   align-self: center;
-  color: var(--memory-faint);
-  font-size: 0.8rem;
-  font-weight: 400;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.taishan-moment.is-selected .taishan-moment-indicator {
+  background: var(--memory-rose);
 }
 
 .taishan-moment-detail {
   display: flex;
-  min-height: 278px;
+  min-height: 250px;
   flex-direction: column;
   padding: 20px 22px 17px;
   border: 1px solid #cec5b9;
@@ -351,8 +341,8 @@
   justify-content: space-between;
   gap: 15px;
   color: var(--memory-muted);
-  font-size: 0.64rem;
-  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
 }
 
 .taishan-moment-detail header b {
@@ -362,10 +352,10 @@
 
 .taishan-moment-detail h3 {
   max-width: 370px;
-  margin: 53px 0 14px;
+  margin: 37px 0 12px;
   color: #4d5f56;
   font-family: 'Source Serif 4', Georgia, serif;
-  font-size: clamp(1.45rem, 2.7vw, 2.05rem);
+  font-size: clamp(1.3rem, 2.1vw, 1.65rem);
   font-weight: 400;
   letter-spacing: -0.055em;
   line-height: 1.35;
@@ -376,8 +366,8 @@
   margin: 0;
   color: #706b64;
   font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 0.95rem;
-  line-height: 1.9;
+  font-size: 0.91rem;
+  line-height: 1.8;
 }
 
 .taishan-moment-detail footer {
@@ -393,7 +383,7 @@
   grid-template-columns: minmax(200px, 0.76fr) minmax(0, 1.24fr);
   gap: clamp(30px, 7vw, 78px);
   align-items: start;
-  padding: 47px 0 51px;
+  padding: 38px 0 42px;
   border-bottom: 1px solid var(--memory-line);
 }
 
@@ -416,7 +406,7 @@
 .taishan-memory-letter label {
   display: block;
   color: var(--memory-muted);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   letter-spacing: 0.05em;
 }
 
@@ -482,8 +472,7 @@
   gap: 18px;
   padding-top: 20px;
   color: var(--memory-faint);
-  font-size: 0.56rem;
-  letter-spacing: 0.12em;
+  font-size: 0.68rem;
 }
 
 .taishan-memory-footer a {
@@ -498,31 +487,26 @@
   }
 
   .taishan-memory-nav {
-    grid-template-columns: 1fr auto;
-    min-height: 50px;
-  }
-
-  .taishan-memory-nav span {
-    display: none;
+    min-height: 48px;
   }
 
   .taishan-memory-intro {
     grid-template-columns: 1fr;
-    gap: 36px;
-    padding: 43px 0 45px;
+    gap: 27px;
+    padding: 34px 0 37px;
   }
 
   .taishan-memory-intro h1 {
-    margin-top: 16px;
-    font-size: clamp(2.45rem, 12vw, 3.25rem);
+    margin-top: 13px;
+    font-size: clamp(2.05rem, 9vw, 2.55rem);
   }
 
   .taishan-memory-lede {
-    font-size: 0.93rem;
+    font-size: 0.9rem;
   }
 
   .taishan-memory-cover {
-    width: min(100%, 300px);
+    width: min(100%, 260px);
   }
 
   .taishan-memory-heading {
@@ -541,11 +525,11 @@
   }
 
   .taishan-moment-detail {
-    min-height: 265px;
+    min-height: 238px;
   }
 
   .taishan-moment-detail h3 {
-    margin-top: 39px;
+    margin-top: 30px;
   }
 }
 
@@ -563,15 +547,15 @@
   }
 
   .taishan-memory-cover-art {
-    height: 230px;
+    height: 205px;
   }
 
   .taishan-memory-section {
-    padding-top: 42px;
+    padding-top: 35px;
   }
 
   .taishan-moment {
-    grid-template-columns: 26px minmax(0, 1fr) 16px;
+    grid-template-columns: 25px minmax(0, 1fr) 8px;
     gap: 7px;
     padding-right: 4px;
     padding-left: 5px;
@@ -582,7 +566,7 @@
   }
 
   .taishan-moment-detail h3 {
-    font-size: 1.52rem;
+    font-size: 1.35rem;
   }
 
   .taishan-memory-footer {

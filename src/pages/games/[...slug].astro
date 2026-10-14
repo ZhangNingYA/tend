@@ -1,72 +1,25 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import Lazy from '../../layouts/lazy.astro';
-import GamesHub from '../../layouts/GamesHub.astro';
-import ReadingPost from '../../layouts/ReadingPost.astro';
 
 export async function getStaticPaths() {
-	const readingOrder = (id: string) => {
-		const match = id.match(/^(\d{4})-(\d{2})-cet4-reading-(\d+)$/);
-		if (!match) return Number.MAX_SAFE_INTEGER;
-		return Number(match[1]) * 10000 + Number(match[2]) * 100 + Number(match[3]);
-	};
 	const posts = await getCollection('games');
-	const readingPosts = posts
-		.filter((post) => post.data.pageLayout === 'reading')
-		.sort((a, b) => (
-			readingOrder(a.id) - readingOrder(b.id)
-			|| a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
-			|| a.id.localeCompare(b.id)
-		));
 	return posts.map((post) => {
-		const seriesPosts = post.data.pageLayout === 'reading' ? readingPosts : [];
-		const seriesIndex = seriesPosts.indexOf(post);
-		const previousPost = seriesIndex > 0 ? seriesPosts[seriesIndex - 1] : undefined;
-		const nextPost = seriesIndex >= 0 ? seriesPosts[seriesIndex + 1] : undefined;
 		return {
 			params: { slug: post.id },
-			props: {
-				post,
-				previous: previousPost
-					? { href: `/games/${previousPost.id}/`, title: previousPost.data.title }
-					: undefined,
-				next: nextPost
-					? { href: `/games/${nextPost.id}/`, title: nextPost.data.title }
-					: undefined,
-			},
+			props: { post },
 		};
 	});
 }
 
-type ReadingLink = { href: string; title: string };
 type Props = {
 	post: CollectionEntry<'games'>;
-	previous?: ReadingLink;
-	next?: ReadingLink;
 };
 
-const { post, previous, next } = Astro.props;
+const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 
-{post.data.pageLayout === 'reading' ? (
-	<ReadingPost
-		{...post.data}
-		archiveHref="/games/"
-		archiveLabel="游戏"
-		allLabel="目录"
-		markReadingNav={false}
-		showHeader={false}
-		metaDescription={post.data.description || '大学英语四级阅读练习。'}
-		{previous}
-		{next}
-	>
-		<Content />
-	</ReadingPost>
-) : post.data.pageLayout === 'library' ? (
-	<GamesHub {...post.data} />
-) : (
-	<Lazy {...post.data}>
-		<Content />
-	</Lazy>
-)}
+<Lazy {...post.data}>
+	<Content />
+</Lazy>

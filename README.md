@@ -8,8 +8,7 @@ Live site: [www.fulafu.com](https://www.fulafu.com/)
 
 ## What is inside
 
-- Sentence-by-sentence English close-reading notes
-- Interactive learning material
+- Interactive graphics and small tools
 - Guided study labs with experiments and checkpoints
 - Project, paper, and game collections
 - Sitemap generation
@@ -44,17 +43,12 @@ npm run astro -- --help
 ```text
 public/          Static assets
 src/components/ Shared UI components
-src/content/    Site content collections (blog, games, study, works, papers)
+src/content/    Site content collections (games, study, works, papers)
 src/data/       Structured learning and visualization data
 src/layouts/    Page layouts
 src/pages/      Site routes
 src/styles/     Shared styles
 ```
-
-## CET-4 reading maintenance
-
-新增或补充四级阅读真题前，先阅读
-[CET-4 阅读真题维护说明](docs/cet4-reading-maintenance.md)。其中记录了文件命名、MDX 元数据、句子编号、精读字段、词汇点击和提交前检查要求。
 
 ## Deployment
 

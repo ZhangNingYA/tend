@@ -2,24 +2,12 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-const reading = defineCollection({
-    loader: glob({ base: './src/content/reading', pattern: '**/*.{md,mdx}' }),
-    schema: z.object({
-        title: z.string(),
-        description: z.string(),
-        pubDate: z.coerce.date(),
-    }),
-});
-
 const games = defineCollection({
     loader: glob({ base: './src/content/games', pattern: '**/*.{md,mdx}' }),
     schema: z.object({
         title: z.string(),
         description: z.string(),
         pubDate: z.coerce.date(),
-        pageLayout: z.enum(['experience', 'reading', 'library']).optional(),
-        answerCoverage: z.enum(['full', 'passage-only', 'none']).optional(),
-        hasStructureModes: z.boolean().optional(),
     }),
 });
 
@@ -70,4 +58,4 @@ const papers = defineCollection({
     }),
 });
 
-export const collections = { reading, games, study, works, papers };
+export const collections = { games, study, works, papers };

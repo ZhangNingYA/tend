@@ -6,8 +6,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import '../styles/editorial.css';
 
-const [reading, works, study, papers] = await Promise.all([
-  getCollection('reading'),
+const [works, study, papers] = await Promise.all([
   getCollection('works'),
   getCollection('study'),
   getCollection('papers'),
@@ -19,12 +18,6 @@ const sections = [
     label: 'Projects',
     count: works.length,
     description: 'Interactive notes on graphics, geometry, and real-time rendering.',
-  },
-  {
-    href: '/blog/',
-    label: 'Reading',
-    count: reading.length,
-    description: 'English texts studied closely, sentence by sentence.',
   },
   {
     href: '/study/',
@@ -42,7 +35,6 @@ const sections = [
 const totalEntries = sections.reduce((sum, section) => sum + section.count, 0);
 
 const recent = [
-  ...reading.map((entry) => ({ ...entry, href: `/blog/${entry.id}/`, section: 'Reading' })),
   ...works.map((entry) => ({ ...entry, href: `/works/${entry.id}/`, section: 'Projects' })),
 ]
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
@@ -101,7 +93,7 @@ const recent = [
       <section class="editorial-index recent-index" aria-labelledby="recent-heading">
         <div class="editorial-section-heading">
           <h2 id="recent-heading">Recently published</h2>
-          <span>Reading & Projects</span>
+          <span>Projects</span>
         </div>
 
         <div class="editorial-list">

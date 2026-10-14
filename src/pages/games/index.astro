@@ -4,10 +4,7 @@ import BaseHead from '../../components/BaseHead.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-// Keep the original diary index intact. Reading papers live behind the
-// collection entry instead of being mixed into the timeline one by one.
 const posts = (await getCollection('games'))
-    .filter((post) => post.data.pageLayout !== 'reading')
     .sort((a, b) => (
         b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
         || a.id.localeCompare(b.id)

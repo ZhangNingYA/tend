@@ -145,6 +145,31 @@ const togetherDate = '2025-10-18';
                 </div>
             </section>
 
+            <!-- ============== MEMORY BOX ======================== -->
+            <section class="memory-box" aria-labelledby="memory-box-title">
+                <div class="memory-box-head">
+                    <div>
+                        <p class="memory-box-eyebrow"><span></span> MEMORY BOX / 03</p>
+                        <h2 id="memory-box-title">把今天的小心动，<em>收在一起。</em></h2>
+                    </div>
+                    <p class="memory-box-lead">在每一页留下一个动作，<br />这里就会亮起一盏小灯。</p>
+                </div>
+                <div class="memory-box-grid">
+                    <a class="memory-box-card" data-memory-card="tend-memory-postcard" href="/games/postcard/">
+                        <span class="memory-box-icon">✉</span><span class="memory-box-card-no">01 / COAST</span>
+                        <strong>寄一张明信片</strong><small data-memory-status>还没有寄出的句子</small><i>↗</i>
+                    </a>
+                    <a class="memory-box-card" data-memory-card="tend-memory-cinema" href="/games/night-cinema/">
+                        <span class="memory-box-icon">◉</span><span class="memory-box-card-no">02 / SCREEN</span>
+                        <strong>留住一帧电影</strong><small data-memory-status>还没有保存的画面</small><i>↗</i>
+                    </a>
+                    <a class="memory-box-card" data-memory-card="tend-memory-herbarium" href="/games/herbarium/">
+                        <span class="memory-box-icon">✳</span><span class="memory-box-card-no">03 / PRESS</span>
+                        <strong>钉一枚小标本</strong><small data-memory-status>还没有收藏的物件</small><i>↗</i>
+                    </a>
+                </div>
+            </section>
+
             <!-- ============== WAVE DIVIDER ====================== -->
             <div class="wave-div" aria-hidden="true">
                 <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
@@ -234,6 +259,28 @@ const togetherDate = '2025-10-18';
                 if (hoursNode) hoursNode.textContent = (daysPassed * 24).toLocaleString();
             };
             updateCounters();
+
+            // -------- memory box ---------------------------------
+            const memoryCards = document.querySelectorAll('[data-memory-card]');
+            const updateMemoryBox = () => {
+                memoryCards.forEach((card) => {
+                    const key = card.getAttribute('data-memory-card');
+                    const status = card.querySelector('[data-memory-status]');
+                    if (!key || !status) return;
+                    try {
+                        const saved = JSON.parse(window.localStorage.getItem(key) || 'null');
+                        card.classList.toggle('is-kept', Boolean(saved));
+                        if (!saved) return;
+                        if (key === 'tend-memory-postcard') status.textContent = `已寄出：${saved.message || '一封小小的信'}`;
+                        if (key === 'tend-memory-cinema') status.textContent = '已保存：' + (['灯光暗下来', '片尾字幕', '夜路回家'][saved.frame] || '一帧电影');
+                        if (key === 'tend-memory-herbarium') status.textContent = '已收藏：' + (saved.title || '一件小标本');
+                    } catch {
+                        card.classList.remove('is-kept');
+                    }
+                });
+            };
+            updateMemoryBox();
+            window.addEventListener('storage', updateMemoryBox);
 
             // -------- live ticker --------
             const ticker = document.getElementById('liveTicker');
@@ -968,6 +1015,129 @@ const togetherDate = '2025-10-18';
     }
     .tl-card:hover .tl-card-arrow { transform: translate(2px, -2px); }
 
+    /* ============== Memory box =============================== */
+    .memory-box {
+        margin: 26px 0 72px;
+        padding: 28px 0 0;
+        border-top: 1px solid rgba(58,36,71,0.13);
+    }
+    .memory-box-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 30px;
+        margin-bottom: 24px;
+    }
+    .memory-box-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 13px;
+        color: rgba(58,36,71,0.58);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.16em;
+    }
+    .memory-box-eyebrow span {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: #d4467b;
+        box-shadow: 0 0 0 0 rgba(212,70,123,0.45);
+        animation: chipPulse 2.2s ease-in-out infinite;
+    }
+    .memory-box h2 {
+        margin: 0;
+        color: #3a2447;
+        font-family: 'Fraunces', serif;
+        font-size: clamp(1.65rem, 3.6vw, 2.5rem);
+        font-weight: 500;
+        letter-spacing: -0.035em;
+    }
+    .memory-box h2 em { color: #d4467b; font-style: italic; }
+    .memory-box-lead {
+        margin: 0 0 3px;
+        color: rgba(58,36,71,0.58);
+        font-family: 'Fraunces', serif;
+        font-size: 0.96rem;
+        font-style: italic;
+        line-height: 1.65;
+        text-align: right;
+    }
+    .memory-box-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    .memory-box-card {
+        position: relative;
+        min-height: 174px;
+        display: flex;
+        flex-direction: column;
+        padding: 18px 18px 16px;
+        overflow: hidden;
+        border: 1px solid rgba(58,36,71,0.11);
+        border-radius: 15px;
+        background: rgba(255,255,255,0.47);
+        box-shadow: 0 8px 20px rgba(58,36,71,0.035);
+        transition: transform .3s, background .3s, box-shadow .3s;
+    }
+    .memory-box-card::after {
+        content: '';
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #d4467b, #e89855, #a87bd6);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform .35s;
+    }
+    .memory-box-card:hover, .memory-box-card.is-kept {
+        transform: translateY(-4px);
+        background: rgba(255,255,255,0.76);
+        box-shadow: 0 14px 30px rgba(58,36,71,0.09);
+    }
+    .memory-box-card:hover::after, .memory-box-card.is-kept::after { transform: scaleX(1); }
+    .memory-box-icon {
+        display: grid; place-items: center;
+        width: 31px; height: 31px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(212,70,123,0.23);
+        border-radius: 10px;
+        color: #d4467b;
+        font-size: 1rem;
+        transform: rotate(-5deg);
+    }
+    .memory-box-card-no {
+        color: rgba(58,36,71,0.46);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.58rem;
+        letter-spacing: .13em;
+    }
+    .memory-box-card strong {
+        margin: 7px 0 5px;
+        color: #3a2447;
+        font-family: 'Fraunces', serif;
+        font-size: 1.08rem;
+        font-weight: 600;
+    }
+    .memory-box-card small {
+        max-width: 90%;
+        overflow: hidden;
+        color: rgba(58,36,71,0.57);
+        font-size: .72rem;
+        line-height: 1.45;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .memory-box-card i {
+        position: absolute;
+        right: 17px; bottom: 15px;
+        color: #d4467b;
+        font-size: 1rem;
+        font-style: normal;
+        transition: transform .25s;
+    }
+    .memory-box-card:hover i { transform: translate(2px, -2px); }
+
     /* ============== Closing ================================= */
     .closing {
         text-align: center;
@@ -1011,6 +1181,10 @@ const togetherDate = '2025-10-18';
     @media (max-width: 820px) {
         .page { padding: 24px 18px 80px; }
 
+        .memory-box-head { display: block; }
+        .memory-box-lead { margin-top: 14px; text-align: left; }
+        .memory-box-grid { grid-template-columns: 1fr; }
+
         .tl-list::before {
             left: 18px;
         }
@@ -1029,6 +1203,7 @@ const togetherDate = '2025-10-18';
 
     @media (max-width: 480px) {
         .orbit { padding: 36px 0 30px; }
+        .memory-box { margin-bottom: 52px; }
         .orbit-quote { margin: 28px auto 18px; }
         .chips { gap: 8px; }
         .chip { padding: 7px 12px; }
@@ -1059,3 +1234,4 @@ const togetherDate = '2025-10-18';
         }
     }
 </style>
+

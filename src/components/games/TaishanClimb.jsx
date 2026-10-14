@@ -1,175 +1,114 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const stages = [
+const memories = [
   {
-    no: '01',
-    name: '红门',
-    english: 'THE RED GATE',
-    distance: '0 km',
-    elevation: '150 m',
-    time: '04:30',
-    tone: '#b88468',
-    note: '从一盏还没熄灭的路灯开始。先别急着赶路，听一听山脚的风。',
+    no: '01', time: '04:30', place: '红门', english: 'THE FIRST LIGHT', altitude: '150 m',
+    title: '天还没有亮，我们先出发了。',
+    text: '红门前的路灯还亮着，四周安静得只听见脚步声。那时我们还不知道，今天会一起走过这么长的台阶。',
+    mark: '山脚的风还带着夜色', tone: '#b46d5d',
   },
   {
-    no: '02',
-    name: '中天门',
-    english: 'MID-HEAVEN GATE',
-    distance: '3.5 km',
-    elevation: '847 m',
-    time: '06:10',
-    tone: '#819a82',
-    note: '这里刚好可以回头看一眼城市。把水喝完，再把步子放慢一点。',
+    no: '02', time: '06:10', place: '中天门', english: 'LOOKING BACK', altitude: '847 m',
+    title: '回头的时候，城市已经醒了。',
+    text: '我们在中天门停下来喝水，也回头看了一眼来时的路。远处的城市一点点亮起来，像有人替这趟旅程开了灯。',
+    mark: '把一口气和一座城都收进眼里', tone: '#708e82',
   },
   {
-    no: '03',
-    name: '南天门',
-    english: 'SOUTHERN GATE',
-    distance: '6.5 km',
-    elevation: '1,460 m',
-    time: '08:20',
-    tone: '#718aa0',
-    note: '风开始有了高度。云从脚边经过，剩下的路会比想象中更轻。',
+    no: '03', time: '08:20', place: '南天门', english: 'ABOVE THE CLOUDS', altitude: '1,460 m',
+    title: '云从脚边经过，我们也快到山顶了。',
+    text: '南天门的风比想象中更大。你说再走一会儿就好，于是那些原本漫长的台阶，忽然也有了尽头。',
+    mark: '风把疲惫吹成了很轻的事', tone: '#687f9a',
   },
   {
-    no: '04',
-    name: '玉皇顶',
-    english: 'JADE EMPEROR PEAK',
-    distance: '7.8 km',
-    elevation: '1,545 m',
-    time: '09:00',
-    tone: '#c69a63',
-    note: '到达最高处，太阳还在慢慢升起。今天的风景，值得被记住。',
+    no: '04', time: '09:00', place: '玉皇顶', english: 'WE MADE IT', altitude: '1,545 m',
+    title: '到了最高处，太阳刚好升起来。',
+    text: '我们终于站在玉皇顶。没有很隆重的仪式，只有一起看完的那片光，和一句现在想起来仍然很开心的“我们做到了”。',
+    mark: '这一天，值得被好好记住', tone: '#c18b5c',
   },
-];
-
-const packingList = [
-  { id: 'water', label: '水和一点能量', sub: '至少 1.5 L' },
-  { id: 'shoes', label: '防滑的鞋', sub: '台阶比想象中长' },
-  { id: 'light', label: '头灯或手电', sub: '日出前出发' },
-  { id: 'jacket', label: '薄外套', sub: '山顶风会变凉' },
 ];
 
 const storageKey = 'tend-memory-taishan';
 
 export default function TaishanClimb() {
-  const [selected, setSelected] = useState(0);
-  const [reached, setReached] = useState(0);
-  const [checked, setChecked] = useState({});
-  const stage = stages[selected];
+  const [selected, setSelected] = useState(3);
+  const [note, setNote] = useState('');
+  const [saved, setSaved] = useState(false);
+  const memory = memories[selected];
 
   useEffect(() => {
     try {
-      const saved = JSON.parse(window.localStorage.getItem(storageKey) || 'null');
-      if (!saved) return;
-      if (Number.isInteger(saved.selected)) setSelected(Math.max(0, Math.min(stages.length - 1, saved.selected)));
-      if (Number.isInteger(saved.reached)) setReached(Math.max(0, Math.min(stages.length - 1, saved.reached)));
-      if (saved.checked && typeof saved.checked === 'object') setChecked(saved.checked);
+      const stored = JSON.parse(window.localStorage.getItem(storageKey) || 'null');
+      if (Number.isInteger(stored?.selected)) setSelected(Math.max(0, Math.min(memories.length - 1, stored.selected)));
+      if (typeof stored?.note === 'string') setNote(stored.note);
+      setSaved(Boolean(stored?.saved));
     } catch {
-      // A private route note should never block the climb template.
+      // The memory page remains readable when storage is unavailable.
     }
   }, []);
 
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(storageKey, JSON.stringify({
-        type: 'taishan',
-        selected,
-        reached,
-        checked,
-        updatedAt: new Date().toISOString(),
-      }));
-    } catch {
-      // The template remains fully usable without local storage.
-    }
-  }, [selected, reached, checked]);
-
-  const progress = useMemo(() => (reached / (stages.length - 1)) * 100, [reached]);
-  const allPacked = packingList.every((item) => checked[item.id]);
-
-  const checkIn = () => {
-    setReached((value) => Math.max(value, selected));
+  const selectMemory = (index) => {
+    setSelected(index);
+    setSaved(false);
   };
 
-  const togglePacking = (id) => {
-    setChecked((value) => ({ ...value, [id]: !value[id] }));
+  const saveMemory = () => {
+    setSaved(true);
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify({
+        type: 'taishan-memory', selected, note: note.trim(), title: memory.title,
+        saved: true, updatedAt: new Date().toISOString(),
+      }));
+    } catch {
+      // The visual keepsake still works without local storage.
+    }
   };
 
   return (
-    <main className="taishan-page" style={{ '--stage-tone': stage.tone }}>
+    <main className="taishan-page" style={{ '--memory-tone': memory.tone }}>
       <style>{styles}</style>
-      <div className="taishan-mist" aria-hidden="true" />
+      <div className="taishan-atmosphere" aria-hidden="true" />
       <div className="taishan-shell">
         <nav className="taishan-nav">
-          <a href="/games/">← 记忆索引</a>
-          <span>MOUNT TAI / FIELD GUIDE</span>
-          <b>{String(reached + 1).padStart(2, '0')} / 04</b>
+          <a href="/games/">← 记忆索引</a><span>TRAVEL MEMORY / 02</span><b>2026.08.08</b>
         </nav>
 
         <header className="taishan-hero">
           <div className="taishan-hero-copy">
-            <p className="taishan-kicker"><i /> A SLOW ASCENT / 01</p>
-            <h1>把每一步，<em>走成风景。</em></h1>
-            <p className="taishan-lead">一份不赶时间的泰山路线模板。留一点空白给呼吸，也留给日出从山背后出现。</p>
-            <div className="taishan-facts" aria-label="路线概况">
-              <span><strong>7.8</strong><small>KM 路程</small></span>
-              <span><strong>1,545</strong><small>M 最高海拔</small></span>
-              <span><strong>04:30</strong><small>建议出发</small></span>
+            <p className="taishan-kicker"><i /> A DAY WE CLIMBED TOGETHER</p>
+            <p className="taishan-date">2026 年 8 月 8 日 · 山东泰安</p>
+            <h1>那天，我们把清晨<br /><em>走到了山顶。</em></h1>
+            <p className="taishan-lead">这不是一份路线攻略。是我们一起走过的 7.8 公里，和太阳升起以前，留在台阶之间的那些小事。</p>
+            <div className="taishan-facts" aria-label="这次登山的记忆">
+              <span><strong>7.8</strong><small>KM 一起走过</small></span><span><strong>1,545</strong><small>M 我们到过</small></span><span><strong>04:30</strong><small>从夜里出发</small></span>
             </div>
           </div>
-          <div className="taishan-sun-card">
-            <div className="taishan-sun" aria-hidden="true"><span /></div>
-            <div className="taishan-sun-meta"><span>TAI'AN / SHANDONG</span><b>日出路线</b></div>
-            <p>山顶的光，会把走过的路重新照亮。</p>
-            <div className="taishan-sun-line"><i style={{ width: progress + '%' }} /><span>{Math.round(progress)}% 已到达</span></div>
+
+          <div className="taishan-cover" aria-label="泰山日出纪念卡片">
+            <div className="taishan-cover-top"><span>TAI'AN / SHANDONG</span><b>MEMORY NO. 02</b></div>
+            <div className="taishan-mountain" aria-hidden="true"><span className="taishan-sun" /><i /><i /><i /></div>
+            <div className="taishan-cover-caption"><strong>爬泰山的日子</strong><span>THE MORNING WE KEPT</span></div><div className="taishan-cover-stamp">08<br /><small>AUG</small></div>
           </div>
         </header>
 
-        <section className="taishan-route" aria-labelledby="taishan-route-title">
-          <div className="taishan-section-head">
-            <div><p>THE ROUTE / 04 STOPS</p><h2 id="taishan-route-title">沿着山脊，<em>选一个落脚处。</em></h2></div>
-            <span className="taishan-current">当前：{stage.name}</span>
-          </div>
-          <div className="taishan-map-layout">
-            <div className="taishan-map" aria-label="泰山登山路线图">
-              <svg viewBox="0 0 800 410" role="img" aria-label="从红门通往玉皇顶的山路">
-                <defs>
-                  <linearGradient id="taishanSky" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#dbe9e4" /><stop offset="1" stopColor="#f3e8d5" /></linearGradient>
-                  <linearGradient id="taishanRock" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#a5b8a2" /><stop offset="1" stopColor="#728c80" /></linearGradient>
-                </defs>
-                <rect width="800" height="410" rx="22" fill="url(#taishanSky)" />
-                <path d="M0 315 C95 282 151 294 227 252 C303 210 328 249 399 207 C486 156 535 188 606 130 C668 80 706 112 800 48 V410 H0Z" fill="url(#taishanRock)" opacity=".9" />
-                <path d="M0 350 C124 302 185 337 278 289 C364 245 419 295 496 230 C590 152 645 202 800 95 V410 H0Z" fill="#5e7b72" opacity=".36" />
-                <path d="M70 329 C170 310 220 275 292 258 C367 241 419 218 493 188 C577 155 653 115 735 72" fill="none" stroke="#f8f2e6" strokeWidth="7" strokeLinecap="round" strokeDasharray="4 11" opacity=".9" />
-                <path d="M70 329 C170 310 220 275 292 258 C367 241 419 218 493 188 C577 155 653 115 735 72" fill="none" stroke="#b67f64" strokeWidth="3" strokeLinecap="round" pathLength="100" strokeDasharray="100" strokeDashoffset={100 - progress} className="taishan-route-progress" />
-                <path d="M40 344 C94 326 128 335 173 316 M525 202 C580 180 616 177 673 138 M642 110 C677 89 710 90 758 60" fill="none" stroke="rgba(255,255,255,.42)" strokeWidth="2" strokeLinecap="round" />
-                <circle cx="674" cy="57" r="24" fill="rgba(255,218,153,.33)" /><circle cx="674" cy="57" r="11" fill="#f0bd6c" />
-              </svg>
-              {stages.map((item, index) => {
-                const coordinates = [{ left: '8%', top: '73%' }, { left: '34%', top: '57%' }, { left: '61%', top: '40%' }, { left: '87%', top: '15%' }][index];
-                return <button type="button" className={'taishan-map-stop' + (selected === index ? ' is-selected' : '') + (reached >= index ? ' is-reached' : '')} style={coordinates} key={item.no} onClick={() => setSelected(index)} aria-label={'选择' + item.name} aria-pressed={selected === index}><span>{item.no}</span><strong>{item.name}</strong></button>;
-              })}
-              <div className="taishan-map-caption"><span>RED GATE</span><i>7.8 KM / ONE WAY</i><span>JADE EMPEROR PEAK</span></div>
+        <section className="taishan-story" aria-labelledby="taishan-story-title">
+          <div className="taishan-section-head"><div><p>THE DAY IN FOUR MOMENTS</p><h2 id="taishan-story-title">一条走过的路，<em>四个记得的瞬间。</em></h2></div><span className="taishan-story-count">{String(selected + 1).padStart(2, '0')} / 04 正在回看</span></div>
+          <div className="taishan-story-layout">
+            <div className="taishan-timeline" role="tablist" aria-label="泰山旅程回忆">
+              {memories.map((item, index) => <button type="button" role="tab" aria-selected={selected === index} className={'taishan-timeline-item' + (selected === index ? ' is-selected' : '')} key={item.no} onClick={() => selectMemory(index)}><span className="taishan-timeline-dot" style={{ '--dot-tone': item.tone }} /><span className="taishan-timeline-time">{item.time}</span><span className="taishan-timeline-place">{item.place}<small>{item.altitude}</small></span><span className="taishan-timeline-mark">{item.mark}</span></button>)}
             </div>
-            <article className="taishan-stage-card" aria-live="polite">
-              <div className="taishan-stage-card-top"><span>{stage.no} / 04</span><b>{stage.english}</b></div>
-              <h3>{stage.name}</h3>
-              <p>{stage.note}</p>
-              <dl><div><dt>抵达时间</dt><dd>{stage.time}</dd></div><div><dt>海拔</dt><dd>{stage.elevation}</dd></div><div><dt>累计路程</dt><dd>{stage.distance}</dd></div></dl>
-              <button type="button" className={'taishan-checkin' + (reached >= selected ? ' is-done' : '')} onClick={checkIn}>{reached >= selected ? '✓ 已在这里' : '我到这里了'} <b>↗</b></button>
-            </article>
+            <article className="taishan-memory-card" aria-live="polite"><div className="taishan-memory-card-top"><span>{memory.no} / 04</span><b>{memory.english}</b></div><p className="taishan-memory-time">{memory.time} · {memory.place}</p><h3>{memory.title}</h3><p className="taishan-memory-text">{memory.text}</p><div className="taishan-memory-card-foot"><span>海拔 {memory.altitude}</span><span>泰山记忆 / 2026</span></div></article>
           </div>
         </section>
 
-        <section className="taishan-pack" aria-labelledby="taishan-pack-title">
-          <div className="taishan-section-head"><div><p>BEFORE YOU GO</p><h2 id="taishan-pack-title">轻一点上山，<em>刚刚好。</em></h2></div><span className={'taishan-pack-status' + (allPacked ? ' is-ready' : '')}>{allPacked ? 'READY TO WALK' : `${Object.values(checked).filter(Boolean).length} / 04 已准备`}</span></div>
-          <div className="taishan-pack-list">{packingList.map((item) => <label className={'taishan-pack-item' + (checked[item.id] ? ' is-checked' : '')} key={item.id}><input type="checkbox" checked={Boolean(checked[item.id])} onChange={() => togglePacking(item.id)} /><span className="taishan-check" /><span><strong>{item.label}</strong><small>{item.sub}</small></span></label>)}</div>
+        <section className="taishan-keepsake" aria-labelledby="taishan-keepsake-title">
+          <div className="taishan-keepsake-copy"><p>LEAVE A LINE FOR THIS DAY</p><h2 id="taishan-keepsake-title">给那天留一句话，<em>以后再打开。</em></h2><span>写下只属于你们的备注，它会和这段回忆一起留在这台设备上。</span></div>
+          <div className="taishan-keepsake-form"><label htmlFor="taishan-note">这一天后来被你记成了什么？</label><textarea id="taishan-note" value={note} maxLength={100} onChange={(event) => { setNote(event.target.value); setSaved(false); }} placeholder="比如：山顶的风很大，但我们笑得更大声。" rows="3" /><div className="taishan-keepsake-actions"><small>{note.length} / 100</small><button type="button" onClick={saveMemory}>{saved ? '✓ 已收进回忆' : '收进这页回忆 ↗'}</button></div><p className={'taishan-saved-status' + (saved ? ' is-visible' : '')} aria-live="polite">{saved ? '这句话和今天一起被保存了。' : '还没有留下这一句。'}</p></div>
         </section>
 
-        <footer className="taishan-footer"><span>TAISHAN / WALK WITH THE MORNING</span><a href="/games/">回到全部记录 ↗</a></footer>
+        <footer className="taishan-footer"><span>NOT A GUIDE / A DAY WE WILL REMEMBER</span><a href="/games/">回到全部记录 ↗</a></footer>
       </div>
     </main>
   );
 }
 
-const styles = String.raw`*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#edf1eb;color:#334d4a}.taishan-page{position:relative;min-height:100vh;overflow:hidden;background:linear-gradient(145deg,#edf3ef 0%,#f3efe5 53%,#f4e2cf 100%);font-family:Inter,system-ui,sans-serif}.taishan-mist{position:absolute;inset:0;pointer-events:none;opacity:.7;background:radial-gradient(ellipse at 84% 6%,rgba(255,224,173,.5),transparent 19rem),radial-gradient(ellipse at 4% 58%,rgba(188,214,205,.45),transparent 23rem)}.taishan-shell{position:relative;z-index:1;width:min(1080px,calc(100vw - 36px));margin:auto}.taishan-nav{display:flex;align-items:center;justify-content:space-between;min-height:64px;border-bottom:1px solid rgba(51,77,74,.16);color:#84918a;font-size:.62rem;letter-spacing:.11em}.taishan-nav a{color:#477067;text-decoration:none;letter-spacing:0}.taishan-nav b{color:#b27d62;font-size:.58rem;font-weight:600}.taishan-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.7fr);gap:clamp(32px,7vw,100px);align-items:center;padding:64px 0 58px}.taishan-kicker,.taishan-section-head p{display:flex;align-items:center;gap:9px;margin:0;color:#5d837a;font-size:.63rem;font-weight:700;letter-spacing:.19em}.taishan-kicker i{width:7px;height:7px;border-radius:50%;background:#bf8068;box-shadow:0 0 0 5px rgba(191,128,104,.13)}.taishan-hero h1{max-width:600px;margin:19px 0 17px;color:#304f4d;font:400 clamp(2.65rem,6vw,4.8rem)/1.08 Georgia,serif;letter-spacing:-.09em}.taishan-hero h1 em{color:#b97763;font-style:italic}.taishan-lead{max-width:430px;margin:0;color:#71827c;font:1rem/1.85 Georgia,serif}.taishan-facts{display:flex;gap:26px;margin-top:31px}.taishan-facts span{display:grid;gap:3px;padding-left:13px;border-left:1px solid rgba(84,119,110,.28)}.taishan-facts strong{color:#476c66;font:500 1.13rem Georgia,serif}.taishan-facts small{color:#8e9a91;font-size:.53rem;letter-spacing:.12em}.taishan-sun-card{position:relative;min-height:282px;padding:23px 22px 20px;overflow:hidden;border:1px solid rgba(102,128,116,.2);border-radius:24px;background:rgba(255,253,246,.5);box-shadow:10px 14px 0 rgba(112,130,112,.07);transform:rotate(1.1deg)}.taishan-sun{position:absolute;top:-70px;right:-47px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,#f5c67f 0 9%,rgba(245,198,127,.45) 10% 30%,rgba(245,198,127,0) 69%);animation:sunBreath 6s ease-in-out infinite}.taishan-sun span{position:absolute;inset:38px;border:1px solid rgba(213,151,95,.36);border-radius:50%}.taishan-sun-meta{position:relative;display:flex;justify-content:space-between;color:#8a948c;font-size:.52rem;letter-spacing:.12em}.taishan-sun-meta b{color:#b88166;font-weight:500}.taishan-sun-card p{position:relative;max-width:230px;margin:110px 0 25px;color:#4d6864;font:1.08rem/1.65 Georgia,serif}.taishan-sun-line{position:relative;display:flex;align-items:center;gap:12px;color:#8c968f;font-size:.55rem;letter-spacing:.08em}.taishan-sun-line i{display:block;width:80px;height:2px;background:#c08068;transform-origin:left;transition:width .55s}.taishan-route,.taishan-pack{padding:28px 0 54px;border-top:1px solid rgba(51,77,74,.16)}.taishan-section-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:24px}.taishan-section-head h2{margin:10px 0 0;color:#385957;font:400 clamp(1.65rem,3.4vw,2.55rem) Georgia,serif;letter-spacing:-.065em}.taishan-section-head h2 em{color:#bb7e68;font-style:italic}.taishan-current,.taishan-pack-status{padding:7px 10px;border:1px solid rgba(72,112,103,.2);border-radius:99px;color:#66847b;font-size:.58rem;letter-spacing:.08em;white-space:nowrap}.taishan-pack-status.is-ready{border-color:rgba(102,145,103,.35);color:#648c6d;background:rgba(229,242,226,.5)}.taishan-map-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(250px,.62fr);gap:clamp(20px,5vw,56px);align-items:stretch}.taishan-map{position:relative;min-height:430px;overflow:hidden;border:1px solid rgba(89,119,108,.2);border-radius:22px;background:#dce9e2;box-shadow:9px 11px 0 rgba(93,120,105,.08)}.taishan-map svg{display:block;width:100%;height:100%;min-height:430px}.taishan-map-stop{position:absolute;z-index:2;display:flex;align-items:center;gap:6px;padding:0;border:0;background:none;color:#385b57;cursor:pointer;transform:translate(-50%,-50%)}.taishan-map-stop span{display:grid;place-items:center;width:24px;height:24px;border:2px solid #f8f4e9;border-radius:50%;background:#a5b9a7;color:#fff;font-size:.52rem;box-shadow:0 2px 0 rgba(54,85,77,.2);transition:transform .3s,background .3s}.taishan-map-stop strong{padding:4px 7px;border-radius:4px;background:rgba(249,247,237,.78);color:#55736d;font:400 .7rem Georgia,serif;white-space:nowrap;box-shadow:0 2px 5px rgba(61,91,83,.06)}.taishan-map-stop.is-reached span{background:#b97c65}.taishan-map-stop.is-selected span{transform:scale(1.32);background:#b97c65;box-shadow:0 0 0 5px rgba(185,124,101,.15),0 2px 0 rgba(54,85,77,.2)}.taishan-map-stop.is-selected strong{color:#a96755}.taishan-route-progress{transition:stroke-dashoffset .8s ease}.taishan-map-caption{position:absolute;left:18px;right:18px;bottom:14px;z-index:2;display:flex;justify-content:space-between;color:rgba(66,97,90,.63);font-size:.49rem;letter-spacing:.12em}.taishan-map-caption i{font-style:normal;color:#b47c67}.taishan-stage-card{display:flex;flex-direction:column;padding:20px 0 5px;border-top:2px solid var(--stage-tone);transition:border-color .35s}.taishan-stage-card-top{display:flex;justify-content:space-between;gap:10px;color:#9a9b8d;font-size:.54rem;letter-spacing:.11em}.taishan-stage-card-top b{color:var(--stage-tone);font-weight:500;text-align:right}.taishan-stage-card h3{margin:36px 0 11px;color:#3b5b56;font:400 2.1rem Georgia,serif;letter-spacing:-.06em}.taishan-stage-card>p{margin:0;color:#75867f;font:.88rem/1.85 Georgia,serif}.taishan-stage-card dl{display:grid;gap:12px;margin:26px 0 0;padding-top:17px;border-top:1px dashed rgba(80,112,101,.28)}.taishan-stage-card dl div{display:flex;justify-content:space-between;gap:15px}.taishan-stage-card dt{color:#9a9e91;font-size:.54rem;letter-spacing:.1em}.taishan-stage-card dd{margin:0;color:#55736d;font:.76rem Georgia,serif}.taishan-checkin{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding:12px 0;border:0;border-bottom:1px solid #b9c7bc;background:none;color:#9d6a57;font-size:.66rem;letter-spacing:.06em;cursor:pointer}.taishan-checkin b{font-size:1rem;font-weight:400;transition:transform .25s}.taishan-checkin:hover b{transform:translate(3px,-3px)}.taishan-checkin.is-done{color:#678b6e}.taishan-pack{padding-bottom:60px}.taishan-pack-list{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.taishan-pack-item{display:flex;align-items:center;gap:10px;min-height:76px;padding:12px;border:1px solid rgba(86,118,104,.17);border-radius:12px;background:rgba(255,253,246,.42);cursor:pointer;transition:transform .25s,background .25s,border-color .25s}.taishan-pack-item:hover{transform:translateY(-2px);background:rgba(255,253,246,.78)}.taishan-pack-item input{position:absolute;opacity:0;pointer-events:none}.taishan-check{position:relative;flex:0 0 17px;width:17px;height:17px;border:1px solid #9eb0a5;border-radius:50%;transition:.25s}.taishan-check:after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:.62rem;opacity:0}.taishan-pack-item strong{display:block;color:#53736a;font:400 .78rem Georgia,serif}.taishan-pack-item small{display:block;margin-top:4px;color:#98a199;font-size:.52rem}.taishan-pack-item.is-checked{border-color:rgba(105,145,105,.35);background:rgba(234,242,226,.7)}.taishan-pack-item.is-checked .taishan-check{border-color:#719875;background:#719875}.taishan-pack-item.is-checked .taishan-check:after{opacity:1}.taishan-footer{display:flex;justify-content:space-between;padding:22px 0 34px;border-top:1px solid rgba(51,77,74,.16);color:#8b978e;font-size:.55rem;letter-spacing:.13em}.taishan-footer a{color:#557c70;text-decoration:none;letter-spacing:0}@keyframes sunBreath{0%,100%{transform:scale(1);opacity:.86}50%{transform:scale(1.06);opacity:1}}@media(max-width:760px){.taishan-shell{width:min(100% - 28px,620px)}.taishan-nav span{display:none}.taishan-hero{grid-template-columns:1fr;gap:28px;padding:44px 0 42px}.taishan-hero h1{font-size:clamp(2.7rem,12vw,4.2rem)}.taishan-lead{font-size:.94rem}.taishan-facts{gap:18px;margin-top:25px}.taishan-facts strong{font-size:1rem}.taishan-sun-card{min-height:245px}.taishan-sun-card p{margin-top:91px}.taishan-route,.taishan-pack{padding-top:24px}.taishan-section-head{display:block;margin-bottom:20px}.taishan-current,.taishan-pack-status{display:inline-block;margin-top:14px}.taishan-map-layout{grid-template-columns:1fr;gap:25px}.taishan-map{min-height:270px;border-radius:17px}.taishan-map svg{min-height:270px}.taishan-map-stop strong{font-size:.62rem}.taishan-map-stop span{width:22px;height:22px}.taishan-stage-card{min-height:310px;padding-top:16px}.taishan-stage-card h3{margin-top:28px;font-size:1.9rem}.taishan-pack-list{grid-template-columns:1fr 1fr;gap:8px}.taishan-pack-item{min-height:70px;padding:10px}.taishan-footer{font-size:.48rem}}@media(max-width:420px){.taishan-hero{padding-top:35px}.taishan-facts{gap:12px}.taishan-facts span{padding-left:8px}.taishan-facts small{font-size:.46rem}.taishan-sun-card{min-height:228px}.taishan-sun-card p{margin-top:80px;font-size:1rem}.taishan-map-caption{left:11px;right:11px;font-size:.4rem}.taishan-map-stop strong{padding:3px 5px;font-size:.55rem}.taishan-pack-list{grid-template-columns:1fr}.taishan-footer{display:block}.taishan-footer a{display:block;margin-top:10px}}@media(prefers-reduced-motion:reduce){.taishan-sun,.taishan-route-progress,.taishan-pack-item,.taishan-checkin b{animation:none;transition:none}}`;
+const styles = String.raw`*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#eee8dc;color:#403d3b}.taishan-page{position:relative;min-height:100vh;overflow:hidden;background:linear-gradient(140deg,#f3eee4 0%,#ebe9df 49%,#e6ece8 100%);font-family:Inter,system-ui,sans-serif}.taishan-atmosphere{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 86% 8%,rgba(245,196,122,.42),transparent 19rem),radial-gradient(circle at 7% 56%,rgba(166,194,183,.35),transparent 24rem)}.taishan-shell{position:relative;z-index:1;width:min(1100px,calc(100vw - 44px));margin:auto}.taishan-nav{display:flex;align-items:center;justify-content:space-between;min-height:70px;border-bottom:1px solid rgba(74,76,69,.18);color:#858980;font-size:.61rem;letter-spacing:.14em}.taishan-nav a{color:#6a7067;text-decoration:none;letter-spacing:0}.taishan-nav b{color:#a97760;font-size:.57rem;font-weight:600}.taishan-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.82fr);gap:clamp(35px,8vw,110px);align-items:center;padding:77px 0 72px}.taishan-kicker{display:flex;align-items:center;gap:10px;margin:0;color:#708879;font-size:.61rem;font-weight:700;letter-spacing:.2em}.taishan-kicker i{width:7px;height:7px;border-radius:50%;background:#b46d5d;box-shadow:0 0 0 5px rgba(180,109,93,.14)}.taishan-date{margin:18px 0 0;color:#9a9a8e;font-size:.69rem;letter-spacing:.08em}.taishan-hero h1{max-width:650px;margin:23px 0 19px;color:#46574f;font:400 clamp(2.65rem,6.2vw,5.1rem)/1.08 Georgia,serif;letter-spacing:-.1em}.taishan-hero h1 em{color:#af6b5b;font-style:italic}.taishan-lead{max-width:490px;margin:0;color:#747b74;font:1rem/1.9 Georgia,serif}.taishan-facts{display:flex;gap:26px;margin-top:33px}.taishan-facts span{display:grid;gap:4px;padding-left:13px;border-left:1px solid rgba(91,119,103,.27)}.taishan-facts strong{color:#557062;font:500 1.14rem Georgia,serif}.taishan-facts small{color:#92968d;font-size:.52rem;letter-spacing:.11em}.taishan-cover{position:relative;min-height:355px;padding:22px 22px 20px;overflow:hidden;border:1px solid rgba(114,121,105,.28);background:#f8f3e8;box-shadow:13px 16px 0 rgba(89,100,85,.1);transform:rotate(1.3deg)}.taishan-cover:before{position:absolute;inset:9px;border:1px solid rgba(166,135,100,.3);content:'';pointer-events:none}.taishan-cover-top{position:relative;display:flex;justify-content:space-between;color:#8f9285;font-size:.5rem;letter-spacing:.12em}.taishan-cover-top b{color:#ad7961;font-weight:500}.taishan-mountain{position:relative;height:240px;margin-top:12px;overflow:hidden;background:linear-gradient(180deg,#dbe9e2,#f2dfc7)}.taishan-mountain:before{position:absolute;right:-12%;bottom:0;left:-12%;height:58%;border-radius:52% 48% 0 0;background:linear-gradient(150deg,#7e9a8d,#536d66);content:'';transform:rotate(-7deg)}.taishan-mountain:after{position:absolute;right:-8%;bottom:0;left:-8%;height:40%;border-radius:55% 45% 0 0;background:rgba(54,81,76,.42);content:'';transform:rotate(7deg)}.taishan-sun{position:absolute;z-index:2;top:34px;right:63px;width:74px;height:74px;border-radius:50%;background:#efbd73;box-shadow:0 0 0 14px rgba(239,189,115,.2),0 0 0 30px rgba(239,189,115,.09)}.taishan-mountain i{position:absolute;z-index:3;bottom:18px;width:4px;height:4px;border-radius:50%;background:#f8f3e8;box-shadow:0 0 0 4px rgba(248,243,232,.15)}.taishan-mountain i:nth-of-type(1){left:35%;bottom:29%}.taishan-mountain i:nth-of-type(2){left:48%;bottom:24%}.taishan-mountain i:nth-of-type(3){left:62%;bottom:18%}.taishan-cover-caption{position:relative;display:grid;gap:5px;margin-top:16px}.taishan-cover-caption strong{color:#4e655c;font:400 1.28rem Georgia,serif}.taishan-cover-caption span{color:#ad7961;font-size:.5rem;letter-spacing:.16em}.taishan-cover-stamp{position:absolute;right:30px;bottom:24px;width:47px;height:50px;display:grid;place-content:center;text-align:center;border:1px dashed #bf8e72;color:#b87862;font:1rem Georgia,serif;line-height:.85;transform:rotate(7deg)}.taishan-cover-stamp small{font:.38rem Inter,sans-serif;letter-spacing:.14em}.taishan-story,.taishan-keepsake{padding:31px 0 64px;border-top:1px solid rgba(74,76,69,.18)}.taishan-section-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:30px}.taishan-section-head p,.taishan-keepsake-copy>p{margin:0;color:#718777;font-size:.61rem;font-weight:700;letter-spacing:.19em}.taishan-section-head h2{margin:11px 0 0;color:#51645a;font:400 clamp(1.7rem,3.4vw,2.7rem) Georgia,serif;letter-spacing:-.07em}.taishan-section-head h2 em,.taishan-keepsake-copy h2 em{color:#ad6d5b;font-style:italic}.taishan-story-count{padding:7px 11px;border:1px solid rgba(103,121,105,.23);border-radius:99px;color:#7c897f;font-size:.57rem;letter-spacing:.06em;white-space:nowrap}.taishan-story-layout{display:grid;grid-template-columns:minmax(320px,.86fr) minmax(0,1.15fr);gap:clamp(28px,7vw,92px);align-items:stretch}.taishan-timeline{position:relative;display:grid;align-content:center}.taishan-timeline:before{position:absolute;top:17px;bottom:17px;left:6px;border-left:1px dashed rgba(104,127,108,.38);content:''}.taishan-timeline-item{position:relative;display:grid;grid-template-columns:31px 55px 1fr;grid-template-rows:auto auto;gap:3px 13px;padding:17px 9px;border:0;border-bottom:1px solid rgba(103,121,105,.15);background:none;color:#718078;text-align:left;cursor:pointer;transition:background .25s,transform .25s}.taishan-timeline-item:first-child{border-top:1px solid rgba(103,121,105,.15)}.taishan-timeline-item:hover{transform:translateX(4px)}.taishan-timeline-item.is-selected{background:rgba(255,252,242,.7);transform:translateX(8px);box-shadow:5px 5px 0 rgba(95,112,95,.08)}.taishan-timeline-dot{position:relative;z-index:1;grid-row:1/3;width:13px;height:13px;margin:2px 0 0;border:3px solid #f1eee4;border-radius:50%;background:var(--dot-tone);box-shadow:0 0 0 1px var(--dot-tone)}.taishan-timeline-time{color:#ad7964;font-size:.67rem;letter-spacing:.08em}.taishan-timeline-place{display:flex;gap:10px;align-items:baseline;color:#4e665a;font:400 1rem Georgia,serif}.taishan-timeline-place small{color:#9a9d91;font:.55rem Inter,sans-serif;letter-spacing:.08em}.taishan-timeline-mark{grid-column:3;color:#90968d;font:.7rem/1.4 Georgia,serif}.taishan-memory-card{position:relative;display:flex;flex-direction:column;min-height:350px;padding:23px 25px 20px;border:1px solid rgba(111,118,100,.3);background:#f8f3e9;box-shadow:9px 12px 0 rgba(89,100,85,.1);transform:rotate(-.7deg)}.taishan-memory-card:before{position:absolute;inset:9px;border:1px solid rgba(166,135,100,.25);content:'';pointer-events:none}.taishan-memory-card-top{position:relative;display:flex;justify-content:space-between;color:#a09c8e;font-size:.54rem;letter-spacing:.12em}.taishan-memory-card-top b{color:var(--memory-tone);font-weight:600}.taishan-memory-time{position:relative;margin:57px 0 0;color:var(--memory-tone);font-size:.62rem;letter-spacing:.14em}.taishan-memory-card h3{position:relative;max-width:460px;margin:12px 0 17px;color:#4c6257;font:400 clamp(1.65rem,3vw,2.55rem)/1.17 Georgia,serif;letter-spacing:-.06em}.taishan-memory-text{position:relative;max-width:470px;margin:0;color:#727b72;font:.95rem/1.9 Georgia,serif}.taishan-memory-card-foot{position:relative;display:flex;justify-content:space-between;gap:12px;margin-top:auto;padding-top:20px;border-top:1px dashed rgba(104,123,105,.32);color:#9b988c;font-size:.53rem;letter-spacing:.1em}.taishan-keepsake{display:grid;grid-template-columns:minmax(0,.85fr) minmax(360px,1.15fr);gap:clamp(30px,8vw,105px);align-items:center}.taishan-keepsake-copy h2{margin:12px 0 10px;color:#53655b;font:400 clamp(1.75rem,3.5vw,2.8rem) Georgia,serif;letter-spacing:-.07em}.taishan-keepsake-copy>span{display:block;max-width:340px;color:#7e867d;font:.84rem/1.7 Georgia,serif}.taishan-keepsake-form{padding:18px 20px 16px;border:1px solid rgba(119,128,107,.28);background:rgba(255,252,243,.55);box-shadow:6px 7px 0 rgba(95,109,90,.08);transform:rotate(.5deg)}.taishan-keepsake-form label{display:block;color:#7e8c81;font-size:.59rem;letter-spacing:.1em}.taishan-keepsake-form textarea{display:block;width:100%;min-height:67px;margin:12px 0;padding:0;border:0;resize:vertical;outline:none;background:transparent;color:#53655b;font:1rem/1.65 Georgia,serif}.taishan-keepsake-form textarea::placeholder{color:#adb0a6}.taishan-keepsake-actions{display:flex;align-items:center;justify-content:space-between;gap:14px}.taishan-keepsake-actions small{color:#a1a298;font-size:.57rem;letter-spacing:.08em}.taishan-keepsake-actions button{padding:10px 14px;border:1px solid #b77460;background:#b77460;color:#fff8ec;font-size:.62rem;letter-spacing:.05em;cursor:pointer;transition:transform .2s,background .2s}.taishan-keepsake-actions button:hover{background:#9f604f;transform:translateY(-2px)}.taishan-saved-status{min-height:1em;margin:11px 0 0;color:#7c987a;font:.69rem/1.4 Georgia,serif;opacity:.5}.taishan-saved-status.is-visible{opacity:1}.taishan-footer{display:flex;justify-content:space-between;padding:23px 0 36px;border-top:1px solid rgba(74,76,69,.18);color:#95988d;font-size:.55rem;letter-spacing:.14em}.taishan-footer a{color:#6d8170;text-decoration:none;letter-spacing:0}@media(max-width:790px){.taishan-shell{width:min(100% - 30px,650px)}.taishan-nav span{display:none}.taishan-hero{grid-template-columns:1fr;gap:34px;padding:53px 0 55px}.taishan-hero h1{font-size:clamp(2.75rem,12vw,4.25rem)}.taishan-cover{max-width:540px;margin:auto}.taishan-section-head{display:block}.taishan-story-count{display:inline-block;margin-top:14px}.taishan-story-layout{grid-template-columns:1fr;gap:29px}.taishan-memory-card{min-height:330px}.taishan-keepsake{grid-template-columns:1fr;gap:25px}.taishan-keepsake-copy>span{max-width:470px}}@media(max-width:450px){.taishan-hero{padding-top:38px}.taishan-facts{gap:13px}.taishan-facts span{padding-left:8px}.taishan-facts small{font-size:.45rem}.taishan-cover{min-height:320px;padding:17px}.taishan-mountain{height:210px}.taishan-sun{right:39px}.taishan-section-head h2{font-size:1.8rem}.taishan-story,.taishan-keepsake{padding-bottom:47px}.taishan-timeline-item{grid-template-columns:27px 47px 1fr;gap:3px 9px;padding:15px 4px}.taishan-timeline-place{font-size:.9rem}.taishan-memory-card{min-height:355px;padding:19px}.taishan-memory-card h3{font-size:1.72rem}.taishan-keepsake-form{padding:15px}.taishan-footer{display:block;font-size:.48rem}.taishan-footer a{display:block;margin-top:11px}}@media(prefers-reduced-motion:reduce){.taishan-timeline-item,.taishan-keepsake-actions button{transition:none}}`;

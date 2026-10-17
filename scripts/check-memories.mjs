@@ -118,6 +118,25 @@ const anniversary = await read('dist/games/year-one/index.html');
 checkNoStamps(anniversary, 'year-one');
 const home = await read('dist/games/index.html');
 checkNoStamps(home, '首页');
+const musicPages = [
+  ['首页', home, 'primrose'],
+  ['高邮', gaoyou, 'rain-love'],
+  ['徐州', xuzhou, 'magic-potion'],
+  ['泰安', taian, 'primrose'],
+  ['周年信', anniversary, 'love-message'],
+];
+for (const [page, html, track] of musicPages) {
+  const player = html.match(/<memory-music\b[^>]*>([\s\S]*?)<\/memory-music>/)?.[0];
+  assert.ok(player, `${page} 缺少悬浮音乐按钮`);
+  assert.equal((html.match(/<memory-music\b/g) || []).length, 1, `${page} 只能保留一个音乐控件`);
+  assert.ok(player.includes(`data-track="${track}"`) && player.includes(`src="/music/${track}.mp3"`), `${page} 音乐搭配不正确`);
+  assert.equal((player.match(/<button\b/g) || []).length, 1, `${page} 音乐只需要一个暂停／播放按钮`);
+  assert.ok(/<audio\b[^>]*preload="none"[^>]*loop/.test(player) && !/<audio\b[^>]*\bautoplay\b/.test(player), `${page} 应等待点击再播放，不提前加载整首音乐`);
+  const file = await readFile(new URL(`dist/music/${track}.mp3`, root));
+  assert.equal(file.subarray(0, 3).toString(), 'ID3', `${track} 应为真实 MP3，而不是改扩展名的 WAV`);
+  assert.ok(file.length > 100_000 && file.length < 8_000_000, `${track} 音乐文件大小不适合手机浏览`);
+}
+console.log('✓ 四首新音乐按页面搭配；单个悬浮按钮、按需加载、英文 MP3 文件通过检查。');
 assert.ok(home.includes('还是想再抱你一会儿。') && home.includes('invitation-photo'), '首页应展示合照与新的周年邀请');
 assert.ok(!home.includes('明明你自己也很生气'), '首页不再使用生气后主动哄我的文案');
 assert.ok(home.includes('href="/games/year-one/#letter"'), '周年邀请应直达写给猪猪的信');
@@ -129,6 +148,9 @@ const introBody = introduction.replace(/^\*\*2026.+\*\*$/m, '');
 paragraphCount += checkInOrder(introBody, home, '原稿序言');
 assert.ok(anniversary.includes('<details') && anniversary.includes('给我的猪猪'), '周年信无法打开');
 assert.ok(anniversary.includes('这一年，让我记得最深的一件事，是那次') && !anniversary.includes('我一直记得，明明你自己也很生气'), '周年信应使用更自然的难忘往事引入');
+for (const detail of ['猪猪，其实你也把我照顾得特别好。', '你主动给我涂药的时候', '被你这样惦记着、心疼着，我也觉得很安心。']) {
+  assert.ok(anniversary.includes(detail), `周年信应写出猪猪对我的照顾：${detail}`);
+}
 assert.ok(!anniversary.includes('连伞都忘了撑') && anniversary.includes('都不会撑太阳伞的小插曲'), '旅行后记也应同步修正不会撑伞的描述');
 for (const detail of ['一颗一颗喂我的猪猪吃坚果', '两个人凑在一起吃同一碗面', '把脑袋埋在我肚子上', '怎么都抱不够']) {
   assert.ok(anniversary.includes(detail), `周年信缺少细节：${detail}`);

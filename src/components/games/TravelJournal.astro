@@ -15,6 +15,7 @@ const trip = trips[tripIndex];
 if (!trip) throw new Error(`Unknown travel diary: ${variant}`);
 const previous = trips[tripIndex - 1];
 const next = trips[tripIndex + 1];
+const musicTracks = { gaoyou: 'rain-love', xuzhou: 'magic-potion', taian: 'primrose' } as const;
 const shortDate = (date: string) => date.replace('月', '.').replace('日', '');
 ---
 <main class={`memory-book journal-book theme-${trip.id}`}>
@@ -64,5 +65,5 @@ const shortDate = (date: string) => date.replace('月', '.').replace('日', '');
 
     <footer class="journal-ending"><span class="book-handwritten">下一页，也还是我们。♡</span><nav class="journal-next" aria-label="继续翻阅"><a href={previous ? `/games/${previous.slug}/` : '/games/#our-travels'}><small>← {previous ? '上一段旅程' : '回到纪念册'}</small><strong>{previous ? previous.city + '之旅' : '我们的第一年'}</strong></a><a href={next ? `/games/${next.slug}/` : '/games/year-one/'}><small>{next ? '下一段旅程' : '有些话，想说给你听'} ↗</small><strong>{next ? next.city + '之旅' : '一周年，写给猪猪的信'}</strong></a></nav></footer>
   </div>
-  <MemoryMusic /><MemoryEffects />
+  <MemoryMusic track={musicTracks[variant]} /><MemoryEffects />
 </main>

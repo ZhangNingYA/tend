@@ -1,27 +1,48 @@
 ---
-interface Props { track?: 'onlyone' | 'lucky' }
-const { track = 'onlyone' } = Astro.props;
+const tracks = {
+  primrose: { title: '樱花草', artist: 'Sweety' },
+  'magic-potion': { title: '给你一瓶魔法药水', artist: '告五人' },
+  'love-message': { title: '爱情讯息', artist: '郭静' },
+  'rain-love': { title: '雨爱', artist: '杨丞琳' },
+};
+interface Props { track?: keyof typeof tracks }
+const { track = 'primrose' } = Astro.props;
+const song = tracks[track];
 ---
-<memory-music class="memory-music" data-track={track}>
+<memory-music class="memory-music" data-track={track} data-title={song.title}>
   <audio src={`/music/${track}.mp3`} preload="none" loop></audio>
-  <button type="button" aria-label="播放背景音乐" aria-pressed="false">
+  <button type="button" aria-label={`播放背景音乐《${song.title}》`} aria-pressed="false" title={`${song.title} · ${song.artist}`}>
     <span class="music-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-    <span data-music-label>配着音乐读</span>
+    <span data-music-label>播放音乐</span>
   </button>
   <span class="memory-sr-only" data-music-status aria-live="polite"></span>
 </memory-music>
 <script>
   class MemoryMusic extends HTMLElement {
+    private controller?: AbortController;
+
     connectedCallback() {
-      if (this.dataset.ready) return;
+      if (this.controller) return;
+      this.controller = new AbortController();
+      const { signal } = this.controller;
       this.dataset.ready = 'true';
       const audio = this.querySelector('audio')!;
       const button = this.querySelector('button')!;
       const label = this.querySelector('[data-music-label]')!;
       const status = this.querySelector('[data-music-status]')!;
       const key = `tend-music-${this.dataset.track}`;
+      const preferenceKey = 'tend-memory-music-playback';
+      const readPreference = () => {
+        try { return sessionStorage.getItem(preferenceKey); } catch { return null; }
+      };
+      let preference = readPreference();
+      const rememberPreference = (value: 'playing' | 'paused') => {
+        preference = value;
+        try { sessionStorage.setItem(preferenceKey, value); } catch {}
+      };
       let lastSaved = 0;
-      audio.volume = 0.45;
+      let starting = false;
+      audio.volume = 0.3;
       let savedTime = 0;
       try {
         const value = Number(localStorage.getItem(key));
@@ -29,7 +50,7 @@ const { track = 'onlyone' } = Astro.props;
       } catch {}
       audio.addEventListener('loadedmetadata', () => {
         if (savedTime > 0 && Number.isFinite(audio.duration)) audio.currentTime = savedTime % audio.duration;
-      }, { once: true });
+      }, { once: true, signal });
       const save = () => {
         // An unopened, preload="none" player is still at zero. Do not erase the
         // last position just because the reader visited another page silently.
@@ -40,22 +61,75 @@ const { track = 'onlyone' } = Astro.props;
         const playing = !audio.paused;
         this.classList.toggle('is-playing', playing);
         button.setAttribute('aria-pressed', String(playing));
-        button.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
-        label.textContent = playing ? '音乐正在陪你' : '配着音乐读';
+        button.setAttribute('aria-label', `${playing ? '暂停' : '播放'}背景音乐《${this.dataset.title}》`);
+        label.textContent = playing ? '暂停音乐' : '播放音乐';
       };
-      button.addEventListener('click', async () => {
-        if (!audio.paused) { audio.pause(); save(); return; }
+
+      const stopAutoStart = () => document.removeEventListener('click', startOnInteraction);
+      const play = async () => {
+        if (starting || !audio.paused) return;
+        starting = true;
         button.disabled = true;
         status.textContent = '';
-        try { await audio.play(); } catch { status.textContent = '音乐暂时无法播放，请稍后再试。'; }
-        finally { button.disabled = false; sync(); }
-      });
-      audio.addEventListener('play', sync);
-      audio.addEventListener('pause', sync);
+        rememberPreference('playing');
+        try {
+          if (audio.error) audio.load();
+          // Keep play() inside the real click handler for mobile browsers.
+          await audio.play();
+          stopAutoStart();
+        } catch (error) {
+          // A new document may need another gesture (notably on iOS). Keep
+          // listening for that click without reporting an audio-file error.
+          if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
+            status.textContent = '音乐暂时无法播放，点音乐按钮可以重试。';
+            stopAutoStart();
+          }
+        } finally {
+          starting = false;
+          button.disabled = false;
+          sync();
+        }
+      };
+      const startOnInteraction = (event: MouseEvent) => {
+        if (!event.isTrusted || this.contains(event.target as Node) || preference === 'paused') return;
+        void play();
+      };
+      const armAutoStart = () => {
+        if (preference !== 'paused') document.addEventListener('click', startOnInteraction, { passive: true, signal });
+      };
+      button.addEventListener('click', () => {
+        stopAutoStart();
+        if (!audio.paused) {
+          rememberPreference('paused');
+          audio.pause();
+          save();
+        } else {
+          void play();
+        }
+      }, { signal });
+      audio.addEventListener('play', sync, { signal });
+      audio.addEventListener('pause', sync, { signal });
       audio.addEventListener('timeupdate', () => {
         if (Date.now() - lastSaved > 5000) { save(); lastSaved = Date.now(); }
-      });
-      window.addEventListener('pagehide', save, { once: true });
+      }, { signal });
+      window.addEventListener('pagehide', () => { save(); audio.pause(); }, { signal });
+      window.addEventListener('pageshow', (event) => {
+        if (!event.persisted) return;
+        preference = readPreference();
+        stopAutoStart();
+        armAutoStart();
+        if (preference === 'playing') void play();
+      }, { signal });
+      armAutoStart();
+      // Continue the reader's choice on navigation; if the browser blocks it,
+      // the next page click will start the music instead.
+      if (preference === 'playing') void play();
+    }
+
+    disconnectedCallback() {
+      this.controller?.abort();
+      this.controller = undefined;
+      this.querySelector('audio')?.pause();
     }
   }
   if (!customElements.get('memory-music')) customElements.define('memory-music', MemoryMusic);

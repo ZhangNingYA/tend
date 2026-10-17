@@ -27,3 +27,6 @@ pnpm-debug.log*
 
 # local assistant notes
 CLAUDE.md
+
+# Full-quality music sources; the site only ships compressed MP3s.
+.music-originals/

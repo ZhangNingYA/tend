@@ -11,6 +11,7 @@ const posts = (await getCollection('games'))
     ));
 
 const togetherDate = '2025-10-18';
+const anniversaryDate = '2026-10-18';
 ---
 
 <!doctype html>
@@ -53,7 +54,7 @@ const togetherDate = '2025-10-18';
             <!-- Mini chip header ------------------------------------ -->
             <nav class="topchip">
                 <span class="chip-pulse"></span>
-                <span>diary · vol.001</span>
+                <span>diary · year one</span>
                 <span class="chip-sep">/</span>
                 <span id="todayDate">2025.01.01</span>
             </nav>
@@ -66,6 +67,12 @@ const togetherDate = '2025-10-18';
                     <span class="greeting-emoji" aria-hidden="true">💌</span>
                     <span class="greeting-rule" aria-hidden="true"></span>
                 </p>
+
+                <div class="anniversary-ribbon" aria-label="一周年纪念">
+                    <span>ONE YEAR</span>
+                    <strong>2025.10.18 <i>→</i> 2026.10.18</strong>
+                    <small id="anniversaryStatus">把第一年，认真收好。</small>
+                </div>
 
                 <div class="orbit-stage">
                     <!-- Background concentric rings -->
@@ -146,23 +153,23 @@ const togetherDate = '2025-10-18';
             <section class="memory-box" aria-labelledby="memory-box-title">
                 <div class="memory-box-head">
                     <div>
-                        <p class="memory-box-eyebrow"><span></span> MEMORY BOX / 03</p>
-                        <h2 id="memory-box-title">把今天的小心动，<em>收在一起。</em></h2>
+                        <p class="memory-box-eyebrow"><span></span> ONE YEAR / 03</p>
+                        <h2 id="memory-box-title">把第一年的小心动，<em>收在一起。</em></h2>
                     </div>
                     <p class="memory-box-lead">在每一页留下一个动作，<br />这里就会亮起一盏小灯。</p>
                 </div>
                 <div class="memory-box-grid">
-                    <a class="memory-box-card" data-memory-card="tend-memory-postcard" href="/games/postcard/">
-                        <span class="memory-box-icon">✉</span><span class="memory-box-card-no">01 / COAST</span>
-                        <strong>寄一张明信片</strong><small data-memory-status>还没有寄出的句子</small><i>↗</i>
+                    <a class="memory-box-card memory-box-card-featured" href="/games/first-meeting/">
+                        <span class="memory-box-icon">01</span><span class="memory-box-card-no">OPENING / 2025.10.18</span>
+                        <strong>第一次相遇</strong><small>故事的第一页，从这里开始</small><i>↗</i>
                     </a>
-                    <a class="memory-box-card" data-memory-card="tend-memory-cinema" href="/games/night-cinema/">
-                        <span class="memory-box-icon">◉</span><span class="memory-box-card-no">02 / SCREEN</span>
-                        <strong>留住一帧电影</strong><small data-memory-status>还没有保存的画面</small><i>↗</i>
+                    <a class="memory-box-card" href="/games/kunming-first-meeting/">
+                        <span class="memory-box-icon">02</span><span class="memory-box-card-no">FIRST MEETING / 2026.06.13</span>
+                        <strong>昆明初见</strong><small>花、甜点，和第一次拥抱</small><i>↗</i>
                     </a>
-                    <a class="memory-box-card" data-memory-card="tend-memory-herbarium" href="/games/herbarium/">
-                        <span class="memory-box-icon">✳</span><span class="memory-box-card-no">03 / PRESS</span>
-                        <strong>钉一枚小标本</strong><small data-memory-status>还没有收藏的物件</small><i>↗</i>
+                    <a class="memory-box-card" href="/games/taian-trip/">
+                        <span class="memory-box-icon">03</span><span class="memory-box-card-no">TRAVEL / 2026.10.03</span>
+                        <strong>三次旅行，走到山顶</strong><small>高邮 · 徐州 · 泰安</small><i>↗</i>
                     </a>
                 </div>
             </section>
@@ -182,13 +189,13 @@ const togetherDate = '2025-10-18';
                     <header class="tl-head">
                         <div class="tl-eyebrow">
                             <span class="eb-dot"></span>
-                            <span>MEMORY LANE</span>
+                            <span>ONE YEAR MEMORY LANE</span>
                             <span class="eb-count">{String(posts.length).padStart(2, '0')}</span>
                         </div>
                         <h2 class="tl-title">
-                            一些<em>琐碎</em>的<br/>日常与心动
+                            第一年的<em>纪念册</em>
                         </h2>
-                        <p class="tl-lead">挑一段往下读，时间会替我们记住。</p>
+                        <p class="tl-lead">从第一次相遇，到一起走过的三座城市。</p>
                     </header>
 
                     <ol class="tl-list">
@@ -226,7 +233,7 @@ const togetherDate = '2025-10-18';
             </section>
         </main>
 
-        <script define:vars={{ togetherDate }}>
+        <script define:vars={{ togetherDate, anniversaryDate }}>
             // -------- today's date in chip --------
             const today = new Date();
             const dateEl = document.getElementById('todayDate');
@@ -257,27 +264,19 @@ const togetherDate = '2025-10-18';
             };
             updateCounters();
 
-            // -------- memory box ---------------------------------
-            const memoryCards = document.querySelectorAll('[data-memory-card]');
-            const updateMemoryBox = () => {
-                memoryCards.forEach((card) => {
-                    const key = card.getAttribute('data-memory-card');
-                    const status = card.querySelector('[data-memory-status]');
-                    if (!key || !status) return;
-                    try {
-                        const saved = JSON.parse(window.localStorage.getItem(key) || 'null');
-                        card.classList.toggle('is-kept', Boolean(saved));
-                        if (!saved) return;
-                        if (key === 'tend-memory-postcard') status.textContent = `已寄出：${saved.message || '一封小小的信'}`;
-                        if (key === 'tend-memory-cinema') status.textContent = '已保存：' + (['灯光暗下来', '片尾字幕', '夜路回家'][saved.frame] || '一帧电影');
-                        if (key === 'tend-memory-herbarium') status.textContent = '已收藏：' + (saved.title || '一件小标本');
-                    } catch {
-                        card.classList.remove('is-kept');
-                    }
-                });
-            };
-            updateMemoryBox();
-            window.addEventListener('storage', updateMemoryBox);
+            const anniversaryStatus = document.getElementById('anniversaryStatus');
+            if (anniversaryStatus) {
+                const anniversary = new Date(anniversaryDate + 'T00:00:00');
+                const nowDate = new Date();
+                const todayDay = Date.UTC(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate());
+                const anniversaryDay = Date.UTC(anniversary.getFullYear(), anniversary.getMonth(), anniversary.getDate());
+                const delta = Math.floor((todayDay - anniversaryDay) / 864e5);
+                anniversaryStatus.textContent = delta === 0
+                    ? '今天是一周年，愿我们继续慢慢走。'
+                    : delta > 0
+                        ? '一周年之后的第 ' + delta + ' 天，故事还在继续。'
+                        : '距离一周年还有 ' + Math.abs(delta) + ' 天。';
+            }
 
             // -------- live ticker --------
             const ticker = document.getElementById('liveTicker');
@@ -504,6 +503,43 @@ const togetherDate = '2025-10-18';
     .orbit-greeting .hand {
         padding: 0 2px;
         white-space: nowrap;
+    }
+    .anniversary-ribbon {
+        display: inline-grid;
+        gap: 7px;
+        margin: 4px auto 22px;
+        padding: 10px 17px 11px;
+        border: 1px solid rgba(212,70,123,0.22);
+        border-radius: 2px;
+        background: rgba(255,255,255,0.48);
+        box-shadow: 5px 5px 0 rgba(212,70,123,0.08);
+        transform: rotate(-1.5deg);
+        animation: fadeUp 0.9s 0.16s ease-out both;
+    }
+    .anniversary-ribbon span {
+        color: #d4467b;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.6rem;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+    }
+    .anniversary-ribbon strong {
+        color: #3a2447;
+        font-family: 'Fraunces', serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+    }
+    .anniversary-ribbon strong i {
+        padding: 0 7px;
+        color: #e89855;
+        font-style: normal;
+    }
+    .anniversary-ribbon small {
+        color: rgba(58,36,71,0.57);
+        font-family: 'Fraunces', serif;
+        font-size: 0.75rem;
+        font-style: italic;
     }
     .greeting-rule {
         width: clamp(28px, 7vw, 58px);
@@ -1093,6 +1129,9 @@ const togetherDate = '2025-10-18';
         box-shadow: 0 14px 30px rgba(58,36,71,0.09);
     }
     .memory-box-card:hover::after, .memory-box-card.is-kept::after { transform: scaleX(1); }
+    .memory-box-card-featured {
+        background: rgba(255,246,239,0.76);
+    }
     .memory-box-icon {
         display: grid; place-items: center;
         width: 31px; height: 31px;

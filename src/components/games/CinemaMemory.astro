@@ -1,0 +1,14 @@
+---
+import { memoryPhotos } from '../../data/travelDiary';
+import MemoryPhoto from './MemoryPhoto.astro';
+---
+<aside class="diary-photo-interlude cinema-memory" data-cinema-memory data-book-reveal aria-label="一起看过的电影：功夫女足">
+  <p class="cinema-memory-eyebrow"><span aria-hidden="true">Ⅱ Ⅰ Ⅱ</span> 把那个雨天，留在这一页</p>
+  <MemoryPhoto photo={memoryPhotos.kungFuSoccer} />
+  <div class="diary-cinema-ticket" aria-label="观影回忆票签，非原始票根">
+    <span>两个人的雨天记忆</span>
+    <strong>功夫女足</strong>
+    <div><time datetime="2026-07-19">2026.07.19</time><span>世贸金街</span></div>
+    <i aria-hidden="true">Ⅱ Ⅱ Ⅰ Ⅱ Ⅰ Ⅰ Ⅱ Ⅱ Ⅰ Ⅱ</i>
+  </div>
+</aside>

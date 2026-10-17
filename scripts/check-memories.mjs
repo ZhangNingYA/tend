@@ -43,6 +43,7 @@ for (const [index, slug] of slugs.entries()) {
   checkNoStamps(html, slug);
   const article = html.match(/<article\b[^>]*class="[^"]*diary-manuscript[^\"]*"[^>]*>([\s\S]*?)<\/article>/)?.[1];
   assert.ok(article, `${slug} 缺少服务端渲染的日记`);
+  assert.ok(!html.includes('journal-ending-quote'), `${slug} 页尾不应重复摘抄正文结尾`);
   const expectedDays = index === 2 ? 4 : 3;
   assert.equal((article.match(/data-diary-day/g) || []).length, expectedDays, `${slug} 日期数量`);
   const days = tripSources[index].split(/(?=^## )/m).slice(1);
@@ -73,15 +74,34 @@ const checkPlacePhotos = async (slug, expectedDays) => {
   }
   return html;
 };
+const gaoyou = await checkPlacePhotos('gaoyou-trip', { 2: ['kung-fu-soccer-still'] });
+const cinema = gaoyou.match(/<aside\b[^>]*data-cinema-memory[^>]*>([\s\S]*?)<\/aside>/)?.[1];
+assert.ok(cinema, '高邮篇缺少电影剧照与票签组合');
+assert.ok(cinema.includes('电影剧照，非影院实拍') && cinema.includes('1905电影网') && cinema.includes('版权归片方及相关权利人'), '电影配图应明确来源、版权及非实拍属性');
+assert.ok(!cinema.includes('creativecommons.org') && !cinema.includes('地点回望'), '电影剧照不应标成开放许可的风景照片');
+assert.ok(cinema.includes('2026.07.19') && cinema.includes('世贸金街') && cinema.includes('非原始票根'), '电影票签应保留原稿日期地点，不冒充真实票根');
+assert.ok(gaoyou.includes('我点了包子外卖，和猪猪一起吃了早饭。') && !gaoyou.includes('我出去买了包子'), '高邮包子应为点外卖，不是出门买');
+assert.equal(gaoyou.split('但是那些一起吃饭、牵手逛街、互相打闹，还有舍不得分别的时刻，反而都变成了最难忘的回忆。').length - 1, 1, '高邮结尾应只出现一次');
 const xuzhou = await checkPlacePhotos('xuzhou-trip', {
   1: ['xuzhou-station', 'xuzhou-lake'],
   2: ['yunlong-mountain', 'yunlong-overlook'],
   3: ['han-culture', 'han-warriors'],
 });
 assert.ok(xuzhou.includes('第二天，是我们第一次一起爬山，爬的是云龙山。'), '徐州首次爬山应明确为云龙山');
+assert.ok(xuzhou.includes('专门给猪猪准备的太阳伞') && xuzhou.includes('一开始居然都不会撑'), '徐州应为带太阳伞却不会撑');
+assert.ok(xuzhou.includes('就这样一路走着走着，不知不觉就到了山顶。') && xuzhou.includes('我们的第一次一起爬山 · 云龙山'), '不知不觉登顶的文案及旁注应保留');
+assert.ok(xuzhou.includes('我一个人吃了烧烤，猪猪还在跟我置气。') && xuzhou.includes('猪猪还是好好地哄了我'), '烧烤那晚应保留独自吃饭、置气后仍主动哄我的细节');
+assert.equal(xuzhou.split('但是这些事情，现在回想起来，反而都变成了很可爱的回忆。').length - 1, 1, '徐州结尾应只出现一次');
+for (const oldDetail of ['专门给猪猪准备的雨伞', '不知道把伞撑起来', '连伞都忘了撑', '我们还一起吃了一顿烧烤', '居然真的走到了山顶']) {
+  assert.ok(!xuzhou.includes(oldDetail) && !manuscript.includes(oldDetail), `徐州旧描述仍残留：${oldDetail}`);
+}
 const taian = await checkPlacePhotos('taian-trip', {
-  2: ['taishan-hongmen', 'taishan-zhongtianmen', 'taishan-nantianmen', 'taishan-yuhuangding', 'taishan-us', 'taishan-view', 'taishan-street'],
+  2: ['taishan-hongmen-recent', 'taishan-zhongtianmen-recent', 'taishan-nantianmen-recent', 'taishan-yuhuangding-recent', 'taishan-us', 'taishan-view', 'taishan-street'],
 });
+for (const oldPhoto of ['taishan-hongmen', 'taishan-zhongtianmen', 'taishan-nantianmen', 'taishan-yuhuangding']) {
+  assert.ok(!taian.includes(`/images/memories/${oldPhoto}.webp`), `泰山仍在引用旧照片：${oldPhoto}`);
+}
+assert.ok(taian.includes('2025年4月登山游记配图') && taian.includes('发布于2026.09.11') && taian.includes('许若晨 / 大众新闻'), '泰山更新照片应保留可核查的来源，区分游记日期与发布日期');
 let landmarkCursor = 0;
 for (const name of ['红门', '中天门', '南天门', '玉皇顶']) {
   const position = taian.indexOf(`data-place-photos="${name}"`, landmarkCursor);
@@ -104,6 +124,8 @@ const introduction = sections.find((section) => section.startsWith('# 我和猪�
 const introBody = introduction.replace(/^\*\*2026.+\*\*$/m, '');
 paragraphCount += checkInOrder(introBody, home, '原稿序言');
 assert.ok(anniversary.includes('<details') && anniversary.includes('给我的猪猪'), '周年信无法打开');
+assert.ok(anniversary.includes('这一年，让我记得最深的一件事，是那次') && !anniversary.includes('我一直记得，明明你自己也很生气'), '周年信应使用更自然的难忘往事引入');
+assert.ok(!anniversary.includes('连伞都忘了撑') && anniversary.includes('都不会撑太阳伞的小插曲'), '旅行后记也应同步修正不会撑伞的描述');
 for (const detail of ['一颗一颗喂我的猪猪吃坚果', '两个人凑在一起吃同一碗面', '把脑袋埋在我肚子上', '怎么都抱不够']) {
   assert.ok(anniversary.includes(detail), `周年信缺少细节：${detail}`);
 }

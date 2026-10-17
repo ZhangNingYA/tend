@@ -21,6 +21,8 @@ export interface MemoryPhoto {
   author?: string;
   license?: string;
   licenseUrl?: string;
+  creditLabel?: string;
+  rights?: string;
 }
 
 export const memoryPhotos: Record<string, MemoryPhoto> = {
@@ -35,6 +37,12 @@ export const memoryPhotos: Record<string, MemoryPhoto> = {
     caption: '盂城驿 · 再看看牵手走过的地方', width: 1280, height: 852,
     source: 'https://commons.wikimedia.org/wiki/File:盂城驿鼓楼.jpg',
     author: '三猎', license: 'CC BY-SA 4.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+  },
+  kungFuSoccer: {
+    name: 'kung-fu-soccer-still', alt: '《功夫女足》影片剧照，身穿白色运动服的队员坐在话筒前，右下角保留片名',
+    caption: '《功夫女足》 · 还记得一起看电影的那个雨天', width: 1280, height: 853,
+    source: 'https://www.1905.com/newgallery/hdpic/1762800.shtml#p7',
+    author: '1905电影网', creditLabel: '电影剧照，非影院实拍', rights: '版权归片方及相关权利人',
   },
   xuzhou: {
     name: 'xuzhou-lake', alt: '徐州云龙湖的湖水、山色与岸边景致',
@@ -73,28 +81,28 @@ export const memoryPhotos: Record<string, MemoryPhoto> = {
     author: 'Gary Todd', license: 'CC0 1.0', licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
   },
   hongmen: {
-    name: 'taishan-hongmen', alt: '泰山红门的红墙门洞与上方的飞云阁',
-    caption: '红门 · 从这里开始，一步一步往上走', width: 1280, height: 960,
-    source: 'https://commons.wikimedia.org/wiki/File:泰山-紅門、飛雲閣.jpg',
-    author: '鏌翷', license: 'CC0 1.0', licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    name: 'taishan-hongmen-recent', alt: '蓝天下泰山红门的红墙门洞、飞云阁和沿登山路前行的游客',
+    caption: '红门 · 从这里开始，一步一步往上走', width: 1280, height: 1707,
+    source: 'https://you.ctrip.com/travels/taian746/4165544.html',
+    author: '行走山水之间 / 携程', creditLabel: '地点回望 · 2025年4月登山游记配图', rights: '版权归原摄影者',
   },
   zhongtianmen: {
-    name: 'taishan-zhongtianmen', alt: '泰山中天门的石门与登山路旁的古建筑',
-    caption: '中天门 · 登山路上的地点回望', width: 1280, height: 962,
-    source: 'https://commons.wikimedia.org/wiki/File:中天门_-_Halfway_Gate_to_Heaven_-_2012.06_-_panoramio.jpg',
-    author: 'rheins', license: 'CC BY 3.0', licenseUrl: 'https://creativecommons.org/licenses/by/3.0/',
+    name: 'taishan-zhongtianmen-recent', alt: '泰山中天门完整石坊，背后是青山、亭阁与蓝天白云',
+    caption: '中天门 · 登山路上的地点回望', width: 1080, height: 1440,
+    source: 'https://dzrb.dzng.com/general/1/DZHN781939XXRKSPIRRP',
+    author: '许若晨 / 大众新闻', rights: '版权归原摄影者',
   },
   nantianmen: {
-    name: 'taishan-nantianmen', alt: '泰山南天门的红墙楼阁与周围的山岭、石阶',
-    caption: '南天门 · 以前觉得很远，后来真的到了', width: 1280, height: 850,
-    source: 'https://commons.wikimedia.org/wiki/File:DSC_5199_泰山南天门.jpg',
-    author: 'drnan tu', license: 'CC BY-SA 2.0', licenseUrl: 'https://creativecommons.org/licenses/by-sa/2.0/',
+    name: 'taishan-nantianmen-recent', alt: '蓝天白云下的泰山南天门，红墙黄瓦、石阶和沿途树木清晰可见',
+    caption: '南天门 · 以前觉得很远，后来真的到了', width: 1280, height: 1706,
+    source: 'https://you.ctrip.com/travels/taian746/4165544.html',
+    author: '行走山水之间 / 携程', creditLabel: '地点回望 · 2025年4月登山游记配图', rights: '版权归原摄影者',
   },
   yuhuangding: {
-    name: 'taishan-yuhuangding', alt: '泰山玉皇顶院内的极顶标石与周围建筑',
+    name: 'taishan-yuhuangding-recent', alt: '蓝天下泰山玉皇顶的红墙入口，门额上的敕修玉皇顶字样清晰可见',
     caption: '玉皇顶 · 终于牵着手，一起登顶', width: 1280, height: 960,
-    source: 'https://commons.wikimedia.org/wiki/File:泰山玉皇顶.jpg',
-    author: 'H2v5o68z', license: 'CC0 1.0', licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/',
+    source: 'https://m.ctrip.com/webapp/you/comment/detail/5142/11/822220883.html',
+    author: '峰中幻想 / 携程', creditLabel: '地点回望 · 发布于2026.09.11', rights: '版权归原摄影者',
   },
   taian: {
     name: 'taishan-back', alt: '穿着绿色外套，站在泰山上看远处的猪猪',
@@ -128,7 +136,7 @@ export const tripMeta = [
     id: 'xuzhou', slug: 'xuzhou-trip', number: '02', city: '徐州', english: 'XUZHOU',
     title: '云龙湖边\n的晚风。', date: '2026.08.22 — 08.24', month: 'AUG', day: '22',
     place: '江苏 · 徐州', duration: '三天两晚', theme: '第一次住民宿，第一次一起爬云龙山',
-    intro: '一起骑电动车、逛云龙湖、吹晚风、听歌。还有我傻乎乎背去的一大瓶椰汁，和两个人连伞都忘了撑的小插曲。',
+    intro: '一起骑电动车、逛云龙湖、吹晚风、听歌。还有我傻乎乎背去的一大瓶椰汁，和两个人一开始居然都不会撑太阳伞的小插曲。',
     quote: '也不知道为什么，明明每天都待在一起，还是总觉得时间不够用。',
     photo: memoryPhotos.xuzhou,
     dayNotes: ['把行李放下，把日子放慢', '休息休息！等会儿等会儿！', '怎么这么快又要分别了'],
@@ -201,7 +209,7 @@ export function diaryInline(text: string) {
 export const anniversaryLetter = [
   '猪猪，一周年快乐呀。',
   '回头看这一年，有很多事情都让我觉得，能和你在一起，真的很幸运。',
-  '我一直记得，明明你自己也很生气，却还是会主动来哄我，一点都舍不得我。想到这些，我就觉得自己被你好好地喜欢着。你的情绪和委屈，我也想更认真地放在心上。以后我想更早一点走向你，主动抱抱你、哄哄你，让你也能安心地依赖我。',
+  '这一年，让我记得最深的一件事，是那次明明你自己也很生气，却还是主动来哄我，舍不得看我难过。想到这些，我就觉得自己被你好好地喜欢着。你的情绪和委屈，我也想更认真地放在心上。以后我想更早一点走向你，主动抱抱你、哄哄你，让你也能安心地依赖我。',
   '还有你主动给我涂药的时候，那些照顾我的小动作，我都记得。每次要分开，你总是不听我的，还是要送我。怎么这么黏人呀，猪猪。可我又知道，你就是舍不得，想再多陪我一会儿。我也一样，每次分别，都还想和你多待一会儿。',
   '我也好喜欢那些只有我们知道的小事。一颗一颗喂我的猪猪吃坚果，两个人凑在一起吃同一碗面。明明都是很普通的东西，和你一起吃，就觉得格外好吃。',
   '还有你把脑袋埋在我肚子上的时候，我就只想再多抱你一会儿。怎么会有一只猪，明明已经抱在怀里了，还是让我觉得怎么都抱不够呀。总想再靠近一点，再抱久一点，最好时间也跟着慢下来，让我们不用那么快就说再见。',

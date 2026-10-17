@@ -9,5 +9,5 @@ const src = `/images/memories/${photo.name}.webp`;
     <img src={src} srcset={`/images/memories/${photo.name}-small.webp 640w, ${src} ${photo.width}w`} sizes="(max-width: 700px) 100vw, 800px" width={photo.width} height={photo.height} alt={photo.alt} loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={eager ? 'high' : 'auto'} />
     <span class="memory-photo-expand" aria-hidden="true">↗</span>
   </button>
-  {caption && <figcaption><span>{photo.caption}</span>{photo.source && <small>地点回望 · <a href={photo.source} target="_blank" rel="noopener noreferrer">{photo.author}</a> / <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer">{photo.license}</a> · 已缩放压缩</small>}</figcaption>}
+  {caption && <figcaption><span>{photo.caption}</span>{photo.source && <small>{photo.creditLabel || '地点回望'} · <a href={photo.source} target="_blank" rel="noopener noreferrer">{photo.author}</a>{photo.license && photo.licenseUrl && <> / <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer">{photo.license}</a></>}{photo.rights && <> · {photo.rights}</>} · 已缩放压缩</small>}</figcaption>}
 </figure>

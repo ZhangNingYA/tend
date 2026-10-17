@@ -202,13 +202,18 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
 .diary-cinema-ticket > strong { display: block; margin: 9px 0 13px; color: #695640; font: 500 29px 'Memory Song', 'Songti SC', STSong, serif; }
 .diary-cinema-ticket > div { display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px dashed #be9c78; font-size: 10px; }
 .diary-cinema-ticket > i { display: block; margin-top: 9px; font: normal 14px monospace; letter-spacing: .1em; opacity: .55; }
+.cinema-memory { padding: 20px 20px 25px; border: 1px solid var(--book-rule); background: #fffdf7; }
+.cinema-memory-eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 17px !important; color: var(--book-accent); font-size: 11px; letter-spacing: .08em; }
+.cinema-memory-eyebrow > span { color: #aa8762; font: 16px monospace; }
+.diary-photo-interlude.cinema-memory .memory-photo-open { aspect-ratio: auto; }
+.cinema-memory .memory-photo-open img { height: auto; }
+.cinema-memory .diary-cinema-ticket { width: min(350px, calc(100% - 26px)); margin: 28px auto 6px; }
 .diary-little-note { width: min(330px, 100%); margin: 36px auto; padding: 24px; background: var(--book-tint); text-align: center; transform: rotate(2deg); }
 .diary-little-note > span { color: var(--book-accent); font-size: 35px; }
 .diary-little-note > p { font: 21px/2 'Kaiti SC', KaiTi, serif; }
 .diary-little-note em { color: var(--book-accent); font-style: normal; }
 .diary-little-note small { display: block; margin-top: 10px; color: #6d7d79; font-size: 10px; }
 .journal-ending { width: min(850px, 100%); margin: 58px auto 0; text-align: center; }
-.journal-ending-quote { max-width: 570px; margin: 0 auto 20px !important; font: 19px/2 'Memory Song', 'Songti SC', STSong, serif; }
 .journal-next { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 52px; padding-top: 25px; border-top: 1px solid var(--book-rule); text-align: left; }
 .journal-next > a { display: flex; flex-direction: column; align-items: start; gap: 10px; min-height: 80px; }
 .journal-next > a:last-child { align-items: end; text-align: right; }
@@ -350,8 +355,9 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
   .polaroid-interlude { width: calc(100% - 8px); margin: 35px auto; padding: 10px; }.polaroid-interlude .memory-photo-open { aspect-ratio: 1.3; }
   .memory-photo figcaption { font-size: 11px; }.memory-photo figcaption small { font-size: 10px; line-height: 1.8; }
   .diary-cinema-ticket { width: calc(100% - 32px); padding: 22px; }.diary-cinema-ticket > strong { font-size: 27px; }
+  .cinema-memory { padding: 14px 14px 20px; }.cinema-memory .memory-photo figcaption { padding-inline: 0; }.cinema-memory-eyebrow { gap: 9px; font-size: 10px; letter-spacing: .04em; }
   .diary-day-end { margin-top: 36px; }
-  .journal-ending { margin-top: 42px; }.journal-ending-quote { font-size: 18px; }.journal-next { gap: 20px; margin-top: 35px; }.journal-next strong { font-size: 17px; }.journal-next small { font-size: 10px; }
+  .journal-ending { margin-top: 42px; }.journal-next { gap: 20px; margin-top: 35px; }.journal-next strong { font-size: 17px; }.journal-next small { font-size: 10px; }
 
   .anniversary-heading { padding-top: 38px; }.anniversary-heading h1 { font-size: 30px; line-height: 1.75; }.anniversary-heading > p:last-of-type { font-size: 12px; }.anniversary-one { margin-top: 24px; font-size: 105px; width: 125px; }
   .anniversary-envelope { margin-top: 13px; }.anniversary-envelope > summary { min-height: 230px; padding: 29px 24px 50px; gap: 15px; }.anniversary-envelope-address { gap: 13px; }.anniversary-envelope-address small { font-size: 7px; }.anniversary-envelope-address strong { font-size: 26px; }.anniversary-envelope-address i { font-size: 16px; }.anniversary-wax { width: 54px; height: 54px; font-size: 30px; }

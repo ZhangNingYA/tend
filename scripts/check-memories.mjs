@@ -102,6 +102,10 @@ for (const oldPhoto of ['taishan-hongmen', 'taishan-zhongtianmen', 'taishan-nant
   assert.ok(!taian.includes(`/images/memories/${oldPhoto}.webp`), `泰山仍在引用旧照片：${oldPhoto}`);
 }
 assert.ok(taian.includes('2025年4月登山游记配图') && taian.includes('发布于2026.09.11') && taian.includes('许若晨 / 大众新闻'), '泰山更新照片应保留可核查的来源，区分游记日期与发布日期');
+assert.ok(taian.includes('上车后，猪猪在卧铺上躺着休息了一会儿。'), '卧铺上躺着休息的是猪猪');
+for (const oldDetail of ['一起在卧铺上睡了一会儿', '一起躺在卧铺上休息']) {
+  assert.ok(!taian.includes(oldDetail) && !manuscript.includes(oldDetail), `卧铺休息的旧描述仍残留：${oldDetail}`);
+}
 let landmarkCursor = 0;
 for (const name of ['红门', '中天门', '南天门', '玉皇顶']) {
   const position = taian.indexOf(`data-place-photos="${name}"`, landmarkCursor);

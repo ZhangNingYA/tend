@@ -1,0 +1,10 @@
+---
+import { diaryInline, type DiaryBlock } from '../../data/travelDiary';
+interface Props { blocks: DiaryBlock[] }
+const { blocks } = Astro.props;
+---
+{blocks.map((block) => block.kind === 'subheading'
+  ? <h3 class="diary-subheading" set:html={diaryInline(block.text)} />
+  : block.kind === 'quote'
+    ? <blockquote class="diary-original-quote" set:html={diaryInline(block.text)} />
+    : <p set:html={diaryInline(block.text)} />)}

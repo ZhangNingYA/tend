@@ -1,0 +1,65 @@
+---
+import { trips, memoryPhotos, type TripId } from '../../data/travelDiary';
+import DiaryText from './DiaryText.astro';
+import MemoryPhoto from './MemoryPhoto.astro';
+import MemoryMusic from './MemoryMusic.astro';
+import MemoryEffects from './MemoryEffects.astro';
+import '../../styles/memory-book.css';
+
+interface Props { variant: TripId }
+const { variant } = Astro.props;
+const tripIndex = trips.findIndex((item) => item.id === variant);
+const trip = trips[tripIndex];
+if (!trip) throw new Error(`Unknown travel diary: ${variant}`);
+const previous = trips[tripIndex - 1];
+const next = trips[tripIndex + 1];
+const shortDate = (date: string) => date.replace('月', '.').replace('日', '');
+const sourceQuotes = {
+  gaoyou: '但是那些一起吃饭、牵手逛街、互相打闹，还有舍不得分别的时刻，反而都变成了最难忘的回忆。',
+  xuzhou: '但是这些事情，现在回想起来，反而都变成了很可爱的回忆。',
+  taian: '每次约会，我们好像都在一点点进步。',
+};
+---
+<main class={`memory-book journal-book theme-${trip.id}`}>
+  <a class="memory-skip-link" href="#diary-start">直接阅读日记</a>
+  <div class="journal-shell">
+    <nav class="journal-topbar" aria-label="日记导航"><a href="/games/#our-travels">← 我们的第一年</a><span>OUR LITTLE JOURNAL</span><b>{trip.number} <i>/ 03</i></b></nav>
+
+    <header class="journal-cover">
+      <div class="journal-cover-copy">
+        <p class="book-eyebrow"><span class="tiny-flower" aria-hidden="true">✳</span> 第{['一', '二', '三'][tripIndex]}篇 · {trip.city}之旅</p>
+        <h1>{trip.title.split('\n').map((line) => <span>{line}</span>)}</h1>
+        <p class="journal-cover-date">{trip.date}<span>{trip.duration}</span></p>
+        <p class="journal-cover-intro">{trip.intro}</p>
+        <a class="journal-read-link" href="#diary-start">向下翻，回到那几天 <span aria-hidden="true">↓</span></a>
+        <div class="journal-location"><span aria-hidden="true">⌁</span>{trip.place}</div>
+      </div>
+      <div class="journal-cover-picture"><span class="memory-tape" aria-hidden="true"></span><MemoryPhoto photo={trip.photo} eager /><span class="cover-date-stamp"><small>{trip.month} / 2026</small><strong>{trip.day}</strong><i>和你在一起</i></span></div>
+    </header>
+
+    <nav class="diary-daynav" aria-label="按日期阅读日记"><span>这几天</span><div>{trip.days.map((day, index) => <a href={`#day-${index + 1}`} data-day-link aria-current={index === 0 ? 'location' : undefined}>{shortDate(day.date)}<small>{index === 0 ? '见面' : index === trip.days.length - 1 ? '分别' : '在一起'}</small></a>)}</div><div class="reading-progress" aria-hidden="true"><i data-reading-progress></i></div></nav>
+
+    <article class="diary-manuscript" id="diary-start" aria-label={`${trip.city}旅行日记全文`}>
+      {trip.days.map((day, dayIndex) => <section class="diary-day" id={`day-${dayIndex + 1}`} data-diary-day>
+        <header class="diary-day-heading" data-book-reveal><div class="diary-day-number"><span>DAY</span><strong>{String(dayIndex + 1).padStart(2, '0')}</strong></div><div><p>{day.date} · {trip.city}</p><h2>{day.title}</h2></div></header>
+        <p class="diary-margin-note">{trip.dayNotes[dayIndex]} <span aria-hidden="true">↙</span></p>
+        <div class="diary-prose">{day.blocks.map((block) => <Fragment>
+          <DiaryText blocks={[block]} />
+          {variant === 'gaoyou' && dayIndex === 1 && block.text === '看电影的时候，猪猪还嫌旁边的小孩子太吵闹了，哈哈哈。' && <aside class="diary-cinema-ticket" aria-label="一起看过的电影"><span>两个人的雨天记忆</span><strong>功夫女足</strong><div><time>2026.07.19</time><span>世贸金街</span></div><i aria-hidden="true">Ⅱ Ⅱ Ⅰ Ⅱ Ⅰ Ⅰ Ⅱ Ⅱ Ⅰ Ⅱ</i></aside>}
+          {variant === 'gaoyou' && dayIndex === 2 && block.text === '之后我们绕着景点，一直牵着手慢慢地逛。' && <div class="diary-photo-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.posthouse} /></div>}
+          {variant === 'xuzhou' && dayIndex === 0 && block.text.startsWith('一边吹着晚风，一边听歌散步') && <div class="diary-photo-interlude lake-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.xuzhou} /></div>}
+          {variant === 'xuzhou' && dayIndex === 1 && block.text === '结果就这么一路走着走着，居然真的走到了山顶。' && <aside class="diary-little-note"><span aria-hidden="true">↟</span><p>“休息休息！”<br /><em>“等会儿等会儿！”</em></p><small>我们的第一次一起爬山</small></aside>}
+          {variant === 'taian' && dayIndex === 1 && block.text.endsWith('就正式开始了这次泰山之旅。') && <div class="diary-photo-interlude polaroid-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.selfie} /></div>}
+          {variant === 'taian' && dayIndex === 1 && block.kind === 'quote' && <div class="diary-photo-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.mountains} /></div>}
+          {variant === 'taian' && dayIndex === 1 && block.text === '以后提起泰山，就会记得这是我们一起牵着手，一步一步登上的山顶。' && <div class="diary-photo-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.skyStreet} /></div>}
+        </Fragment>)}</div>
+        <div class="diary-day-end" aria-hidden="true"><span></span><i>♡</i><span></span></div>
+      </section>)}
+    </article>
+
+    <section class="journal-keepsake" data-keepsake={variant} aria-labelledby="keepsake-title" data-book-reveal><div><p class="book-eyebrow">A LITTLE KEEPSAKE / 这一趟的纪念</p><h2 id="keepsake-title">{trip.keepsake}</h2><p data-stamp-status aria-live="polite">留下一枚印记，下次回来还在这里。</p><button type="button" data-stamp-button aria-pressed="false">盖上我们的纪念章 ↙</button></div><div class="keepsake-stamp" aria-hidden="true"><span>OUR LITTLE JOURNEY</span><strong>{trip.city}</strong><i>{trip.stamp}</i><small>2026 · {trip.number}</small></div></section>
+
+    <footer class="journal-ending"><p class="journal-ending-quote">{sourceQuotes[variant]}</p><span class="book-handwritten">下一页，也还是我们。♡</span><nav class="journal-next" aria-label="继续翻阅"><a href={previous ? `/games/${previous.slug}/` : '/games/#our-travels'}><small>← {previous ? '上一段旅程' : '回到纪念册'}</small><strong>{previous ? previous.city + '之旅' : '我们的第一年'}</strong></a><a href={next ? `/games/${next.slug}/` : '/games/year-one/'}><small>{next ? '下一段旅程' : '有些话，想说给你听'} ↗</small><strong>{next ? next.city + '之旅' : '一周年，写给猪猪的信'}</strong></a></nav></footer>
+  </div>
+  <MemoryMusic /><MemoryEffects />
+</main>

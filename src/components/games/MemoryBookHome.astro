@@ -1,0 +1,54 @@
+---
+import { tripMeta, travelIntroduction } from '../../data/travelDiary';
+import DiaryText from './DiaryText.astro';
+import MemoryMusic from './MemoryMusic.astro';
+import MemoryEffects from './MemoryEffects.astro';
+import '../../styles/memory-book.css';
+
+const beginnings = [
+  { href: 'first-meeting', date: '2025.10.18', title: '第一次相遇', note: '故事的第一页，一直留在这里。', mark: '01' },
+  { href: 'fifth', date: '2026.06.01', title: '儿童节快乐呀', note: '愿我的猪永远年轻，永远有糖。', mark: '02' },
+  { href: 'kunming-first-meeting', date: '2026.06.13', title: '昆明初见纪念', note: '鲜花、甜点，和终于抱到的你。', mark: '03' },
+];
+---
+<div class="memory-book memory-home">
+  <nav class="book-tabs" aria-label="纪念册目录">
+    <a href="#our-beginning">故事的开始</a><span aria-hidden="true">✳</span><a href="#our-travels">三次旅行</a><span aria-hidden="true">✳</span><a href="/games/year-one/">一周年的信</a>
+  </nav>
+
+  <section class="book-invitation" aria-labelledby="invitation-title" data-book-reveal>
+    <div class="invitation-copy">
+      <p class="book-eyebrow">A LETTER FOR YOU · 2026.10.18</p>
+      <h2 id="invitation-title">第一年，<br />有些话想认真说给你听。</h2>
+      <p>明明你自己也很生气，<br />却还是会主动来哄我，一点都舍不得我。</p>
+      <a class="book-text-link" href="/games/year-one/">猪猪，拆开你的信 <span aria-hidden="true">↗</span></a>
+    </div>
+    <a class="invitation-envelope" href="/games/year-one/" aria-label="打开写给猪猪的一周年信">
+      <div class="envelope-letter"><span>给我的猪猪</span><i>一周年快乐呀。</i><span class="letter-lines" aria-hidden="true"></span></div>
+      <div class="envelope-pocket"></div><span class="envelope-seal" aria-hidden="true">♡</span><span class="envelope-postmark">WITH LOVE<br /><b>10.18</b></span>
+    </a>
+  </section>
+
+  <section class="book-origin" id="our-beginning" aria-labelledby="origin-title">
+    <header class="book-section-head"><div><p class="book-eyebrow">THE FIRST PAGES / 故事的开始</p><h2 id="origin-title">每一页，都想留给你。</h2></div><span class="book-handwritten">从相遇，到终于见面 ♡</span></header>
+    <div class="origin-entries">{beginnings.map((entry) => <a class="origin-entry" href={`/games/${entry.href}/`}><span class="origin-number">{entry.mark}</span><div><time>{entry.date}</time><h3>{entry.title}</h3><p>{entry.note}</p></div><span class="origin-arrow" aria-hidden="true">↗</span></a>)}</div>
+  </section>
+
+  <section class="book-travels" id="our-travels" aria-labelledby="travels-title">
+    <header class="book-section-head"><div><p class="book-eyebrow">THREE LITTLE JOURNEYS / 2026</p><h2 id="travels-title">把想念，走成了见面。</h2></div><p>2026.07 — 2026.10<br />高邮 · 徐州 · 泰安</p></header>
+    <div class="book-travel-intro"><DiaryText blocks={travelIntroduction} /></div>
+    <div class="book-trip-grid">{tripMeta.map((trip) => <article class={`book-trip-card theme-${trip.id}`} data-keepsake={trip.id} data-book-reveal>
+      <a href={`/games/${trip.slug}/`} class="trip-card-link">
+        <div class="trip-card-image"><img src={`/images/memories/${trip.photo.name}-small.webp`} width={trip.photo.width} height={trip.photo.height} alt={trip.photo.alt} loading="lazy" decoding="async" /><span class="trip-card-location">{trip.city}<small>{trip.english}</small></span><span class="trip-card-no">{trip.number}</span><span class="trip-card-kept" aria-label="已留下纪念章">♡ 已收好</span></div>
+        <div class="trip-card-copy"><span class="trip-card-date">{trip.date} <i>{trip.duration}</i></span><h3>{trip.title.replace('\n', '')}</h3><p>{trip.theme}</p><span class="trip-card-open">翻开这几天 <b aria-hidden="true">↗</b></span></div>
+      </a>
+      {trip.photo.source && <p class="trip-card-credit">地点回望 · <a href={trip.photo.source} target="_blank" rel="noopener noreferrer">{trip.photo.author}</a> · <a href={trip.photo.licenseUrl} target="_blank" rel="noopener noreferrer">{trip.photo.license}</a> · 已缩放</p>}
+    </article>)}</div>
+  </section>
+
+  <section class="book-year-two" data-book-reveal>
+    <span class="book-flower" aria-hidden="true">✳</span><p class="book-eyebrow">TO OUR NEXT CHAPTER</p><h2>第二年，<br />也继续牵着我吧。</h2><p>继续往前走，继续克服困难。<br />一起变得更好，走得更远。</p><a href="/games/year-one/#afterword" class="book-text-link">写在三次旅行之后 <span aria-hidden="true">↗</span></a>
+    <div class="book-endmark"><span>2025.10.18</span><i aria-hidden="true">♡</i><span>TO BE CONTINUED</span></div>
+  </section>
+  <MemoryMusic /><MemoryEffects />
+</div>

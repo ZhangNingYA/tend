@@ -1,0 +1,28 @@
+---
+import { anniversaryLetter, travelAfterword, memoryPhotos } from '../../data/travelDiary';
+import DiaryText from './DiaryText.astro';
+import MemoryPhoto from './MemoryPhoto.astro';
+import MemoryMusic from './MemoryMusic.astro';
+import MemoryEffects from './MemoryEffects.astro';
+import '../../styles/memory-book.css';
+---
+<main class="memory-book anniversary-book">
+  <div class="journal-shell">
+    <nav class="journal-topbar" aria-label="周年信导航"><a href="/games/">← 我们的第一年</a><span>ONE YEAR, WITH YOU</span><b>♡</b></nav>
+    <header class="anniversary-heading"><p class="book-eyebrow">2025.10.18 — 2026.10.18</p><div class="anniversary-one" aria-hidden="true">1<span>st</span><i>♡</i></div><h1>第一年，<br />继续牵着你往前走。</h1><p>写给我的猪猪，和我们还很长的以后。</p><span class="book-handwritten">有些话，想慢慢说给你听。</span></header>
+
+    <details class="anniversary-envelope" id="letter">
+      <summary><span class="anniversary-envelope-address"><small>TO MY FAVORITE PERSON</small><strong>给我的猪猪</strong><i>一周年快乐呀。</i></span><span class="anniversary-wax" aria-hidden="true">♡</span><span class="envelope-open-label">轻轻拆开这封信 <span aria-hidden="true">↗</span></span><span class="envelope-close-label">把信轻轻合上 <span aria-hidden="true">↙</span></span></summary>
+      <div class="anniversary-letter-paper"><span class="letter-paper-flower" aria-hidden="true">✳</span><p class="book-eyebrow">OCTOBER 18, 2026</p><div class="anniversary-letter-copy">{anniversaryLetter.map((paragraph, index) => <p class:list={{ 'letter-salutation': index === 0, 'letter-promise': paragraph === '第二年，我们继续往前走吧。' || index === anniversaryLetter.length - 1 }}>{paragraph}</p>)}</div><footer><span>好好牵着你的我</span><time datetime="2026-10-18">2026.10.18</time><i aria-hidden="true">♡</i></footer></div>
+    </details>
+
+    <section class="anniversary-photo-pair" aria-label="一起走到的地方" data-book-reveal><MemoryPhoto photo={memoryPhotos.selfie} /><MemoryPhoto photo={memoryPhotos.taian} /><p class="book-handwritten">有你在身边，<br />就想把路走得更远一点。</p></section>
+
+    <section class="anniversary-next-year" aria-labelledby="next-year-title"><p class="book-eyebrow">THE SECOND YEAR / 我们的下一年</p><h2 id="next-year-title">继续往前走。<br /><em>继续，好好爱你。</em></h2><div class="year-two-promises"><p><span>01</span>遇到困难，<br /><strong>我们一起慢慢解决。</strong></p><p><span>02</span>照顾好彼此，<br /><strong>也一起变得更好。</strong></p><p><span>03</span>再去新的城市，<br /><strong>牵着手，走得更远。</strong></p></div></section>
+
+    <section class="anniversary-afterword" id="afterword" aria-labelledby="afterword-title"><header class="book-section-head"><div><p class="book-eyebrow">AFTER THREE JOURNEYS</p><h2 id="afterword-title">写在三次旅行之后</h2></div><span class="book-handwritten">把零零碎碎，都认真收好。</span></header><div class="diary-prose"><DiaryText blocks={travelAfterword} /></div></section>
+
+    <footer class="anniversary-footer"><span aria-hidden="true">♡</span><p>第二年，也继续牵着我吧，猪猪。</p><a href="/games/" class="book-text-link">回到我们的第一年 <span aria-hidden="true">↗</span></a><small>OUR STORY IS STILL BEING WRITTEN.</small></footer>
+  </div>
+  <MemoryMusic /><MemoryEffects />
+</main>

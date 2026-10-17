@@ -1,0 +1,62 @@
+---
+interface Props { track?: 'onlyone' | 'lucky' }
+const { track = 'onlyone' } = Astro.props;
+---
+<memory-music class="memory-music" data-track={track}>
+  <audio src={`/music/${track}.mp3`} preload="none" loop></audio>
+  <button type="button" aria-label="播放背景音乐" aria-pressed="false">
+    <span class="music-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span data-music-label>配着音乐读</span>
+  </button>
+  <span class="memory-sr-only" data-music-status aria-live="polite"></span>
+</memory-music>
+<script>
+  class MemoryMusic extends HTMLElement {
+    connectedCallback() {
+      if (this.dataset.ready) return;
+      this.dataset.ready = 'true';
+      const audio = this.querySelector('audio')!;
+      const button = this.querySelector('button')!;
+      const label = this.querySelector('[data-music-label]')!;
+      const status = this.querySelector('[data-music-status]')!;
+      const key = `tend-music-${this.dataset.track}`;
+      let lastSaved = 0;
+      audio.volume = 0.45;
+      let savedTime = 0;
+      try {
+        const value = Number(localStorage.getItem(key));
+        if (Number.isFinite(value) && value > 0) savedTime = value;
+      } catch {}
+      audio.addEventListener('loadedmetadata', () => {
+        if (savedTime > 0 && Number.isFinite(audio.duration)) audio.currentTime = savedTime % audio.duration;
+      }, { once: true });
+      const save = () => {
+        // An unopened, preload="none" player is still at zero. Do not erase the
+        // last position just because the reader visited another page silently.
+        if (audio.readyState < HTMLMediaElement.HAVE_METADATA) return;
+        try { localStorage.setItem(key, String(audio.currentTime)); } catch {}
+      };
+      const sync = () => {
+        const playing = !audio.paused;
+        this.classList.toggle('is-playing', playing);
+        button.setAttribute('aria-pressed', String(playing));
+        button.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
+        label.textContent = playing ? '音乐正在陪你' : '配着音乐读';
+      };
+      button.addEventListener('click', async () => {
+        if (!audio.paused) { audio.pause(); save(); return; }
+        button.disabled = true;
+        status.textContent = '';
+        try { await audio.play(); } catch { status.textContent = '音乐暂时无法播放，请稍后再试。'; }
+        finally { button.disabled = false; sync(); }
+      });
+      audio.addEventListener('play', sync);
+      audio.addEventListener('pause', sync);
+      audio.addEventListener('timeupdate', () => {
+        if (Date.now() - lastSaved > 5000) { save(); lastSaved = Date.now(); }
+      });
+      window.addEventListener('pagehide', save, { once: true });
+    }
+  }
+  if (!customElements.get('memory-music')) customElements.define('memory-music', MemoryMusic);
+</script>

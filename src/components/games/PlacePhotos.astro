@@ -1,0 +1,17 @@
+---
+import type { MemoryPhoto as Photo } from '../../data/travelDiary';
+import MemoryPhoto from './MemoryPhoto.astro';
+
+interface Props {
+  place: string;
+  photos: Photo[];
+  marker?: string;
+}
+const { place, photos, marker } = Astro.props;
+---
+<aside class="diary-photo-interlude place-photos" data-place-photos={place} data-book-reveal aria-label={`${place}地点回望照片`}>
+  <div class="place-photos-heading"><span aria-hidden="true">{marker || '⌁'}</span><p><small>沿着记忆，再看一眼</small><strong>{place}</strong></p><i>地点回望</i></div>
+  <div class:list={['place-photos-grid', { 'place-photos-pair': photos.length > 1 }]}>
+    {photos.map((photo) => <MemoryPhoto photo={photo} />)}
+  </div>
+</aside>

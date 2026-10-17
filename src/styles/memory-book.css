@@ -179,6 +179,18 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
 .polaroid-interlude { width: min(520px, 100%); margin: 43px auto; padding: 14px 14px 17px; border: 1px solid var(--book-rule); background: #fffdf8; transform: rotate(-2deg); box-shadow: 0 9px 23px #5b493a12; }
 .polaroid-interlude.book-revealed { animation-name: book-arrive; }
 .lake-interlude .memory-photo-open { aspect-ratio: 1.65; }
+.place-photos { padding: 22px; border: 1px solid var(--book-rule); background: #fffdf7; }
+.place-photos-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.place-photos-heading > span { flex: 0 0 35px; color: var(--book-accent); font: italic 24px Georgia, serif; }
+.place-photos-heading > p { display: flex; flex-direction: column; gap: 3px; margin: 0; }
+.place-photos-heading small { color: #786e5f; font-size: 10px; letter-spacing: .1em; }
+.place-photos-heading strong { color: var(--book-ink); font-size: 19px; font-weight: 500; }
+.place-photos-heading > i { margin-left: auto; color: #786e5f; font-size: 10px; font-style: normal; white-space: nowrap; }
+.place-photos-grid { display: grid; gap: 22px; }
+.place-photos-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+/* Keep landmark signs and stairways intact, including in narrow phone layouts. */
+.diary-photo-interlude.place-photos .memory-photo-open { aspect-ratio: auto; }
+.place-photos .memory-photo-open img { display: block; height: auto; }
 .diary-day-end { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 50px 0 5px; }
 .diary-day-end > span { height: 1px; width: 45px; background: var(--book-rule); }
 .diary-day-end i { color: #b59a83; font: normal 17px Georgia, serif; }
@@ -333,6 +345,8 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
   .diary-prose .diary-subheading { margin-top: 35px; padding: 12px 0 12px 14px; font-size: 20px; }
   .diary-original-quote { margin: 32px -7px; padding: 23px 20px; font-size: 22px; }
   .diary-photo-interlude { margin: 33px -12px; }.diary-photo-interlude .memory-photo-open { aspect-ratio: 1.22; }.diary-photo-interlude .memory-photo figcaption { padding-inline: 8px; }
+  .place-photos { padding: 14px; }.place-photos-heading { gap: 7px; margin-bottom: 14px; }.place-photos-heading > span { flex-basis: 27px; font-size: 21px; }.place-photos-heading strong { font-size: 18px; }.place-photos-heading small { font-size: 9px; letter-spacing: .05em; }.place-photos-heading > i { font-size: 9px; }
+  .place-photos-pair { grid-template-columns: minmax(0, 1fr); }.place-photos .memory-photo figcaption { padding-inline: 0; }
   .polaroid-interlude { width: calc(100% - 8px); margin: 35px auto; padding: 10px; }.polaroid-interlude .memory-photo-open { aspect-ratio: 1.3; }
   .memory-photo figcaption { font-size: 11px; }.memory-photo figcaption small { font-size: 10px; line-height: 1.8; }
   .diary-cinema-ticket { width: calc(100% - 32px); padding: 22px; }.diary-cinema-ticket > strong { font-size: 27px; }

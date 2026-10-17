@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFile, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 
 const root = new URL('../', import.meta.url);
 const read = (path) => readFile(new URL(path, root), 'utf8');
@@ -49,8 +50,45 @@ for (const [index, slug] of slugs.entries()) {
   for (const match of html.matchAll(/(?:src|href)="(\/images\/memories\/[^"#]+|\/music\/[^"#]+)"/g)) {
     await access(fileURLToPath(new URL(`dist${match[1]}`, root)));
   }
+  for (const match of html.matchAll(/srcset="([^"]+)"/g)) {
+    for (const candidate of match[1].split(',')) {
+      const [src, width] = candidate.trim().split(/\s+/);
+      if (!src.startsWith('/images/memories/')) continue;
+      const image = await sharp(fileURLToPath(new URL(`dist${src}`, root))).metadata();
+      assert.equal(image.width, Number.parseInt(width), `${src} 响应式照片宽度标注不符`);
+    }
+  }
   console.log(`✓ ${slug}: ${expectedDays} 天完整原稿、照片与音乐文件`);
 }
+
+const checkPlacePhotos = async (slug, expectedDays) => {
+  const html = await read(`dist/games/${slug}/index.html`);
+  const days = [...html.matchAll(/<section\b[^>]*id="day-(\d+)"[^>]*>([\s\S]*?)<\/section>/g)];
+  for (const [dayNumber, photos] of Object.entries(expectedDays)) {
+    const day = days.find(([, number]) => number === dayNumber)?.[2];
+    assert.ok(day, `${slug} 缺少第 ${dayNumber} 天`);
+    for (const photo of photos) {
+      assert.ok(day.includes(`src="/images/memories/${photo}.webp"`), `${slug} 第 ${dayNumber} 天缺少对应地点照片 ${photo}`);
+    }
+  }
+  return html;
+};
+const xuzhou = await checkPlacePhotos('xuzhou-trip', {
+  1: ['xuzhou-station', 'xuzhou-lake'],
+  2: ['yunlong-mountain', 'yunlong-overlook'],
+  3: ['han-culture', 'han-warriors'],
+});
+assert.ok(xuzhou.includes('第二天，是我们第一次一起爬山，爬的是云龙山。'), '徐州首次爬山应明确为云龙山');
+const taian = await checkPlacePhotos('taian-trip', {
+  2: ['taishan-hongmen', 'taishan-zhongtianmen', 'taishan-nantianmen', 'taishan-yuhuangding', 'taishan-us', 'taishan-view', 'taishan-street'],
+});
+let landmarkCursor = 0;
+for (const name of ['红门', '中天门', '南天门', '玉皇顶']) {
+  const position = taian.indexOf(`data-place-photos="${name}"`, landmarkCursor);
+  assert.ok(position > landmarkCursor, `泰山地标照片顺序错误：${name}`);
+  landmarkCursor = position;
+}
+console.log('✓ 徐州站、云龙山、汉文化景区配图与日期对应；泰山四处地标按登山顺序展示，原有实拍保留。');
 
 const anniversary = await read('dist/games/year-one/index.html');
 checkNoStamps(anniversary, 'year-one');

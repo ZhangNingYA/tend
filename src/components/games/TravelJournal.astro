@@ -2,6 +2,7 @@
 import { trips, memoryPhotos, type TripId } from '../../data/travelDiary';
 import DiaryText from './DiaryText.astro';
 import MemoryPhoto from './MemoryPhoto.astro';
+import PlacePhotos from './PlacePhotos.astro';
 import MemoryMusic from './MemoryMusic.astro';
 import MemoryEffects from './MemoryEffects.astro';
 import '../../styles/memory-book.css';
@@ -47,10 +48,18 @@ const sourceQuotes = {
           <DiaryText blocks={[block]} />
           {variant === 'gaoyou' && dayIndex === 1 && block.text === '看电影的时候，猪猪还嫌旁边的小孩子太吵闹了，哈哈哈。' && <aside class="diary-cinema-ticket" aria-label="一起看过的电影"><span>两个人的雨天记忆</span><strong>功夫女足</strong><div><time>2026.07.19</time><span>世贸金街</span></div><i aria-hidden="true">Ⅱ Ⅱ Ⅰ Ⅱ Ⅰ Ⅰ Ⅱ Ⅱ Ⅰ Ⅱ</i></aside>}
           {variant === 'gaoyou' && dayIndex === 2 && block.text === '之后我们绕着景点，一直牵着手慢慢地逛。' && <div class="diary-photo-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.posthouse} /></div>}
+          {variant === 'xuzhou' && dayIndex === 0 && block.text === '**8月22日中午**，我们一起到了徐州站。' && <PlacePhotos place="徐州站" photos={[memoryPhotos.xuzhouStation]} />}
           {variant === 'xuzhou' && dayIndex === 0 && block.text.startsWith('一边吹着晚风，一边听歌散步') && <div class="diary-photo-interlude lake-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.xuzhou} /></div>}
-          {variant === 'xuzhou' && dayIndex === 1 && block.text === '结果就这么一路走着走着，居然真的走到了山顶。' && <aside class="diary-little-note"><span aria-hidden="true">↟</span><p>“休息休息！”<br /><em>“等会儿等会儿！”</em></p><small>我们的第一次一起爬山</small></aside>}
+          {variant === 'xuzhou' && dayIndex === 1 && block.text === '我们先租了一辆电动车，骑着去了云龙湖那边，准备去爬云龙山。' && <PlacePhotos place="云龙山" photos={[memoryPhotos.yunlongMountain]} />}
+          {variant === 'xuzhou' && dayIndex === 1 && block.text === '结果就这么一路走着走着，居然真的走到了山顶。' && <aside class="diary-little-note"><span aria-hidden="true">↟</span><p>“休息休息！”<br /><em>“等会儿等会儿！”</em></p><small>我们的第一次一起爬山 · 云龙山</small></aside>}
+          {variant === 'xuzhou' && dayIndex === 1 && block.text === '到了山顶之后，我们一起远眺，风景还是很好看的。' && <PlacePhotos place="从云龙山看出去" photos={[memoryPhotos.yunlongOverlook]} />}
+          {variant === 'xuzhou' && dayIndex === 2 && block.text === '我们在里面走了好久好久，逛了不少地方。虽然走得有些累，但两个人一起逛，也还是挺有意思的。' && <PlacePhotos place="汉文化景区" photos={[memoryPhotos.hanCulture, memoryPhotos.hanWarriors]} />}
+          {variant === 'taian' && dayIndex === 1 && block.text === '收拾完之后，我们一起坐车去了红门。' && <PlacePhotos place="红门" marker="01" photos={[memoryPhotos.hongmen]} />}
           {variant === 'taian' && dayIndex === 1 && block.text.endsWith('就正式开始了这次泰山之旅。') && <div class="diary-photo-interlude polaroid-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.selfie} /></div>}
+          {variant === 'taian' && dayIndex === 1 && block.text === '就这样，我们还算轻松地爬到了山腰。' && <PlacePhotos place="中天门" marker="02" photos={[memoryPhotos.zhongtianmen]} />}
+          {variant === 'taian' && dayIndex === 1 && block.text === '终于，经过漫长的攀登，我们一起抵达了之前觉得遥不可及的南天门。' && <PlacePhotos place="南天门" marker="03" photos={[memoryPhotos.nantianmen]} />}
           {variant === 'taian' && dayIndex === 1 && block.kind === 'quote' && <div class="diary-photo-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.mountains} /></div>}
+          {variant === 'taian' && dayIndex === 1 && block.text === '最后，我们终于一起牵着手，抵达了泰山最高点——玉皇顶！' && <PlacePhotos place="玉皇顶" marker="04" photos={[memoryPhotos.yuhuangding]} />}
           {variant === 'taian' && dayIndex === 1 && block.text === '以后提起泰山，就会记得这是我们一起牵着手，一步一步登上的山顶。' && <div class="diary-photo-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.skyStreet} /></div>}
         </Fragment>)}</div>
         <div class="diary-day-end" aria-hidden="true"><span></span><i>♡</i><span></span></div>

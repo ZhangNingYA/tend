@@ -53,21 +53,26 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
 .book-tabs a { display: inline-flex; align-items: center; min-height: 44px; color: var(--book-muted); font-size: 13px; }
 .book-tabs a:hover { color: var(--book-accent); }
 .book-tabs > span { color: #bca38c; font-size: 12px; }
-.book-invitation { position: relative; display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 25px; padding: 58px 48px; overflow: hidden; border: 1px solid #e7d4ce; background: #f3e9e3; }
+.book-invitation { position: relative; display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 30px; padding: 52px 48px; overflow: hidden; border: 1px solid #ded0bd; background: #f8f1e6; box-shadow: 0 4px 0 #e5d9c82b; }
+.book-invitation::after { content: ''; position: absolute; inset: 9px; border: 1px solid #ded0bd70; pointer-events: none; }
 .invitation-copy { position: relative; z-index: 2; }
-.invitation-copy h2 { margin: 16px 0 20px; font: 500 clamp(25px, 3vw, 34px)/1.6 'Memory Song', 'Songti SC', STSong, SimSun, serif; }
-.invitation-copy > p:not(.book-eyebrow) { color: #806c63; font-size: 14px; line-height: 1.95; }
-.invitation-copy .book-text-link { margin-top: 23px; color: var(--book-accent); }
-.invitation-envelope { position: relative; display: block; width: min(100%, 330px); height: 250px; margin: 35px auto 0; transform: rotate(7deg); transition: transform .5s ease; }
-.invitation-envelope:hover { transform: rotate(2deg) translateY(-5px); }
-.envelope-letter { position: absolute; z-index: 1; inset: -38px 20px 12px; display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 30px 20px; background: #fffdf7; border: 1px solid #e5d9c8; transform: rotate(-5deg); box-shadow: 0 8px 20px #6d49380c; }
-.envelope-letter > span:first-child { font: 23px 'Memory Song', 'Songti SC', STSong, serif; }
-.envelope-letter i { font: italic 15px 'Kaiti SC', KaiTi, serif; color: #9e8270; }
-.letter-lines { width: 100%; height: 80px; opacity: .7; background: repeating-linear-gradient(transparent 0 20px, #e3d8c7 20px 21px); }
-.envelope-pocket { position: absolute; inset: 60px 0 0; z-index: 2; border: 1px solid #d5b8a7; background: linear-gradient(31deg, #dec4af 49.7%, transparent 50.2%) left/50% 100% no-repeat, linear-gradient(-31deg, #e4cdb9 49.7%, transparent 50.2%) right/50% 100% no-repeat, linear-gradient(149deg, #e5cfbb 49.7%, #d9bfa8 50.2%); box-shadow: 0 12px 28px #68442b14; }
-.envelope-seal { position: absolute; z-index: 3; left: calc(50% - 23px); top: 128px; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 3px double #c49783; background: #a76556; color: #f4ded0; font-size: 25px; box-shadow: 2px 3px 6px #67463226; }
-.envelope-postmark { position: absolute; top: 48px; right: 7px; z-index: 3; width: 78px; height: 78px; display: grid; align-content: center; justify-items: center; border: 3px double #9f6c57; border-radius: 50%; color: #9f6c57; font: 9px/1.5 'Inter Variable', sans-serif; letter-spacing: .1em; transform: rotate(-17deg); opacity: .8; }
-.envelope-postmark b { font-size: 17px; font-weight: 400; }
+.invitation-copy > .book-eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 15px; color: #89735d; font-size: 9px; letter-spacing: .08em; }
+.invitation-copy > .book-eyebrow > span { padding-left: 15px; border-left: 1px solid #c8b296; font: 11px -apple-system, sans-serif; letter-spacing: .06em; }
+.invitation-copy h2 { margin: 21px 0 22px; font: 500 clamp(25px, 3vw, 34px)/1.6 'Memory Song', 'Songti SC', STSong, SimSun, serif; }
+.invitation-moments { color: #655a4b; font-size: 15px; line-height: 2; }
+.invitation-promise { margin-top: 12px !important; color: #776b5c; font-size: 13px; line-height: 1.95; }
+.invitation-copy .book-text-link { margin-top: 22px; color: var(--book-accent); }
+.invitation-envelope { position: relative; display: block; width: min(100%, 300px); height: 280px; margin: 55px auto 0; transform: rotate(3deg); transition: transform .5s ease; }
+.invitation-envelope:hover { transform: rotate(0deg) translateY(-4px); }
+.invitation-photo { position: absolute; z-index: 3; left: 15px; top: -45px; width: 215px; max-width: calc(100% - 25px); padding: 8px 8px 12px; border: 1px solid #ddcfb9; background: #fffdf7; transform: rotate(-10deg); box-shadow: 0 5px 12px #6b50301c; }
+.invitation-photo > img { width: 100%; height: 125px; object-fit: cover; object-position: center top; }
+.invitation-photo > span { display: block; margin-top: 8px; color: #7d6a56; font: 11px/1.7 'Kaiti SC', KaiTi, 'Memory Song', serif; text-align: center; }
+.envelope-pocket { position: absolute; inset: 75px 0 36px; z-index: 2; border: 1px solid #cbb396; background: linear-gradient(31deg, #e8d3b7 49.7%, transparent 50.2%) left/50% 100% no-repeat, linear-gradient(-31deg, #ebd9c1 49.7%, transparent 50.2%) right/50% 100% no-repeat, #dec7a9; box-shadow: 0 9px 20px #68442b14; }
+.envelope-address { position: absolute; left: 25px; bottom: 22px; display: flex; flex-direction: column; gap: 11px; }
+.envelope-address > strong { color: #685343; font: 500 23px 'Memory Song', 'Songti SC', serif; }
+.envelope-address > i { color: #7e6650; font: italic 13px 'Kaiti SC', KaiTi, 'Memory Song', serif; }
+.envelope-heart { position: absolute; right: 25px; bottom: 26px; color: #9a6959; font: 34px Georgia, serif; transform: rotate(-10deg); }
+.invitation-note { position: absolute; right: -5px; bottom: -1px; color: #796b59; font: italic 12px/1.8 'Kaiti SC', KaiTi, 'Memory Song', serif; }
 .book-origin { padding: 76px 0 72px; }
 .origin-entries { border-top: 1px solid var(--book-rule); }
 .origin-entry { display: grid; grid-template-columns: 60px 1fr 30px; align-items: center; gap: 18px; padding: 25px 8px; border-bottom: 1px solid var(--book-rule); transition: padding .25s, background .25s; }
@@ -100,8 +105,6 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
 .trip-card-open b { font-size: 20px; font-weight: 400; }
 .trip-card-credit { margin: 10px 3px 0 !important; color: #74695e; font-size: 9px; line-height: 1.7; }
 .trip-card-credit a { text-decoration: underline; text-underline-offset: 2px; }
-.trip-card-kept { position: absolute; top: 15px; right: 13px; z-index: 2; display: none; padding: 5px 8px; border: 1px solid #f9f1dc; background: #faf2e6eb; color: var(--book-accent); font-size: 11px; transform: rotate(5deg); }
-.is-kept .trip-card-kept { display: block; }
 .book-year-two { padding: 50px 0 0; text-align: center; }
 .book-flower { display: block; margin-bottom: 20px; color: #ad8069; font-size: 40px; }
 .book-year-two h2 { margin: 19px 0 20px; font: 500 clamp(32px, 4vw, 45px)/1.6 'Memory Song', 'Songti SC', STSong, SimSun, serif; }
@@ -192,16 +195,6 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
 .diary-little-note > p { font: 21px/2 'Kaiti SC', KaiTi, serif; }
 .diary-little-note em { color: var(--book-accent); font-style: normal; }
 .diary-little-note small { display: block; margin-top: 10px; color: #6d7d79; font-size: 10px; }
-.journal-keepsake { display: flex; align-items: center; justify-content: space-between; gap: 40px; width: min(850px, 100%); margin: 75px auto 0; padding: 38px 45px; background: var(--book-tint); border: 1px solid var(--book-rule); }
-.journal-keepsake h2 { margin: 14px 0 12px; font: 500 25px/1.6 'Memory Song', 'Songti SC', STSong, serif; }
-.journal-keepsake p[data-stamp-status] { min-height: 22px; color: #777064; font-size: 12px; }
-.journal-keepsake button { min-height: 44px; margin-top: 17px; padding: 10px 0; border: 0; border-bottom: 1px solid var(--book-accent); background: transparent; color: var(--book-accent); font-size: 13px; }
-.keepsake-stamp { display: flex; flex: 0 0 140px; width: 140px; height: 140px; flex-direction: column; align-items: center; justify-content: center; border: 4px double currentColor; border-radius: 50%; color: var(--book-accent); opacity: .32; transform: rotate(-14deg); transition: transform .45s, opacity .45s; }
-.keepsake-stamp > span { font: 7px 'Inter Variable', sans-serif; letter-spacing: .09em; }
-.keepsake-stamp > strong { margin-top: 8px; font: 500 31px 'Memory Song', 'Songti SC', STSong, serif; letter-spacing: .13em; }
-.keepsake-stamp > i { margin-top: 5px; font: normal 10px 'Memory Song', 'Songti SC', STSong, serif; }
-.keepsake-stamp > small { margin-top: 8px; font: 8px 'Inter Variable', sans-serif; letter-spacing: .15em; }
-.is-kept .keepsake-stamp { opacity: 1; transform: rotate(-8deg) scale(1.04); }
 .journal-ending { width: min(850px, 100%); margin: 58px auto 0; text-align: center; }
 .journal-ending-quote { max-width: 570px; margin: 0 auto 20px !important; font: 19px/2 'Memory Song', 'Songti SC', STSong, serif; }
 .journal-next { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 52px; padding-top: 25px; border-top: 1px solid var(--book-rule); text-align: left; }
@@ -296,15 +289,14 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
   .memory-home { padding-top: 15px; }
   .book-tabs { gap: 13px; padding: 15px 0 23px; }
   .book-tabs a { font-size: 12px; }.book-tabs > span { font-size: 9px; }
-  .book-invitation { grid-template-columns: 1fr; gap: 16px; padding: 31px 24px 26px; }
-  .invitation-copy h2 { margin: 15px 0; font-size: 25px; line-height: 1.65; }
-  .invitation-copy > p:not(.book-eyebrow) { font-size: 13px; }
+  .book-invitation { grid-template-columns: 1fr; gap: 16px; padding: 31px 24px 27px; }
+  .invitation-copy > .book-eyebrow { gap: 9px 12px; font-size: 8px; }.invitation-copy > .book-eyebrow > span { padding-left: 12px; font-size: 10px; }
+  .invitation-copy h2 { margin: 19px 0 17px; font-size: 25px; line-height: 1.65; }
+  .invitation-moments { font-size: 14px; }.invitation-promise { font-size: 12px; }
   .invitation-copy .book-text-link { margin-top: 17px; }
-  .invitation-envelope { width: 250px; height: 200px; margin-top: 35px; }
-  .envelope-letter { inset: -32px 15px 7px; gap: 16px; padding-top: 25px; }
-  .envelope-letter > span:first-child { font-size: 21px; }
-  .envelope-letter i { font-size: 14px; }
-  .envelope-pocket { top: 48px; }.envelope-seal { top: 108px; width: 40px; height: 40px; left: calc(50% - 20px); }.envelope-postmark { top: 34px; width: 66px; height: 66px; font-size: 7px; }
+  .invitation-envelope { width: min(100%, 260px); height: 260px; margin-top: 32px; }
+  .invitation-photo { top: -26px; left: 12px; width: 190px; padding: 7px 7px 10px; }.invitation-photo > img { height: 110px; }.invitation-photo > span { margin-top: 7px; font-size: 10px; }
+  .envelope-pocket { bottom: 32px; }.envelope-address { left: 22px; bottom: 22px; gap: 9px; }.envelope-address > strong { font-size: 21px; }.envelope-address > i { font-size: 12px; }.envelope-heart { right: 20px; bottom: 24px; font-size: 29px; }.invitation-note { font-size: 11px; right: 0; }
   .book-origin { padding: 54px 0; }
   .book-section-head { display: block; margin-bottom: 25px; }
   .book-section-head h2 { margin-top: 11px; font-size: 27px; }
@@ -345,8 +337,6 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
   .memory-photo figcaption { font-size: 11px; }.memory-photo figcaption small { font-size: 10px; line-height: 1.8; }
   .diary-cinema-ticket { width: calc(100% - 32px); padding: 22px; }.diary-cinema-ticket > strong { font-size: 27px; }
   .diary-day-end { margin-top: 36px; }
-  .journal-keepsake { position: relative; display: block; margin-top: 52px; padding: 28px 23px; }.journal-keepsake h2 { max-width: 245px; font-size: 24px; }.journal-keepsake p[data-stamp-status] { font-size: 11px; }.journal-keepsake .book-eyebrow { font-size: 9px; }
-  .keepsake-stamp { width: 120px; height: 120px; margin: 26px 0 0 auto; }.keepsake-stamp > strong { font-size: 28px; }
   .journal-ending { margin-top: 42px; }.journal-ending-quote { font-size: 18px; }.journal-next { gap: 20px; margin-top: 35px; }.journal-next strong { font-size: 17px; }.journal-next small { font-size: 10px; }
 
   .anniversary-heading { padding-top: 38px; }.anniversary-heading h1 { font-size: 30px; line-height: 1.75; }.anniversary-heading > p:last-of-type { font-size: 12px; }.anniversary-one { margin-top: 24px; font-size: 105px; width: 125px; }
@@ -362,7 +352,7 @@ html:has(.journal-book), body:has(.journal-book) { overflow-x: clip; }
   .memory-book *, .memory-book *::before, .memory-book *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 @media print {
-  .memory-music, .memory-lightbox, .diary-daynav, .journal-read-link, .journal-keepsake, .journal-next { display: none !important; }
+  .memory-music, .memory-lightbox, .diary-daynav, .journal-read-link, .journal-next { display: none !important; }
   .journal-book, .anniversary-book { background: #fff; padding: 0; }
   .diary-manuscript, .anniversary-afterword { width: 100%; }
   .diary-day { break-before: page; }

@@ -26,3 +26,11 @@ import '../../styles/memory-book.css';
   </div>
   <MemoryMusic /><MemoryEffects />
 </main>
+<script>
+  const envelope = document.querySelector<HTMLDetailsElement>('.anniversary-envelope');
+  const openAddressedLetter = () => {
+    if (envelope && location.hash === '#letter') envelope.open = true;
+  };
+  openAddressedLetter();
+  window.addEventListener('hashchange', openAddressedLetter);
+</script>

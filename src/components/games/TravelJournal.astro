@@ -57,8 +57,6 @@ const sourceQuotes = {
       </section>)}
     </article>
 
-    <section class="journal-keepsake" data-keepsake={variant} aria-labelledby="keepsake-title" data-book-reveal><div><p class="book-eyebrow">A LITTLE KEEPSAKE / 这一趟的纪念</p><h2 id="keepsake-title">{trip.keepsake}</h2><p data-stamp-status aria-live="polite">留下一枚印记，下次回来还在这里。</p><button type="button" data-stamp-button aria-pressed="false">盖上我们的纪念章 ↙</button></div><div class="keepsake-stamp" aria-hidden="true"><span>OUR LITTLE JOURNEY</span><strong>{trip.city}</strong><i>{trip.stamp}</i><small>2026 · {trip.number}</small></div></section>
-
     <footer class="journal-ending"><p class="journal-ending-quote">{sourceQuotes[variant]}</p><span class="book-handwritten">下一页，也还是我们。♡</span><nav class="journal-next" aria-label="继续翻阅"><a href={previous ? `/games/${previous.slug}/` : '/games/#our-travels'}><small>← {previous ? '上一段旅程' : '回到纪念册'}</small><strong>{previous ? previous.city + '之旅' : '我们的第一年'}</strong></a><a href={next ? `/games/${next.slug}/` : '/games/year-one/'}><small>{next ? '下一段旅程' : '有些话，想说给你听'} ↗</small><strong>{next ? next.city + '之旅' : '一周年，写给猪猪的信'}</strong></a></nav></footer>
   </div>
   <MemoryMusic /><MemoryEffects />

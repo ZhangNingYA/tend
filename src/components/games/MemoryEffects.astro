@@ -33,43 +33,6 @@
     document.querySelectorAll('[data-book-reveal]').forEach((element) => observer.observe(element));
   }
 
-  const isKept = (id: string) => {
-    try { return localStorage.getItem(`tend-keepsake-${id}`) === 'yes' || Boolean(JSON.parse(localStorage.getItem(`tend-memory-${id}`) || 'null')?.kept); }
-    catch { return false; }
-  };
-  const refreshStamps = () => {
-    document.querySelectorAll<HTMLElement>('[data-keepsake]').forEach((element) => {
-      const kept = isKept(element.dataset.keepsake!);
-      element.classList.toggle('is-kept', kept);
-      const button = element.querySelector<HTMLButtonElement>('[data-stamp-button]');
-      if (button) {
-        button.setAttribute('aria-pressed', String(kept));
-        button.textContent = kept ? '已经好好收下了 ✓' : '盖上我们的纪念章 ↙';
-      }
-      const status = element.querySelector('[data-stamp-status]');
-      if (status) status.textContent = kept ? '这一页，已经替我们收好了。' : '留下一枚印记，下次回来还在这里。';
-    });
-  };
-  document.querySelectorAll<HTMLButtonElement>('[data-stamp-button]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const parent = button.closest<HTMLElement>('[data-keepsake]')!;
-      const id = parent.dataset.keepsake!;
-      try {
-        localStorage.setItem(`tend-keepsake-${id}`, isKept(id) ? 'no' : 'yes');
-        // Retire the old flag so an unstamp is respected after migration.
-        const legacy = JSON.parse(localStorage.getItem(`tend-memory-${id}`) || 'null');
-        if (legacy?.kept) localStorage.setItem(`tend-memory-${id}`, JSON.stringify({ ...legacy, kept: false }));
-        refreshStamps();
-      } catch {
-        const status = parent.querySelector('[data-stamp-status]');
-        if (status) status.textContent = '这一刻已经记住啦；当前浏览器无法保存印记。';
-      }
-    });
-  });
-  refreshStamps();
-  window.addEventListener('pageshow', refreshStamps);
-  window.addEventListener('storage', refreshStamps);
-
   const days = [...document.querySelectorAll<HTMLElement>('[data-diary-day]')];
   const dayLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-day-link]')];
   const progress = document.querySelector<HTMLElement>('[data-reading-progress]');

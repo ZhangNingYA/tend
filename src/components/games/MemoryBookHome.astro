@@ -1,5 +1,5 @@
 ---
-import { tripMeta, travelIntroduction } from '../../data/travelDiary';
+import { tripMeta, travelIntroduction, memoryPhotos } from '../../data/travelDiary';
 import DiaryText from './DiaryText.astro';
 import MemoryMusic from './MemoryMusic.astro';
 import MemoryEffects from './MemoryEffects.astro';
@@ -18,14 +18,16 @@ const beginnings = [
 
   <section class="book-invitation" aria-labelledby="invitation-title" data-book-reveal>
     <div class="invitation-copy">
-      <p class="book-eyebrow">A LETTER FOR YOU · 2026.10.18</p>
-      <h2 id="invitation-title">第一年，<br />有些话想认真说给你听。</h2>
-      <p>明明你自己也很生气，<br />却还是会主动来哄我，一点都舍不得我。</p>
-      <a class="book-text-link" href="/games/year-one/">猪猪，拆开你的信 <span aria-hidden="true">↗</span></a>
+      <p class="book-eyebrow">2025.10.18 — 2026.10.18<span>写给我的猪猪</span></p>
+      <h2 id="invitation-title">第一年，<br />还是想再抱你一会儿。</h2>
+      <p class="invitation-moments">一颗一颗喂你吃坚果，<br />两个人吃同一碗面。</p>
+      <p class="invitation-promise">这些小事，我都想和你再过好多遍。</p>
+      <a class="book-text-link" href="/games/year-one/#letter">拆开写给你的信 <span aria-hidden="true">↗</span></a>
     </div>
-    <a class="invitation-envelope" href="/games/year-one/" aria-label="打开写给猪猪的一周年信">
-      <div class="envelope-letter"><span>给我的猪猪</span><i>一周年快乐呀。</i><span class="letter-lines" aria-hidden="true"></span></div>
-      <div class="envelope-pocket"></div><span class="envelope-seal" aria-hidden="true">♡</span><span class="envelope-postmark">WITH LOVE<br /><b>10.18</b></span>
+    <a class="invitation-envelope" href="/games/year-one/#letter" aria-label="打开写给猪猪的一周年信">
+      <div class="invitation-photo"><img src={`/images/memories/${memoryPhotos.selfie.name}-small.webp`} width={memoryPhotos.selfie.width} height={memoryPhotos.selfie.height} alt={memoryPhotos.selfie.alt} loading="lazy" decoding="async" /><span aria-hidden="true">靠近一点，再靠近一点。</span></div>
+      <div class="envelope-pocket"><span class="envelope-address"><strong>给我的猪猪</strong><i>一周年快乐呀。</i></span><span class="envelope-heart" aria-hidden="true">♡</span></div>
+      <span class="invitation-note" aria-hidden="true">还有好多话，想慢慢说给你听。</span>
     </a>
   </section>
 
@@ -37,9 +39,9 @@ const beginnings = [
   <section class="book-travels" id="our-travels" aria-labelledby="travels-title">
     <header class="book-section-head"><div><p class="book-eyebrow">THREE LITTLE JOURNEYS / 2026</p><h2 id="travels-title">把想念，走成了见面。</h2></div><p>2026.07 — 2026.10<br />高邮 · 徐州 · 泰安</p></header>
     <div class="book-travel-intro"><DiaryText blocks={travelIntroduction} /></div>
-    <div class="book-trip-grid">{tripMeta.map((trip) => <article class={`book-trip-card theme-${trip.id}`} data-keepsake={trip.id} data-book-reveal>
+    <div class="book-trip-grid">{tripMeta.map((trip) => <article class={`book-trip-card theme-${trip.id}`} data-book-reveal>
       <a href={`/games/${trip.slug}/`} class="trip-card-link">
-        <div class="trip-card-image"><img src={`/images/memories/${trip.photo.name}-small.webp`} width={trip.photo.width} height={trip.photo.height} alt={trip.photo.alt} loading="lazy" decoding="async" /><span class="trip-card-location">{trip.city}<small>{trip.english}</small></span><span class="trip-card-no">{trip.number}</span><span class="trip-card-kept" aria-label="已留下纪念章">♡ 已收好</span></div>
+        <div class="trip-card-image"><img src={`/images/memories/${trip.photo.name}-small.webp`} width={trip.photo.width} height={trip.photo.height} alt={trip.photo.alt} loading="lazy" decoding="async" /><span class="trip-card-location">{trip.city}<small>{trip.english}</small></span><span class="trip-card-no">{trip.number}</span></div>
         <div class="trip-card-copy"><span class="trip-card-date">{trip.date} <i>{trip.duration}</i></span><h3>{trip.title.replace('\n', '')}</h3><p>{trip.theme}</p><span class="trip-card-open">翻开这几天 <b aria-hidden="true">↗</b></span></div>
       </a>
       {trip.photo.source && <p class="trip-card-credit">地点回望 · <a href={trip.photo.source} target="_blank" rel="noopener noreferrer">{trip.photo.author}</a> · <a href={trip.photo.licenseUrl} target="_blank" rel="noopener noreferrer">{trip.photo.license}</a> · 已缩放</p>}

@@ -67,7 +67,7 @@ export const tripMeta = [
     place: '江苏 · 高邮 / 淮安', duration: '三天两晚', theme: '雨天、乌龙茶，还有黏人猪',
     intro: '每次见面都盼了很久。好不容易见面，就想一直黏在一起，结果每次都发现时间不够用了。',
     quote: '其实也没做什么特别的事情，就是两个人手牵着手走走看看，但现在想起来，还是觉得很甜。',
-    keepsake: '把舍不得，留在这一页。', stamp: '牵手到很晚', photo: memoryPhotos.gaoyou,
+    photo: memoryPhotos.gaoyou,
     dayNotes: ['终于接到我的女朋友', '雨天也有好喝的乌龙茶', '再多陪我一会儿'],
   },
   {
@@ -76,7 +76,7 @@ export const tripMeta = [
     place: '江苏 · 徐州', duration: '三天两晚', theme: '第一次住民宿，第一次一起爬山',
     intro: '一起骑电动车、逛云龙湖、吹晚风、听歌。还有我傻乎乎背去的一大瓶椰汁，和两个人连伞都忘了撑的小插曲。',
     quote: '也不知道为什么，明明每天都待在一起，还是总觉得时间不够用。',
-    keepsake: '把那一晚的风，也收好。', stamp: '晚风和你', photo: memoryPhotos.xuzhou,
+    photo: memoryPhotos.xuzhou,
     dayNotes: ['把行李放下，把日子放慢', '休息休息！等会儿等会儿！', '怎么这么快又要分别了'],
   },
   {
@@ -85,7 +85,7 @@ export const tripMeta = [
     place: '山东 · 泰安 / 泰山', duration: '四天三晚', theme: '从红门到玉皇顶，一步一步',
     intro: '南天门曾经看起来那么遥远，但我们还是一步一步走到了。希望以后的生活也是这样。',
     quote: '也许以后，我们还会遇到许多看起来遥不可及的事情，但只要两个人一起努力，也都能够慢慢抵达。',
-    keepsake: '这座山，我们一起登上来了。', stamp: '一起抵达', photo: memoryPhotos.taian,
+    photo: memoryPhotos.taian,
     dayNotes: ['有一只精心准备的贴心猪', '这次，臭猪居然爬得比我快', '哪里都不去，就这样照顾你', '还有好多话，舍不得说完'],
   },
 ] as const;

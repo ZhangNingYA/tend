@@ -116,6 +116,12 @@ for (const oldPhoto of ['taishan-hongmen', 'taishan-zhongtianmen', 'taishan-nant
 }
 assert.ok(taian.includes('2025年4月登山游记配图') && taian.includes('发布于2026.09.11') && taian.includes('许若晨 / 大众新闻'), '泰山更新照片应保留可核查的来源，区分游记日期与发布日期');
 assert.ok(taian.includes('上车后，猪猪在卧铺上躺着休息了一会儿。'), '卧铺上躺着休息的是猪猪');
+for (const detail of ['中午没吃饭，我们一起看电影', '伺候着我的猪猪', 'pp想喝了，我就把奶茶端过去。']) {
+  assert.ok(taian.includes(detail), `泰安休息日应写清看电影、没吃饭和端奶茶的细节：${detail}`);
+}
+for (const oldDetail of ['我记得好像又吃了一份牛肉面', '好像那时候也不是很饿', '这个得让猪猪告诉我，看看PP记不记得']) {
+  assert.ok(!taian.includes(oldDetail) && !manuscript.includes(oldDetail), `休息日已补全，不应保留旧的不确定描述：${oldDetail}`);
+}
 for (const oldDetail of ['一起在卧铺上睡了一会儿', '一起躺在卧铺上休息']) {
   assert.ok(!taian.includes(oldDetail) && !manuscript.includes(oldDetail), `卧铺休息的旧描述仍残留：${oldDetail}`);
 }

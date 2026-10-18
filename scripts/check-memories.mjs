@@ -8,6 +8,7 @@ const root = new URL('../', import.meta.url);
 const read = (path) => readFile(new URL(path, root), 'utf8');
 const manuscript = await read('src/我和猪猪的旅行日记_2026年7月至10月.md');
 assert.ok(!manuscript.includes('她'), '旅行原稿应使用猪猪或 PP 作为称呼');
+assert.ok(!manuscript.includes('孟城驿'), '高邮景点名称应为盂城驿，不是孟城驿');
 await access(new URL('dist/fonts/memory-song-sc.woff2', root));
 const plainText = (html) => html.replace(/<[^>]*>/g, '')
   .replace(/&quot;/g, '"').replace(/&#39;|&#x27;/g, "'")
@@ -75,6 +76,7 @@ const checkPlacePhotos = async (slug, expectedDays) => {
   return html;
 };
 const gaoyou = await checkPlacePhotos('gaoyou-trip', { 2: ['kung-fu-soccer-still'] });
+assert.ok(gaoyou.includes('盂城驿、挑香菜') && gaoyou.includes('去了高邮的盂城驿。') && !gaoyou.includes('孟城驿'), '高邮日记的标题和正文应统一使用盂城驿');
 const cinema = gaoyou.match(/<aside\b[^>]*data-cinema-memory[^>]*>([\s\S]*?)<\/aside>/)?.[1];
 assert.ok(cinema, '高邮篇缺少电影剧照与票签组合');
 assert.ok(cinema.includes('电影剧照，非影院实拍') && cinema.includes('1905电影网') && cinema.includes('版权归片方及相关权利人'), '电影配图应明确来源、版权及非实拍属性');
@@ -115,6 +117,7 @@ for (const name of ['红门', '中天门', '南天门', '玉皇顶']) {
 console.log('✓ 徐州站、云龙山、汉文化景区配图与日期对应；泰山四处地标按登山顺序展示，原有实拍保留。');
 
 const anniversary = await read('dist/games/year-one/index.html');
+assert.ok(anniversary.includes('我们一起吃拌饭、看电影、喝奶茶、逛盂城驿。') && !anniversary.includes('孟城驿'), '旅行后记中的景点名称应同步改为盂城驿');
 checkNoStamps(anniversary, 'year-one');
 const home = await read('dist/games/index.html');
 checkNoStamps(home, '首页');

@@ -115,6 +115,9 @@ for (const oldDetail of ['专门给猪猪准备的雨伞', '不知道把伞撑�
 const taian = await checkPlacePhotos('taian-trip', {
   2: ['taishan-hongmen-recent', 'taishan-zhongtianmen-recent', 'taishan-nantianmen-recent', 'taishan-yuhuangding-recent', 'taishan-us', 'taishan-view', 'taishan-street'],
 });
+for (const detail of ['中途我们还吃了肯德基。', 'pp喜欢吃薯条，汉堡就啃了几口，鸡翅都被我吃了。', '吃完之后，我们又继续往上爬。']) {
+  assert.ok(taian.includes(detail), `泰山途中肯德基回忆缺少细节：${detail}`);
+}
 for (const oldPhoto of ['taishan-hongmen', 'taishan-zhongtianmen', 'taishan-nantianmen', 'taishan-yuhuangding']) {
   assert.ok(!taian.includes(`/images/memories/${oldPhoto}.webp`), `泰山仍在引用旧照片：${oldPhoto}`);
 }

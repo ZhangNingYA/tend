@@ -98,6 +98,9 @@ for (const detail of ['第二天，我们先一起去吃了必胜客，这还是
   assert.ok(xuzhou.includes(detail), `徐州爬山前的必胜客回忆缺少细节：${detail}`);
 }
 assert.ok(xuzhou.indexOf('我们先一起去吃了必胜客') < xuzhou.indexOf('这天也是我们第一次一起爬山') && xuzhou.indexOf('吃完后，我们租了一辆电动车') < xuzhou.indexOf('结果猪猪才爬了一会儿'), '徐州篇应先吃必胜客，再骑车去爬山');
+for (const detail of ['逛了大墓，逛了纪念馆，逛了许许多多主题馆。', '两个人还挤一只小伞，pp老让我好好打伞 😕']) {
+  assert.ok(xuzhou.includes(detail), `汉文化景区回忆应保留用户的细节和口吻：${detail}`);
+}
 assert.ok(xuzhou.includes('专门给猪猪准备的太阳伞') && xuzhou.includes('一开始居然都不会撑'), '徐州应为带太阳伞却不会撑');
 assert.ok(xuzhou.includes('就这样一路走着走着，不知不觉就到了山顶。') && xuzhou.includes('我们的第一次一起爬山 · 云龙山'), '不知不觉登顶的文案及旁注应保留');
 assert.ok(xuzhou.includes('我一个人吃了烧烤，猪猪还在跟我置气。') && xuzhou.includes('猪猪还是好好地哄了我'), '烧烤那晚应保留独自吃饭、置气后仍主动哄我的细节');

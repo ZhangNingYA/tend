@@ -98,6 +98,10 @@ for (const detail of ['第二天，我们先一起去吃了必胜客，这还是
   assert.ok(xuzhou.includes(detail), `徐州爬山前的必胜客回忆缺少细节：${detail}`);
 }
 assert.ok(xuzhou.indexOf('我们先一起去吃了必胜客') < xuzhou.indexOf('这天也是我们第一次一起爬山') && xuzhou.indexOf('吃完后，我们租了一辆电动车') < xuzhou.indexOf('结果猪猪才爬了一会儿'), '徐州篇应先吃必胜客，再骑车去爬山');
+assert.ok(xuzhou.includes('最后，我们直接骑车去买了茶颜悦色，又买了一些零食。') && xuzhou.indexOf('后来我们一起下了山') < xuzhou.indexOf('直接骑车去买了茶颜悦色'), '徐州篇应在下山后直接去买茶颜悦色，不是再去吃饭');
+for (const oldDetail of ['回去之后吃了什么，我现在有点记不清了', '好像是房东推荐的一家店', '至于具体买了些什么、吃了些什么']) {
+  assert.ok(!xuzhou.includes(oldDetail) && !manuscript.includes(oldDetail), `徐州下山后已明确去买奶茶，不应保留吃饭猜测：${oldDetail}`);
+}
 for (const detail of ['逛了大墓，逛了纪念馆，逛了许许多多主题馆。', '两个人还挤一只小伞，pp老让我好好打伞 😕']) {
   assert.ok(xuzhou.includes(detail), `汉文化景区回忆应保留用户的细节和口吻：${detail}`);
 }
@@ -116,7 +120,7 @@ for (const oldPhoto of ['taishan-hongmen', 'taishan-zhongtianmen', 'taishan-nant
 }
 assert.ok(taian.includes('2025年4月登山游记配图') && taian.includes('发布于2026.09.11') && taian.includes('许若晨 / 大众新闻'), '泰山更新照片应保留可核查的来源，区分游记日期与发布日期');
 assert.ok(taian.includes('上车后，猪猪在卧铺上躺着休息了一会儿。'), '卧铺上躺着休息的是猪猪');
-for (const detail of ['中午没吃饭，我们一起看电影', '伺候着我的猪猪', 'pp想喝了，我就把奶茶端过去。']) {
+for (const detail of ['中午没吃饭，我们一起看电影，还买了两杯奶茶。', '伺候着我的猪猪', 'pp想喝了，我就把奶茶端过去。']) {
   assert.ok(taian.includes(detail), `泰安休息日应写清看电影、没吃饭和端奶茶的细节：${detail}`);
 }
 for (const oldDetail of ['我记得好像又吃了一份牛肉面', '好像那时候也不是很饿', '这个得让猪猪告诉我，看看PP记不记得']) {

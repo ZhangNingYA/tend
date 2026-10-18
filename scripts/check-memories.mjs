@@ -83,6 +83,10 @@ assert.ok(cinema.includes('电影剧照，非影院实拍') && cinema.includes('
 assert.ok(!cinema.includes('creativecommons.org') && !cinema.includes('地点回望'), '电影剧照不应标成开放许可的风景照片');
 assert.ok(cinema.includes('2026.07.19') && cinema.includes('世贸金街') && cinema.includes('非原始票根'), '电影票签应保留原稿日期地点，不冒充真实票根');
 assert.ok(gaoyou.includes('我点了包子外卖，和猪猪一起吃了早饭。') && !gaoyou.includes('我出去买了包子'), '高邮包子应为点外卖，不是出门买');
+for (const detail of ['一起吃了海底捞', '一起去打酱碟', '给PP夹菜，夹了好多好多次', '像照顾小孩子一样', '后来PP提醒我的', '用了PP的大学生优惠，hh']) {
+  assert.ok(gaoyou.includes(detail), `高邮海底捞回忆缺少细节：${detail}`);
+}
+assert.ok(!gaoyou.includes('晚上好像还在金街吃了些什么') && !manuscript.includes('这个得问问PP，看看猪猪还记不记得'), '海底捞回忆应替换原先记不清晚饭的描述');
 assert.equal(gaoyou.split('但是那些一起吃饭、牵手逛街、互相打闹，还有舍不得分别的时刻，反而都变成了最难忘的回忆。').length - 1, 1, '高邮结尾应只出现一次');
 const xuzhou = await checkPlacePhotos('xuzhou-trip', {
   1: ['xuzhou-station', 'xuzhou-lake'],

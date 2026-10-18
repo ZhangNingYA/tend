@@ -93,7 +93,11 @@ const xuzhou = await checkPlacePhotos('xuzhou-trip', {
   2: ['yunlong-mountain', 'yunlong-overlook'],
   3: ['han-culture', 'han-warriors'],
 });
-assert.ok(xuzhou.includes('第二天，是我们第一次一起爬山，爬的是云龙山。'), '徐州首次爬山应明确为云龙山');
+assert.ok(xuzhou.includes('这天也是我们第一次一起爬山，爬的是云龙山。'), '徐州首次爬山应明确为云龙山');
+for (const detail of ['第二天，我们先一起去吃了必胜客，这还是我们第一次一起吃。', '我吃了披萨，pp吃的汉堡。', '抹茶冰淇淋，pp说喜欢吃，结果没吃两口，又全让我吃了。', '我还吃得挺撑的。', '吃完后，我们租了一辆电动车']) {
+  assert.ok(xuzhou.includes(detail), `徐州爬山前的必胜客回忆缺少细节：${detail}`);
+}
+assert.ok(xuzhou.indexOf('我们先一起去吃了必胜客') < xuzhou.indexOf('这天也是我们第一次一起爬山') && xuzhou.indexOf('吃完后，我们租了一辆电动车') < xuzhou.indexOf('结果猪猪才爬了一会儿'), '徐州篇应先吃必胜客，再骑车去爬山');
 assert.ok(xuzhou.includes('专门给猪猪准备的太阳伞') && xuzhou.includes('一开始居然都不会撑'), '徐州应为带太阳伞却不会撑');
 assert.ok(xuzhou.includes('就这样一路走着走着，不知不觉就到了山顶。') && xuzhou.includes('我们的第一次一起爬山 · 云龙山'), '不知不觉登顶的文案及旁注应保留');
 assert.ok(xuzhou.includes('我一个人吃了烧烤，猪猪还在跟我置气。') && xuzhou.includes('猪猪还是好好地哄了我'), '烧烤那晚应保留独自吃饭、置气后仍主动哄我的细节');

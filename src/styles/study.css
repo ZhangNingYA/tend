@@ -212,13 +212,10 @@ html { scroll-behavior: smooth; }
 }
 
 .study-desktop-toc {
-  position: fixed;
-  left: max(24px, calc((100vw - 960px) / 2));
-  width: 170px;
+  position: sticky;
   top: 88px;
   max-height: calc(100vh - 112px);
   overflow-y: auto;
-  z-index: 10;
   scrollbar-width: thin;
 }
 

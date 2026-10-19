@@ -33,6 +33,7 @@ const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*
   </head>
   <body class="study-page study-article-page" data-study-page data-study-course={Astro.url.pathname} data-study-title={title}>
     <BlogHeader active="study" />
+    <div class="study-reading-progress" aria-hidden="true"><i data-study-progress-bar></i></div>
 
     <main class="study-article-shell">
       <div class="study-reader-topline">
@@ -86,6 +87,17 @@ const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*
     </main>
 
     <script>
+      const progressBar = document.querySelector<HTMLElement>('[data-study-progress-bar]');
+      const updateProgress = () => {
+        if (!progressBar) return;
+        const documentElement = document.documentElement;
+        const scrollableHeight = documentElement.scrollHeight - documentElement.clientHeight;
+        const progress = scrollableHeight > 0 ? documentElement.scrollTop / scrollableHeight : 0;
+        progressBar.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`;
+      };
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress();
+
       const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-study-nav-link]'));
       const headings = Array.from(document.querySelectorAll<HTMLElement>('.study-document h2'));
       if (links.length && headings.length && 'IntersectionObserver' in window) {

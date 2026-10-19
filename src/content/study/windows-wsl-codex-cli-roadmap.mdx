@@ -1,0 +1,534 @@
+---
+title: 'Windows、WSL 与 Codex CLI：系统运行机制学习路线'
+description: '用三周时间理解命令执行、环境配置、认证请求与后台服务冲突，建立一套可迁移的开发环境排错方法。'
+pubDate: '2026-10-19'
+updatedDate: '2026-10-19'
+mode: 'reading'
+subject: 'Windows / WSL / Codex CLI'
+estimatedMinutes: 45
+---
+
+## 学习目标
+
+不再依赖“复制命令、反复重装”来处理开发环境问题，而是能够解释命令如何被执行、环境与配置如何生效、请求怎样完成认证，以及后台服务为何出现版本冲突。
+
+**适用基础：**已接触 JavaScript/Node.js、PowerShell、Ubuntu/WSL，有一定编程经验，但尚未把操作系统、Shell、软件安装、认证与网络等知识系统串起来。
+
+**建议安排：**3 周，每天 30–45 分钟；理解 → 动手验证 → 用自己的话解释 → 小测自检。时间不足可以按模块延长，不必赶进度。
+
+## 0. 先建立全局模型
+
+学习前先读下面这条执行链：
+
+~~~
+当你在 PowerShell 或 Bash 中输入 codex：
+
+输入命令
+  ↓
+Shell 解析命令与参数
+  ↓
+查找命令（PATH / 命令别名 / 脚本等）
+  ↓
+操作系统启动程序，形成进程
+  ↓
+进程接收环境变量，读取配置和认证信息
+  ↓
+程序可能调用本地后台服务，或经网络请求 API
+  ↓
+服务端验证请求，返回结果或错误
+  ↓
+CLI 输出信息
+~~~
+
+### 通用排查五问
+
+1. 我现在位于 Windows / WSL Ubuntu / 远程 Linux 中的哪一个环境？
+2. 这条命令实际运行的是哪个程序文件？
+3. 进程使用的环境变量、配置、凭据分别从哪里来？
+4. 请求发送到哪个地址，错误出现在客户端、本地服务、网络还是远端服务器？
+5. 是否存在旧进程、旧版本、缓存、持久化状态与当前进程发生冲突？
+
+### 遇到过的真实问题与对应知识
+
+| 问题或报错 | 优先学习的知识 | 第一次应该检查什么 |
+| --- | --- | --- |
+| codex 命令不存在 | Shell、PATH、安装位置 | Get-Command / type -a |
+| Cannot find module | Node.js 模块解析、可执行脚本、路径 | Node 的平台与实际执行路径 |
+| WSL 中 process.platform 为 win32 | Windows–WSL 互操作 | node 指向 Windows 还是 Linux |
+| Missing CODEX_API_KEY | 环境变量及继承、配置优先级 | 当前进程是否实际拿到了变量 |
+| 登录显示 Logged in，请求却返回 401 | OAuth、API Key、运行时认证选择 | 实际请求的目标接口及凭据来源 |
+| 403 Forbidden | HTTP 认证/授权、网关策略 | 哪一端返回 403，是否附带错误信息 |
+| daemon release has different contents | 后台进程、版本与状态目录 | daemon 的安装位置及版本状态 |
+
+**原则：**报错消息是线索，不是完整的根因证明。排查时一次只验证一个假设。
+
+## 1. 学习全景与优先级
+
+| 顺序 | 主题 | 核心问题 | 优先级 | 验收标准 |
+| --- | --- | --- | --- | --- |
+| 1 | 程序、进程与 Shell | 输入命令后谁做了什么？ | 必学 | 能区分程序文件、运行进程和命令解释器 |
+| 2 | PATH 与环境变量 | 为什么两个终端结果不一样？ | 必学 | 能定位实际程序并解释环境变量继承 |
+| 3 | Node.js/npm 安装体系 | npm -g 把程序安装在哪里？ | 必学 | 能区分 Node、npm、CLI 入口与包文件 |
+| 4 | WSL 的边界与互操作 | 为什么 Linux 里会运行 Windows 的 node？ | 必学 | 能解释 Windows 和 WSL 路径及程序混用 |
+| 5 | 配置与认证 | 为什么登录成功仍可能 401？ | 必学 | 能检查配置来源，并区分 OAuth 与 API Key |
+| 6 | Daemon、端口与网络 | CLI 和后台服务是什么关系？ | 重要 | 能解释服务进程、状态、版本冲突 |
+| 7 | 排错方法论 | 怎样系统定位而非靠重装？ | 必学 | 能独立完成一次分层排错记录 |
+
+不必先学：完整操作系统内核、编译原理、复杂 TCP 拥塞算法、Kubernetes、深入的 OAuth 协议实现。这些并非理解当前问题的前提。
+
+## 2. 第一周：程序怎样被找到并运行
+
+**周目标：**输入 node 或 codex 时，能够明确知道它由谁查找、在哪里运行、会继承哪些环境信息。
+
+### Day 1｜Shell、命令、可执行文件
+
+**理解**
+
+- 终端（Terminal）是输入/输出界面；Shell（如 PowerShell、Bash）负责解释命令。
+- 内建命令、别名、脚本和外部可执行程序的区别。
+- node --version 中的程序名与参数分别是什么。
+
+**练习（只读）**
+
+Windows PowerShell：
+
+~~~
+Get-Command node, npm, codex -All -ErrorAction SilentlyContinue |
+  Select-Object Name, CommandType, Source
+~~~
+
+WSL Bash：
+
+~~~
+type -a node npm codex
+~~~
+
+**自测：**输入 codex 时，为什么并不代表一定在运行你最近安装的那一份 Codex？
+
+### Day 2｜程序、进程、父子进程、退出码
+
+**理解**
+
+- 程序是磁盘中的代码；进程是正在运行的实例。
+- Shell 通常会启动子进程；子进程有 PID、环境与退出状态。
+- 普通前台进程与后台常驻服务（daemon）的区别。
+
+**练习（只读）**
+
+PowerShell：
+
+~~~
+Get-Process node, codex -ErrorAction SilentlyContinue |
+  Select-Object ProcessName, Id, Path
+~~~
+
+WSL：
+
+~~~
+ps -ef | grep -E '[n]ode|[c]odex'
+~~~
+
+**自测：**为什么关闭 Codex 交互界面，不一定会让相关后台服务同时退出？
+
+### Day 3｜PATH：命令查找与优先级
+
+**理解**
+
+- PATH 是目录列表，不是某个程序的完整路径。
+- 同名程序可能存在多个版本；Shell 根据自身的命令解析规则选择。
+- Windows 的 .exe / .cmd 与 Linux 可执行文件的区别。
+
+**练习（只读）**
+
+PowerShell：
+
+~~~
+$env:PATH -split ';'
+Get-Command node -All
+~~~
+
+WSL：
+
+~~~
+printf '%s\n' "${PATH//:/$'\n'}"
+type -a node
+~~~
+
+**自测：**在什么情况下，npm install -g 已经成功，却仍然运行旧的 codex？
+
+### Day 4｜环境变量与继承
+
+**理解**
+
+- HOME、PATH、CODEX_HOME、OPENAI_BASE_URL 是环境变量，不等于配置文件。
+- 子进程通常继承父进程启动时提供的环境。
+- “当前终端有效”与“用户级持久生效”不同；修改持久设置不会自动更新已运行的进程。
+
+**安全实验：**只用 STUDY_DEMO，不使用真实密钥。
+
+PowerShell：
+
+~~~
+$env:STUDY_DEMO = 'hello'
+node -e 'console.log(process.env.STUDY_DEMO)'
+Remove-Item Env:STUDY_DEMO
+~~~
+
+WSL：
+
+~~~
+export STUDY_DEMO=hello
+node -e 'console.log(process.env.STUDY_DEMO)'
+unset STUDY_DEMO
+~~~
+
+**自测：**为什么你在一个终端执行 export OPENAI_API_KEY=...，另一个早已打开的终端可能读不到？
+
+### Day 5｜Node.js、npm、全局包与 CLI 入口
+
+**理解**
+
+- Node 是 JavaScript 运行时；npm 是包管理工具。
+- npm 包中的 CLI 入口可能通过包装脚本启动实际程序。
+- 全局安装位置、命令入口位置、包所在位置可能不同。
+- 卸载 npm 包不等于清理所有用户配置、会话和后台服务数据。
+
+**练习（只读）**
+
+PowerShell 或 WSL：
+
+~~~
+node --version
+npm --version
+npm prefix -g
+npm list -g --depth=0
+~~~
+
+**自测：**npm uninstall -g @openai/codex 为什么不应被理解为“删除 Codex 的一切痕迹”？
+
+### Day 6｜实战：比较 Windows 与 WSL 的 Node
+
+分别在两个环境执行：
+
+PowerShell：
+
+~~~
+node -p "process.platform + ' | ' + process.execPath"
+Get-Command node -All
+~~~
+
+WSL：
+
+~~~
+node -p 'process.platform + " | " + process.execPath'
+type -a node
+~~~
+
+记录：程序平台、文件路径、版本，三者是否一致？如果不一致，原因是什么？
+
+### Day 7｜复盘与第一周验收
+
+用自己的话回答：
+
+1. 终端、Shell、程序、进程有何区别？
+2. PATH 如何影响实际启动的程序？
+3. 环境变量在哪里保存、怎样传给进程？
+4. Node.js/npm/Codex CLI 在执行链上分别是什么角色？
+5. 如何判断一个 CLI 命令是否被多个版本抢占？
+
+**达到标准：**不看答案，能画出 PowerShell → 命令解析 → codex 程序 → 进程的关系。
+
+## 3. 第二周：WSL、配置与认证
+
+**周目标：**清楚划分 Windows 与 Linux 环境；理解程序到底从哪里获取配置与登录凭据。
+
+### Day 8｜WSL 是什么
+
+**理解**
+
+- WSL 2 的 Linux 环境与 Windows 是不同的操作系统环境，但存在互操作。
+- Windows 程序、Linux 程序分别在自己的运行环境中执行。
+- 在 WSL 中运行 Windows .exe 与运行 Linux 可执行文件不一样。
+
+**自测：**在 WSL 输入 node 时，为什么可能出现 process.platform === 'win32'？
+
+### Day 9｜文件系统与用户目录
+
+**理解**
+
+- C:\Users\... 与 /mnt/c/Users/... 的映射。
+- /home/cyan 是 Linux 用户目录，不等于 Windows 用户目录。
+- ~/.codex 在 Windows 与 WSL 中可能指向两个不同目录。
+- .bashrc、PowerShell Profile、config.toml 分别承担不同职责。
+
+**练习（只读）**
+
+PowerShell：
+
+~~~
+$HOME
+$env:USERPROFILE
+$PROFILE
+~~~
+
+WSL：
+
+~~~
+pwd
+printf 'HOME=%s\n' "$HOME"
+ls -ld ~/.codex /mnt/c/Users 2>/dev/null
+~~~
+
+### Day 10｜跨系统 PATH 与混用故障
+
+**理解**
+
+- Windows 侧路径可以通过 WSL 互操作出现在 Linux 的 PATH 中。
+- 哪个程序先被解析到，比“你以为在哪个系统里”更重要。
+- 优先让 WSL 开发环境使用 Linux 原生 Node/npm/Codex，除非有明确跨系统需求。
+
+**练习：**对比 type -a node npm codex，判断是否混合出现 /home/... 与 /mnt/c/... 路径。只检查，不删除。
+
+### Day 11｜配置文件、环境变量与覆盖规则
+
+**理解**
+
+- config.toml 是声明式配置；[model_providers.custom] 是定义一个提供商，不代表已经选用。
+- model_provider = "openai" 表示当前选择了一个提供商。
+- 不同程序的配置优先级并不通用，必须查各自文档；命令行参数、环境变量、项目配置、用户配置可能相互覆盖。
+- 相同名字的“登录状态”与“请求时实际用到的凭据”不是同一件事。
+
+**练习：**拿自己的 config.toml，只标记：模型选择、提供商定义、网络地址、功能开关、项目配置。无需展示密钥或 Token。
+
+### Day 12｜HTTP 请求与错误来源
+
+**理解**
+
+- URL 的协议、主机、路径。
+- 客户端、代理/网关、上游 API 分别可能返回错误。
+- 401 是认证相关失败；403 是拒绝访问（常与授权或策略有关）；404 是目标资源未找到；502 通常是网关访问上游失败。
+- 状态码有通用含义，但具体根因必须结合响应体、来源与日志。
+
+**思考：**请求实际发往 api.openai.com 和发往自定义中转站时，排错对象有什么区别？
+
+### Day 13｜API Key、OAuth、Token 与登录状态
+
+**理解**
+
+- API Key：发送请求时使用的一类访问凭据。
+- OAuth 登录：应用通过授权流程取得代表特定授权的令牌；令牌可能过期或刷新。
+- “已登录”表示有登录状态，不能单独证明每次 API 请求一定使用了预期凭据。
+- 不应输出完整 auth.json、API Key、访问令牌或刷新令牌。
+
+**案例分析：**
+
+~~~
+codex login status → Logged in
+请求 URL → https://api.openai.com/v1/responses
+响应 → 401 invalid_api_key
+~~~
+
+先验证请求目标及凭据来源，再判断是否因旧环境变量、配置覆盖或缓存导致；不能仅凭 401 断言一定是环境变量问题。
+
+### Day 14｜复盘与第二周验收
+
+画一张你自己的系统图：
+
+~~~
+Windows: PowerShell → Windows Codex → Windows 配置/认证
+                         │
+                         └── 网络请求 → API
+
+WSL:     Bash       → Linux Codex   → WSL 配置/认证
+                         │
+                         └── 网络请求 → API
+~~~
+
+写出哪些东西是独立的、哪些东西可以通过互操作共享。
+
+## 4. 第三周：Daemon、网络与故障排查
+
+**周目标：**能判断故障发生在命令入口、进程、配置认证、后台服务还是网络层。
+
+### Day 15｜Daemon、后台服务、PID 与端口
+
+**理解**
+
+- CLI 是交互入口；后台服务可能独立启动和运行。
+- PID 是运行中进程的标识；端口用于识别特定网络通信端点。
+- Windows 服务、Linux systemd 服务、普通后台进程并不完全相同。
+
+**只读练习**
+
+PowerShell：
+
+~~~
+Get-Process codex, node -ErrorAction SilentlyContinue |
+  Select-Object ProcessName, Id, Path
+~~~
+
+WSL：
+
+~~~
+ps -ef | grep -E '[c]odex|[n]ode'
+~~~
+
+### Day 16｜版本、状态、缓存和 Daemon 冲突
+
+**理解**
+
+- 程序包的版本与后台服务实际运行的版本可能不同。
+- 安装目录、版本目录、状态目录和缓存目录职责不同。
+- 文件一致性检查失败并不等价于 API Key 错误。
+- --no-daemon 的作用需要依据所用 Codex 版本和命令帮助确认；它通常用于绕过后台服务路径以缩小故障范围。
+
+**思考：**为什么“删除项目源码”对修复后台服务版本冲突没有帮助？
+
+### Day 17｜localhost、网络请求与代理
+
+**理解**
+
+- localhost / 127.0.0.1 是相对于当前网络环境的本机地址。
+- DNS 把域名解析成 IP；HTTP(S) 再建立连接与发送请求。
+- 代理、中转站、Cloudflare Tunnel 是不同层次的转发机制。
+- Windows、WSL、远程 Ubuntu 对 localhost 的具体连通关系需要根据网络架构判断。
+
+**练习（只读）**
+
+Windows：
+
+~~~
+Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
+  Select-Object -First 15 LocalAddress, LocalPort, OwningProcess
+~~~
+
+WSL：
+
+~~~
+ss -ltn | head -20
+~~~
+
+### Day 18｜日志与最小复现
+
+**理解**
+
+- 日志用于观察事实，猜测用于形成待验证的假设。
+- 一次只改变一个因素，例如临时移除环境变量，再重复请求。
+- 区分“相关”与“因果”：重装后恢复并不能自动证明问题是安装包损坏。
+
+**练习：**对一个历史错误写下“观察到的事实 / 三个候选解释 / 验证命令 / 验证结果”。
+
+### Day 19｜模拟故障：PATH 优先级
+
+不修改系统 PATH。只使用 Day 3 的只读命令检查机器已有的命令与路径，然后提出一个假设：如果 PATH 前面存在另一份 Node，会怎样影响 Codex？
+
+能说清原因比真正制造系统故障更重要。
+
+### Day 20｜模拟故障：环境变量继承
+
+利用 Day 4 的 STUDY_DEMO 做实验：
+
+1. 在 PowerShell 中设置变量。
+2. 在当前 PowerShell 启动 Node 并读取变量。
+3. 在独立打开的终端检查变量是否存在。
+4. 删除当前进程变量，验证新启动的子进程读不到。
+
+注意：只对测试变量操作，不动真实认证信息。
+
+### Day 21｜综合排错挑战
+
+按顺序解释下列情况，并给出最先执行的一条安全检查命令：
+
+1. WSL 里 codex 提示找不到命令。
+2. WSL 里 Node 显示 win32。
+3. Windows Codex 显示 Logged in，请求返回 401 invalid_api_key。
+4. codex --no-daemon 可以运行，但普通启动出现 daemon 版本冲突。
+5. npm 升级后执行的还是旧版本 Codex。
+
+**毕业标准：**能区分观察、假设、测试、修复与复测；不会一开始就删除配置或重装。
+
+## 5. 每次排错使用的标准模板
+
+复制下面这个模板，遇到新故障时填写：
+
+~~~markdown
+### 故障现象
+- 运行环境：Windows PowerShell / WSL / 远程 Ubuntu
+- 输入命令：
+- 完整错误信息（去掉所有密钥/Token）：
+
+### 已知事实
+- 命令实际路径：
+- 程序版本：
+- 目标 URL / 本地服务（如适用）：
+- 配置来源（只记文件路径，不贴凭据）：
+
+### 候选原因
+1.
+2.
+3.
+
+### 最小验证
+- 命令：
+- 预期现象：
+- 实际现象：
+
+### 结论
+- 哪些假设被排除？
+- 当前最有证据支持的原因是什么？
+- 修复动作与风险是什么？
+- 如何复测？
+~~~
+
+**安全规则：**优先只读命令；删除、覆盖、重装前先确认目标路径与影响范围。不要在日志、截图或对话里公开完整 API Key、auth.json、Token。
+
+## 6. 适合收藏的命令速查
+
+| 目的 | Windows PowerShell | WSL Bash |
+| --- | --- | --- |
+| 当前目录 | Get-Location | pwd |
+| 查找命令 | Get-Command codex -All | type -a codex |
+| 查看 Node 真实运行平台与路径 | node -p "process.platform + ' / ' + process.execPath" | node -p 'process.platform + " / " + process.execPath' |
+| 查看 PATH | $env:PATH -split ';' | echo "$PATH" |
+| 查看是否设置变量（避免显示敏感值） | [bool]$env:OPENAI_API_KEY | test -n "$OPENAI_API_KEY" && echo yes |
+| 查看 npm 全局目录 | npm prefix -g | npm prefix -g |
+| 查看 Codex 版本 | codex --version | codex --version |
+| 查看进程 | Get-Process codex -ErrorAction SilentlyContinue | ps -ef \| grep '[c]odex' |
+| 查看监听端口 | Get-NetTCPConnection -State Listen | ss -ltn |
+
+命令与版本可能因系统而异。先读 --help、官方说明或报错提示，不要把网上脚本直接用于生产环境。
+
+## 7. 推荐参考资料与阅读顺序
+
+1. [Microsoft Learn — PowerShell 环境变量](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_environment_variables)  
+   对应 Day 3–4，重点理解作用域与进程继承。
+2. [Microsoft Learn — WSL 文件系统](https://learn.microsoft.com/windows/wsl/filesystems)  
+   对应 Day 8–10，理解 /mnt/c 和 Linux 用户目录。
+3. [Microsoft Learn — WSL 运行 Windows 工具](https://learn.microsoft.com/windows/wsl/filesystems#run-windows-tools-from-linux)  
+   理解 WSL 的命令与路径互操作。
+4. [npm Docs — folders](https://docs.npmjs.com/cli/v10/configuring-npm/folders)  
+   对应 Day 5，理解包、入口及全局安装位置（不同 npm 版本可能略有变化）。
+5. [OpenAI Codex — 配置文档](https://developers.openai.com/codex/config-basic)  
+   对应 Day 11，学习配置层级与选择机制。
+6. [OpenAI Codex — GitHub 源码仓库](https://github.com/openai/codex)  
+   第三周需要了解后台实现和版本变化时再读。
+7. [MDN — HTTP 响应状态码](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Reference/Status)  
+   对应 Day 12，理解 401、403、404、502 等错误的通用语义。
+
+## 8. 后续拓展
+
+完成三周后再学：
+
+- Linux 服务管理：systemd、服务日志、权限、用户、文件所有权、信号。
+- 网络基础：DNS → TCP → TLS → HTTP → 反向代理；结合自己使用过的 Clash/Cloudflare Tunnel 理解。
+- 部署与打包：可执行文件、npm、Docker Image、Container、Compose、Volumes。
+- 开发环境管理：Node 版本管理（nvm）、依赖锁文件、PATH 冲突、配置隔离。
+- 后端实践：做一个小型 Node.js/Go HTTP 服务，配日志、环境变量、端口、systemd/Docker 部署，并自己设计故障排查清单。
+
+## 最终目标
+
+看到一个新报错时，能够先判断：
+
+> 是命令没找到？程序没启动？配置没有生效？身份验证失败？请求没有到达目标？还是后台服务或版本状态冲突？
+
+能把这六类问题分开，之后不论是 Codex、WSL、Node.js、Ubuntu 服务器还是 Docker，排错逻辑都会清晰得多。

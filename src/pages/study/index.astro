@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { ArrowUpRight } from 'lucide-astro';
+import { ArrowUpRight, BookOpen, Check, Clock3, Sparkles } from 'lucide-astro';
 import BaseHead from '../../components/BaseHead.astro';
 import BlogHeader from '../../components/blog/BlogHeader.astro';
 import '../../styles/study.css';
@@ -20,35 +20,145 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
     <BlogHeader active="study" />
 
     <main class="study-index" id="top">
-      <section class="study-library" aria-labelledby="study-list-title">
+      <section class="study-hero" aria-labelledby="study-list-title">
+        <div class="study-hero-copy">
+          <span class="study-eyebrow"><Sparkles size={14} stroke-width={2} /> PERSONAL LEARNING SPACE</span>
+          <h1 id="study-list-title">把学习，变成<br /><em>可以回来的地方。</em></h1>
+          <p>把值得反复阅读的内容收进一个安静的角落。每次回来，都知道自己走到了哪一步。</p>
+        </div>
+        <div class="study-hero-orbit" aria-hidden="true">
+          <span class="study-orbit-ring study-orbit-ring-one"></span>
+          <span class="study-orbit-ring study-orbit-ring-two"></span>
+          <span class="study-orbit-core"><BookOpen size={31} stroke-width={1.6} /></span>
+        </div>
+      </section>
+
+      <section class="study-progress-card" aria-label="学习进度">
+        <div class="study-progress-copy">
+          <span class="study-section-kicker">YOUR PROGRESS</span>
+          <strong><span data-study-completed-count>0</span><span class="study-progress-slash">/</span>{studies.length}</strong>
+          <span class="study-progress-label">篇学习记录已完成</span>
+        </div>
+        <div class="study-progress-track" aria-hidden="true"><span data-study-progress-bar></span></div>
+        <div class="study-progress-note"><span data-study-progress-percent>0%</span><span>慢一点，也是在前进。</span></div>
+      </section>
+
+      <section class="study-library" aria-labelledby="study-library-title">
         <div class="study-library-heading">
-          <h1 id="study-list-title">学习记录</h1>
-          <span>{studies.length} 篇</span>
+          <div>
+            <span class="study-section-kicker">THE LIBRARY</span>
+            <h2 id="study-library-title">学习记录</h2>
+          </div>
+          <span class="study-library-count">{studies.length} 篇</span>
+        </div>
+
+        <div class="study-filters" role="group" aria-label="筛选学习记录">
+          <button class="study-filter is-active" type="button" data-study-filter="all">全部 <span>{studies.length}</span></button>
+          <button class="study-filter" type="button" data-study-filter="active">进行中</button>
+          <button class="study-filter" type="button" data-study-filter="completed">已完成</button>
         </div>
 
         {studies.length ? (
-          <ol class="study-record-list" aria-label="学习记录列表">
+          <div class="study-record-list" aria-label="学习记录列表">
             {studies.map((study) => (
-              <li>
-                <a class="study-record" href={`/study/${study.id}/`}>
+              <article class="study-record" data-study-card data-study-id={study.id} data-study-state="active">
+                <a class="study-record-link" href={`/study/${study.id}/`}>
+                  <div class="study-record-index" aria-hidden="true">{String(studies.indexOf(study) + 1).padStart(2, '0')}</div>
                   <div class="study-record-body">
                     <div class="study-record-meta">
                       <span>{study.data.subject ?? '学习记录'}</span>
                       <time datetime={(study.data.updatedDate ?? study.data.pubDate).toISOString()}>{formatDate(study.data.updatedDate ?? study.data.pubDate)}</time>
                     </div>
-                    <div>
-                      <h3>{study.data.title}</h3>
+                    <h3>{study.data.title}</h3>
+                    <p>{study.data.description}</p>
+                    <div class="study-record-details">
+                      <span><Clock3 size={14} stroke-width={1.8} />约 {study.data.estimatedMinutes ?? 20} 分钟</span>
+                      <span class="study-status" data-study-status><span class="study-status-dot"></span>未完成</span>
                     </div>
                   </div>
-                  <span class="study-record-arrow" aria-hidden="true"><ArrowUpRight size={18} stroke-width={1.7} /></span>
+                  <span class="study-record-arrow" aria-hidden="true"><ArrowUpRight size={20} stroke-width={1.7} /></span>
                 </a>
-              </li>
+                <button class="study-complete-toggle" type="button" data-study-toggle aria-pressed="false">
+                  <span class="study-toggle-icon"><Check size={14} stroke-width={2.4} /></span>
+                  <span data-study-toggle-label>标记完成</span>
+                </button>
+              </article>
             ))}
-          </ol>
+          </div>
         ) : (
           <p class="study-empty">暂无记录。</p>
         )}
+        <p class="study-filter-empty" data-study-filter-empty hidden>这个筛选下还没有学习记录。</p>
       </section>
     </main>
+
+    <script>
+      const progressKey = 'tend-study-progress';
+      const readProgress = () => {
+        try { return JSON.parse(localStorage.getItem(progressKey) ?? '{}') as Record<string, boolean>; }
+        catch { return {}; }
+      };
+      const writeProgress = (progress: Record<string, boolean>) => {
+        try { localStorage.setItem(progressKey, JSON.stringify(progress)); } catch { /* private browsing */ }
+      };
+      const progress = readProgress();
+      const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-study-card]'));
+      const completedCount = document.querySelector<HTMLElement>('[data-study-completed-count]');
+      const progressBar = document.querySelector<HTMLElement>('[data-study-progress-bar]');
+      const progressPercent = document.querySelector<HTMLElement>('[data-study-progress-percent]');
+      const filterEmpty = document.querySelector<HTMLElement>('[data-study-filter-empty]');
+
+      const syncCard = (card: HTMLElement) => {
+        const id = card.dataset.studyId ?? '';
+        const isCompleted = Boolean(progress[id]);
+        card.dataset.studyState = isCompleted ? 'completed' : 'active';
+        card.querySelector<HTMLElement>('[data-study-status]')!.innerHTML = isCompleted
+          ? '<span class="study-status-dot"></span>已完成'
+          : '<span class="study-status-dot"></span>未完成';
+        const toggle = card.querySelector<HTMLButtonElement>('[data-study-toggle]');
+        if (toggle) {
+          toggle.setAttribute('aria-pressed', String(isCompleted));
+          toggle.querySelector<HTMLElement>('[data-study-toggle-label]')!.textContent = isCompleted ? '标记为未完成' : '标记完成';
+        }
+      };
+      const syncSummary = () => {
+        const total = cards.length;
+        const done = cards.filter((card) => card.dataset.studyState === 'completed').length;
+        const percent = total ? Math.round((done / total) * 100) : 0;
+        if (completedCount) completedCount.textContent = String(done);
+        if (progressPercent) progressPercent.textContent = `${percent}%`;
+        if (progressBar) progressBar.style.width = `${percent}%`;
+      };
+      const applyFilter = (filter: string) => {
+        let visible = 0;
+        cards.forEach((card) => {
+          const show = filter === 'all' || card.dataset.studyState === filter;
+          card.hidden = !show;
+          if (show) visible += 1;
+        });
+        if (filterEmpty) filterEmpty.hidden = visible !== 0;
+      };
+
+      cards.forEach((card) => {
+        syncCard(card);
+        card.querySelector<HTMLButtonElement>('[data-study-toggle]')?.addEventListener('click', () => {
+          const id = card.dataset.studyId ?? '';
+          progress[id] = !progress[id];
+          writeProgress(progress);
+          syncCard(card);
+          syncSummary();
+          const activeFilter = document.querySelector<HTMLButtonElement>('.study-filter.is-active')?.dataset.studyFilter ?? 'all';
+          applyFilter(activeFilter);
+        });
+      });
+      document.querySelectorAll<HTMLButtonElement>('[data-study-filter]').forEach((button) => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('[data-study-filter]').forEach((item) => item.classList.remove('is-active'));
+          button.classList.add('is-active');
+          applyFilter(button.dataset.studyFilter ?? 'all');
+        });
+      });
+      syncSummary();
+    </script>
   </body>
 </html>

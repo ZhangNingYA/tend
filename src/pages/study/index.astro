@@ -1,13 +1,19 @@
 ---
-import { getCollection } from 'astro:content';
-import { ArrowUpRight, BookOpen, Check, Clock3, Sparkles } from 'lucide-astro';
+import { getCollection, render } from 'astro:content';
+import { ArrowUpRight, BookOpen, Clock3, Sparkles } from 'lucide-astro';
 import BaseHead from '../../components/BaseHead.astro';
 import BlogHeader from '../../components/blog/BlogHeader.astro';
+import { getStudyStageHeadings } from '../../lib/studyStages';
 import '../../styles/study.css';
 
 const studies = (await getCollection('study')).sort(
   (a, b) => (b.data.updatedDate ?? b.data.pubDate).valueOf() - (a.data.updatedDate ?? a.data.pubDate).valueOf(),
 );
+const studyRecords = await Promise.all(studies.map(async (study) => {
+  const { headings } = await render(study);
+  const stageIds = getStudyStageHeadings(headings).map((heading) => heading.slug);
+  return { study, stageIds };
+}));
 const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
 ---
 
@@ -60,8 +66,8 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
 
         {studies.length ? (
           <div class="study-record-list" aria-label="学习记录列表">
-            {studies.map((study) => (
-              <article class="study-record" data-study-card data-study-id={study.id} data-study-state="active">
+            {studyRecords.map(({ study, stageIds }) => (
+              <article class="study-record" data-study-card data-study-id={study.id} data-study-stage-ids={JSON.stringify(stageIds)} data-study-state="active">
                 <a class="study-record-link" href={`/study/${study.id}/`}>
                   <div class="study-record-index" aria-hidden="true">{String(studies.indexOf(study) + 1).padStart(2, '0')}</div>
                   <div class="study-record-body">
@@ -73,15 +79,12 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
                     <p>{study.data.description}</p>
                     <div class="study-record-details">
                       <span><Clock3 size={14} stroke-width={1.8} />约 {study.data.estimatedMinutes ?? 20} 分钟</span>
-                      <span class="study-status" data-study-status><span class="study-status-dot"></span>未完成</span>
+                      <span class="study-status" data-study-status><span class="study-status-dot"></span><span data-study-status-label>未完成</span></span>
+                      <span class="study-stage-progress" data-study-stage-progress>0 / {stageIds.length} 个阶段</span>
                     </div>
                   </div>
                   <span class="study-record-arrow" aria-hidden="true"><ArrowUpRight size={20} stroke-width={1.7} /></span>
                 </a>
-                <button class="study-complete-toggle" type="button" data-study-toggle aria-pressed="false">
-                  <span class="study-toggle-icon"><Check size={14} stroke-width={2.4} /></span>
-                  <span data-study-toggle-label>标记完成</span>
-                </button>
               </article>
             ))}
           </div>
@@ -95,13 +98,11 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
     <script>
       const progressKey = 'tend-study-progress';
       const readProgress = () => {
-        try { return JSON.parse(localStorage.getItem(progressKey) ?? '{}') as Record<string, boolean>; }
+        try { return JSON.parse(localStorage.getItem(progressKey) ?? '{}') as Record<string, boolean | Record<string, boolean>>; }
         catch { return {}; }
       };
-      const writeProgress = (progress: Record<string, boolean>) => {
-        try { localStorage.setItem(progressKey, JSON.stringify(progress)); } catch { /* private browsing */ }
-      };
-      const progress = readProgress();
+      const savedProgress = readProgress();
+      const progress: Record<string, Record<string, boolean>> = {};
       const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-study-card]'));
       const completedCount = document.querySelector<HTMLElement>('[data-study-completed-count]');
       const progressBar = document.querySelector<HTMLElement>('[data-study-progress-bar]');
@@ -110,16 +111,13 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
 
       const syncCard = (card: HTMLElement) => {
         const id = card.dataset.studyId ?? '';
-        const isCompleted = Boolean(progress[id]);
+        const stageIds = JSON.parse(card.dataset.studyStageIds ?? '[]') as string[];
+        progress[id] = typeof savedProgress[id] === 'boolean' ? Object.fromEntries(stageIds.map((stageId) => [stageId, savedProgress[id] as boolean])) : (savedProgress[id] ?? {});
+        const completedStages = stageIds.filter((stageId) => progress[id][stageId]).length;
+        const isCompleted = stageIds.length > 0 && completedStages === stageIds.length;
         card.dataset.studyState = isCompleted ? 'completed' : 'active';
-        card.querySelector<HTMLElement>('[data-study-status]')!.innerHTML = isCompleted
-          ? '<span class="study-status-dot"></span>已完成'
-          : '<span class="study-status-dot"></span>未完成';
-        const toggle = card.querySelector<HTMLButtonElement>('[data-study-toggle]');
-        if (toggle) {
-          toggle.setAttribute('aria-pressed', String(isCompleted));
-          toggle.querySelector<HTMLElement>('[data-study-toggle-label]')!.textContent = isCompleted ? '标记为未完成' : '标记完成';
-        }
+        card.querySelector<HTMLElement>('[data-study-status-label]')!.textContent = isCompleted ? '已完成' : '未完成';
+        card.querySelector<HTMLElement>('[data-study-stage-progress]')!.textContent = `${completedStages} / ${stageIds.length} 个阶段`;
       };
       const syncSummary = () => {
         const total = cards.length;
@@ -141,15 +139,6 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
 
       cards.forEach((card) => {
         syncCard(card);
-        card.querySelector<HTMLButtonElement>('[data-study-toggle]')?.addEventListener('click', () => {
-          const id = card.dataset.studyId ?? '';
-          progress[id] = !progress[id];
-          writeProgress(progress);
-          syncCard(card);
-          syncSummary();
-          const activeFilter = document.querySelector<HTMLButtonElement>('.study-filter.is-active')?.dataset.studyFilter ?? 'all';
-          applyFilter(activeFilter);
-        });
       });
       document.querySelectorAll<HTMLButtonElement>('[data-study-filter]').forEach((button) => {
         button.addEventListener('click', () => {

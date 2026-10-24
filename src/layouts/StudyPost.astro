@@ -1,9 +1,10 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
-import { ArrowLeft, Check, Clock3 } from 'lucide-astro';
+import { ArrowLeft, Clock3 } from 'lucide-astro';
 import BaseHead from '../components/BaseHead.astro';
 import BlogHeader from '../components/blog/BlogHeader.astro';
+import { getStudyStageHeadings } from '../lib/studyStages';
 import '../styles/study.css';
 
 type Props = CollectionEntry<'study'>['data'] & {
@@ -23,6 +24,8 @@ const {
 } = Astro.props;
 
 const sections = headings.filter((heading) => heading.depth === 2);
+const stageHeadings = getStudyStageHeadings(headings);
+const stageIds = stageHeadings.map((heading) => heading.slug).join(',');
 const displayDate = updatedDate ?? pubDate;
 const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
 const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*\/\s*/, '');
@@ -33,7 +36,7 @@ const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*
   <head>
     <BaseHead title={title} description={description} />
   </head>
-  <body class="study-page study-article-page" data-study-page data-study-course={Astro.url.pathname} data-study-id={studyId} data-study-title={title}>
+  <body class="study-page study-article-page" data-study-page data-study-course={Astro.url.pathname} data-study-id={studyId} data-study-title={title} data-study-stage-ids={stageIds}>
     <BlogHeader active="study" />
     <div class="study-reading-progress" aria-hidden="true"><i data-study-progress-bar></i></div>
 
@@ -55,10 +58,7 @@ const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*
             <p>{description}</p>
             <div class="study-article-status-row">
               <div class="study-article-status" data-study-status><span class="study-status-dot"></span><span data-study-status-label>未完成</span></div>
-              <button class="study-complete-toggle study-complete-toggle-large" type="button" data-study-toggle aria-pressed="false">
-                <span class="study-toggle-icon"><Check size={14} stroke-width={2.4} /></span>
-                <span data-study-toggle-label>标记完成</span>
-              </button>
+              <span class="study-article-stage-summary" data-study-stage-summary>0 / {stageHeadings.length} 个阶段</span>
             </div>
           </div>
         </header>
@@ -125,24 +125,62 @@ const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*
 
       const progressKey = 'tend-study-progress';
       const page = document.querySelector<HTMLElement>('[data-study-page]');
-      const toggle = document.querySelector<HTMLButtonElement>('[data-study-toggle]');
+      const documentNode = document.querySelector<HTMLElement>('[data-study-document]');
       const status = document.querySelector<HTMLElement>('[data-study-status]');
       const statusLabel = document.querySelector<HTMLElement>('[data-study-status-label]');
-      if (page && toggle && status && statusLabel) {
+      const stageSummary = document.querySelector<HTMLElement>('[data-study-stage-summary]');
+      if (page && documentNode && status && statusLabel && stageSummary) {
         const id = page.dataset.studyId ?? page.dataset.studyCourse ?? '';
-        let progress: Record<string, boolean> = {};
-        try { progress = JSON.parse(localStorage.getItem(progressKey) ?? '{}') as Record<string, boolean>; } catch { /* private browsing */ }
-        const syncStatus = () => {
-          const completed = Boolean(progress[id]);
-          toggle.setAttribute('aria-pressed', String(completed));
-          toggle.querySelector<HTMLElement>('[data-study-toggle-label]')!.textContent = completed ? '标记为未完成' : '标记完成';
-          statusLabel.textContent = completed ? '已完成' : '未完成';
-          status.classList.toggle('is-completed', completed);
+        const stageIds = (page.dataset.studyStageIds ?? '').split(',').filter(Boolean);
+        const stages = stageIds.map((stageId) => document.getElementById(stageId)).filter((stage): stage is HTMLElement => Boolean(stage));
+        let progress: Record<string, Record<string, boolean>> = {};
+        let saved: Record<string, boolean | Record<string, boolean>> = {};
+        try {
+          saved = JSON.parse(localStorage.getItem(progressKey) ?? '{}') as Record<string, boolean | Record<string, boolean>>;
+          for (const [studyId, value] of Object.entries(saved)) {
+            if (typeof value !== 'boolean') progress[studyId] = value;
+          }
+        } catch { /* private browsing */ }
+        const save = () => {
+          try { localStorage.setItem(progressKey, JSON.stringify({ ...saved, ...progress })); } catch { /* private browsing */ }
         };
-        toggle.addEventListener('click', () => {
-          progress[id] = !progress[id];
-          try { localStorage.setItem(progressKey, JSON.stringify(progress)); } catch { /* private browsing */ }
-          syncStatus();
+        if (saved[id] === true) {
+          progress[id] = Object.fromEntries(stages.map((stage) => [stage.id, true]));
+          save();
+          saved[id] = progress[id];
+        }
+        const syncStatus = () => {
+          const completed = stages.filter((stage) => progress[id]?.[stage.id]).length;
+          const complete = stages.length > 0 && completed === stages.length;
+          statusLabel.textContent = complete ? '已完成' : '未完成';
+          status.classList.toggle('is-completed', complete);
+          stageSummary.textContent = `${completed} / ${stages.length} 个阶段`;
+        };
+        stages.forEach((stage, index) => {
+          const stageId = stage.id || `stage-${index + 1}`;
+          if (!stage.id) stage.id = stageId;
+          stage.dataset.studyStage = stageId;
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'study-stage-toggle';
+          button.dataset.studyStageToggle = stageId;
+          button.setAttribute('aria-label', `标记阶段“${stage.textContent?.trim() ?? ''}”完成`);
+          button.innerHTML = '<span class="study-toggle-icon" aria-hidden="true">✓</span><span class="study-stage-label">完成阶段</span>';
+          stage.append(button);
+          const syncStage = () => {
+            const done = Boolean(progress[id]?.[stageId]);
+            button.setAttribute('aria-pressed', String(done));
+            button.querySelector<HTMLElement>('.study-stage-label')!.textContent = done ? '已完成' : '完成阶段';
+            stage.classList.toggle('is-study-stage-completed', done);
+          };
+          button.addEventListener('click', () => {
+            progress[id] ??= {};
+            progress[id][stageId] = !progress[id][stageId];
+            save();
+            syncStage();
+            syncStatus();
+          });
+          syncStage();
         });
         syncStatus();
       }

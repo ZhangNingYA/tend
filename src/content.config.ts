@@ -37,25 +37,4 @@ const works = defineCollection({
         }),
 });
 
-const papers = defineCollection({
-    loader: glob({ base: './src/content/papers', pattern: '**/*.{md,mdx}' }),
-    schema: z.object({
-        title: z.string(),
-        description: z.string(),
-        indexTitle: z.string(),
-        indexDescription: z.string(),
-        topic: z.string(),
-        pubDate: z.coerce.date(),
-        updatedDate: z.coerce.date().optional(),
-        authors: z.array(z.string()).optional(),
-        affiliation: z.string().optional(),
-        venue: z.string().optional(),
-        year: z.number().optional(),
-        doi: z.string().optional(),
-        series: z.literal('factor-graphs').optional(),
-        part: z.number().int().min(0).max(9).optional(),
-        estimatedMinutes: z.number().int().positive().optional(),
-    }),
-});
-
-export const collections = { games, study, works, papers };
+export const collections = { games, study, works };

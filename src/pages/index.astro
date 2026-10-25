@@ -6,10 +6,9 @@ import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import '../styles/editorial.css';
 
-const [works, study, papers] = await Promise.all([
+const [works, study] = await Promise.all([
   getCollection('works'),
   getCollection('study'),
-  getCollection('papers'),
 ]);
 
 const sections = [
@@ -24,12 +23,6 @@ const sections = [
     label: 'Study',
     count: study.length,
     description: 'Guided learning labs that turn difficult ideas into experiments.',
-  },
-  {
-    href: '/papers/',
-    label: 'Papers',
-    count: papers.length,
-    description: 'Research papers explored through questions, answers, and clear derivations.',
   },
 ];
 const totalEntries = sections.reduce((sum, section) => sum + section.count, 0);

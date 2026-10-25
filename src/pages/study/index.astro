@@ -7,13 +7,30 @@ import { getStudyStageHeadings } from '../../lib/studyStages';
 import '../../styles/study.css';
 
 const studies = (await getCollection('study')).sort(
-  (a, b) => (b.data.updatedDate ?? b.data.pubDate).valueOf() - (a.data.updatedDate ?? a.data.pubDate).valueOf(),
+  (a, b) => {
+    if (a.data.series && a.data.series === b.data.series) return (a.data.part ?? 0) - (b.data.part ?? 0);
+    return (b.data.updatedDate ?? b.data.pubDate).valueOf() - (a.data.updatedDate ?? a.data.pubDate).valueOf();
+  },
 );
 const studyRecords = await Promise.all(studies.map(async (study) => {
   const { headings } = await render(study);
   const stageIds = getStudyStageHeadings(headings).map((heading) => heading.slug);
   return { study, stageIds };
 }));
+const studyGroups = studyRecords.reduce<Array<{ key: string; title: string; records: typeof studyRecords }>>((groups, record) => {
+  const key = record.study.data.series ?? `standalone:${record.study.id}`;
+  let group = groups.find((candidate) => candidate.key === key);
+  if (!group) {
+    group = {
+      key,
+      title: key === 'ai-app-engineering' ? 'AI 应用工程实习路线' : record.study.data.series ? key : '',
+      records: [],
+    };
+    groups.push(group);
+  }
+  group.records.push(record);
+  return groups;
+}, []);
 const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
 ---
 
@@ -65,27 +82,34 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
         </div>
 
         {studies.length ? (
-          <div class="study-record-list" aria-label="学习记录列表">
-            {studyRecords.map(({ study, stageIds }) => (
-              <article class="study-record" data-study-card data-study-id={study.id} data-study-stage-ids={JSON.stringify(stageIds)} data-study-state="active">
-                <a class="study-record-link" href={`/study/${study.id}/`}>
-                  <div class="study-record-index" aria-hidden="true">{String(studies.indexOf(study) + 1).padStart(2, '0')}</div>
-                  <div class="study-record-body">
-                    <div class="study-record-meta">
-                      <span>{study.data.subject ?? '学习记录'}</span>
-                      <time datetime={(study.data.updatedDate ?? study.data.pubDate).toISOString()}>{formatDate(study.data.updatedDate ?? study.data.pubDate)}</time>
-                    </div>
-                    <h3>{study.data.title}</h3>
-                    <p>{study.data.description}</p>
-                    <div class="study-record-details">
-                      <span><Clock3 size={14} stroke-width={1.8} />约 {study.data.estimatedMinutes ?? 20} 分钟</span>
-                      <span class="study-status" data-study-status><span class="study-status-dot"></span><span data-study-status-label>未完成</span></span>
-                      <span class="study-stage-progress" data-study-stage-progress>0 / {stageIds.length} 个阶段</span>
-                    </div>
-                  </div>
-                  <span class="study-record-arrow" aria-hidden="true"><ArrowUpRight size={20} stroke-width={1.7} /></span>
-                </a>
-              </article>
+          <div class="study-series-groups">
+            {studyGroups.map((group) => (
+              <section class="study-series-group" data-study-group={group.key} aria-label={group.title || '独立学习记录'}>
+                {group.title && <header class="study-series-heading"><h3>{group.title}</h3><span data-study-group-summary>0 / {group.records.length} 篇完成 · 按学习顺序</span></header>}
+                <div class="study-record-list" aria-label={group.title || '独立学习记录'}>
+                  {group.records.map(({ study, stageIds }) => (
+                    <article class="study-record" data-study-card data-study-id={study.id} data-study-series={study.data.series ?? ''} data-study-stage-ids={JSON.stringify(stageIds)} data-study-state="active">
+                      <a class="study-record-link" href={`/study/${study.id}/`}>
+                        <div class="study-record-index" aria-hidden="true">{String(studies.indexOf(study) + 1).padStart(2, '0')}</div>
+                        <div class="study-record-body">
+                          <div class="study-record-meta">
+                            <span>{study.data.subject ?? '学习记录'}</span>
+                            <time datetime={(study.data.updatedDate ?? study.data.pubDate).toISOString()}>{formatDate(study.data.updatedDate ?? study.data.pubDate)}</time>
+                          </div>
+                          <h3>{study.data.title}</h3>
+                          <p>{study.data.description}</p>
+                          <div class="study-record-details">
+                            <span><Clock3 size={14} stroke-width={1.8} />约 {study.data.estimatedMinutes ?? 20} 分钟</span>
+                            <span class="study-status" data-study-status><span class="study-status-dot"></span><span data-study-status-label>未完成</span></span>
+                            <span class="study-stage-progress" data-study-stage-progress>0 / {stageIds.length} 个阶段</span>
+                          </div>
+                        </div>
+                        <span class="study-record-arrow" aria-hidden="true"><ArrowUpRight size={20} stroke-width={1.7} /></span>
+                      </a>
+                    </article>
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         ) : (
@@ -108,6 +132,7 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
       const progressBar = document.querySelector<HTMLElement>('[data-study-progress-bar]');
       const progressPercent = document.querySelector<HTMLElement>('[data-study-progress-percent]');
       const filterEmpty = document.querySelector<HTMLElement>('[data-study-filter-empty]');
+      const groups = Array.from(document.querySelectorAll<HTMLElement>('[data-study-group]'));
 
       const syncCard = (card: HTMLElement) => {
         const id = card.dataset.studyId ?? '';
@@ -126,6 +151,12 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
         if (completedCount) completedCount.textContent = String(done);
         if (progressPercent) progressPercent.textContent = `${percent}%`;
         if (progressBar) progressBar.style.width = `${percent}%`;
+        groups.forEach((group) => {
+          const groupCards = Array.from(group.querySelectorAll<HTMLElement>('[data-study-card]'));
+          const groupDone = groupCards.filter((card) => card.dataset.studyState === 'completed').length;
+          const summary = group.querySelector<HTMLElement>('[data-study-group-summary]');
+          if (summary) summary.textContent = `${groupDone} / ${groupCards.length} 篇完成 · 按学习顺序`;
+        });
       };
       const applyFilter = (filter: string) => {
         let visible = 0;
@@ -133,6 +164,9 @@ const formatDate = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'num
           const show = filter === 'all' || card.dataset.studyState === filter;
           card.hidden = !show;
           if (show) visible += 1;
+        });
+        groups.forEach((group) => {
+          group.hidden = !group.querySelector('[data-study-card]:not([hidden])');
         });
         if (filterEmpty) filterEmpty.hidden = visible !== 0;
       };

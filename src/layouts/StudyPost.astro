@@ -10,6 +10,11 @@ import '../styles/study.css';
 type Props = CollectionEntry<'study'>['data'] & {
   headings?: MarkdownHeading[];
   studyId?: string;
+  seriesNavigation?: {
+    previous?: { id: string; title: string };
+    next?: { id: string; title: string };
+    position: string;
+  };
 };
 
 const {
@@ -21,6 +26,7 @@ const {
   estimatedMinutes,
   headings = [],
   studyId = Astro.url.pathname,
+  seriesNavigation,
 } = Astro.props;
 
 const sections = headings.filter((heading) => heading.depth === 2);
@@ -92,6 +98,17 @@ const sectionTitle = (heading: MarkdownHeading) => heading.text.replace(/^\d+\s*
           <slot />
         </article>
       </div>
+      {seriesNavigation && (
+        <nav class="study-series-navigation" aria-label="系列篇章导航">
+          {seriesNavigation.previous
+            ? <a href={`/study/${seriesNavigation.previous.id}/`}><span>← 上一篇</span><strong>{seriesNavigation.previous.title}</strong></a>
+            : <span class="study-series-nav-empty"></span>}
+          <span class="study-series-position">{seriesNavigation.position}</span>
+          {seriesNavigation.next
+            ? <a class="study-series-next" href={`/study/${seriesNavigation.next.id}/`}><span>下一篇 →</span><strong>{seriesNavigation.next.title}</strong></a>
+            : <span class="study-series-nav-empty"></span>}
+        </nav>
+      )}
       </div>
     </main>
 

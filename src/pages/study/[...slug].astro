@@ -14,8 +14,23 @@ type Props = CollectionEntry<'study'>;
 
 const study = Astro.props;
 const { Content, headings } = await render(study);
+const seriesNavigation = study.data.series
+  ? (await getCollection('study', (entry) => entry.data.series === study.data.series))
+      .sort((a, b) => (a.data.part ?? 0) - (b.data.part ?? 0))
+      .map((entry) => ({ id: entry.id, title: entry.data.title }))
+  : [];
+const currentIndex = seriesNavigation.findIndex((entry) => entry.id === study.id);
 ---
 
-<StudyPost {...study.data} studyId={study.id} headings={headings}>
+<StudyPost
+  {...study.data}
+  studyId={study.id}
+  headings={headings}
+  seriesNavigation={seriesNavigation.length > 1 ? {
+    previous: currentIndex > 0 ? seriesNavigation[currentIndex - 1] : undefined,
+    next: currentIndex < seriesNavigation.length - 1 ? seriesNavigation[currentIndex + 1] : undefined,
+    position: `${currentIndex + 1} / ${seriesNavigation.length}`,
+  } : undefined}
+>
   <Content />
 </StudyPost>

@@ -1,6 +1,5 @@
 ---
 import { Menu, X } from 'lucide-astro';
-import TendWordmark from '../TendWordmark.astro';
 
 interface Props {
   active?: 'notes' | 'experiments' | 'builds' | 'now' | 'about';
@@ -13,8 +12,11 @@ const { active, theme = 'light' } = Astro.props;
 <header class:list={['site-header', theme === 'dark' && 'theme-dark']} data-site-header>
   <div class="header-inner">
     <a class="brand" href="/" aria-label="Tend home">
-      <TendWordmark />
+      <span class="brand-mark" aria-hidden="true">+</span>
+      <span class="brand-copy">Tend</span>
     </a>
+
+    <div class="header-utility" aria-hidden="true"><span class="utility-dot"></span><span>AI AGENT FIELD</span></div>
 
     <nav id="primary-navigation" class="site-nav" aria-label="Primary navigation">
       <a href="/field-notes/" aria-current={active === 'notes' ? 'page' : undefined}>Field Notes</a>

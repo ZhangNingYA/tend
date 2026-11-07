@@ -13,7 +13,7 @@ const builds = (await getCollection('builds')).filter((build) => !build.data.dra
 <html lang="zh-CN">
   <head><BaseHead title={`Builds · ${SITE_TITLE}`} description="正在构建和已经交付的 AI Agent 系统。" /></head>
   <body class="studio-page">
-    <BlogHeader active="builds" theme="dark" />
+    <BlogHeader active="builds" />
     <main class="studio-shell studio-main">
       <header class="studio-index-hero">
         <div><div class="studio-kicker"><span class="studio-kicker-dot"></span> Shipped work</div><h1>Builds.</h1><p>把学习变成可以运行、测量和交付的东西。这里记录真正做出来的 Agent 系统。</p></div>

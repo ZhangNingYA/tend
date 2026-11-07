@@ -15,7 +15,7 @@ const experiments = [
 <html lang="zh-CN">
   <head><BaseHead title={`Experiments · ${SITE_TITLE}`} description="AI Agent 的交互实验和系统验证。" /></head>
   <body class="studio-page">
-    <BlogHeader active="experiments" theme="dark" />
+    <BlogHeader active="experiments" />
     <main class="studio-shell studio-main">
       <header class="studio-index-hero"><div><div class="studio-kicker"><span class="studio-kicker-dot"></span> Interactive systems</div><h1>Experiments.</h1><p>先把一个问题变成可以操作的东西，再决定它是否值得做成系统。</p></div><div class="studio-index-count"><strong>03</strong> experiments in queue</div></header>
       <section class="studio-section"><div class="studio-portal-grid">{experiments.map((experiment) => <article class="studio-portal"><div class="studio-portal-top"><span class="studio-portal-index">{experiment.number} / {experiment.state}</span><span class="studio-portal-arrow">↗</span></div><div><h3>{experiment.title}</h3><p>{experiment.body}</p></div></article>)}</div></section>

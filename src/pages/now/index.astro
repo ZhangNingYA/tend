@@ -15,7 +15,7 @@ const tracks = [
 <html lang="zh-CN">
   <head><BaseHead title={`Now · ${SITE_TITLE}`} description="当前正在学习和构建的 AI Agent 方向。" /></head>
   <body class="studio-page">
-    <BlogHeader active="now" theme="dark" />
+    <BlogHeader active="now" />
     <main class="studio-shell studio-main">
       <header class="studio-index-hero"><div><div class="studio-kicker"><span class="studio-kicker-dot"></span> Current signal / 2026</div><h1>What’s now.</h1><p>我正在把 AI Agent 当成一个需要观察、评测和持续照料的系统来学习。</p></div><div class="studio-index-count"><strong>03</strong> active tracks</div></header>
       <section class="studio-section"><div class="studio-section-heading"><div><div class="studio-section-label">The current loop</div><h2>从会调用，到值得信任。</h2></div><p>学习不按课程结束，而按问题被弄清楚推进。</p></div><div class="studio-note-grid">{tracks.map(([number, title, body]) => <article class="studio-note-card"><div class="studio-card-label">{number}</div><h3>{title}</h3><p>{body}</p><div class="studio-note-card-footer"><span>In progress</span><span>↗</span></div></article>)}</div></section>

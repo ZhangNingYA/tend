@@ -11,8 +11,8 @@ const games = defineCollection({
     }),
 });
 
-const works = defineCollection({
-    loader: glob({ base: './src/content/works', pattern: '**/*.{md,mdx}' }),
+const projects = defineCollection({
+    loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
     schema: ({ image }) =>
         z.object({
             title: z.string(),
@@ -23,4 +23,4 @@ const works = defineCollection({
         }),
 });
 
-export const collections = { games, works };
+export const collections = { games, projects };

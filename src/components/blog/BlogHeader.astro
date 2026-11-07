@@ -3,7 +3,7 @@ import { Menu, X } from 'lucide-astro';
 import TendWordmark from '../TendWordmark.astro';
 
 interface Props {
-  active?: 'works' | 'about';
+  active?: 'projects' | 'about';
   theme?: 'light' | 'dark';
 }
 
@@ -17,7 +17,7 @@ const { active, theme = 'light' } = Astro.props;
     </a>
 
     <nav id="primary-navigation" class="site-nav" aria-label="Primary navigation">
-      <a href="/works/" aria-current={active === 'works' ? 'page' : undefined}>Projects</a>
+      <a href="/projects/" aria-current={active === 'projects' ? 'page' : undefined}>Projects</a>
       <a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>About</a>
     </nav>
 

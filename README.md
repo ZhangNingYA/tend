@@ -42,7 +42,7 @@ npm run astro -- --help
 ```text
 public/          Static assets
 src/components/ Shared UI components
-src/content/    Site content collections (games, works)
+src/content/    Site content collections (games, projects)
 src/data/       Structured site data
 src/layouts/    Page layouts
 src/pages/      Site routes

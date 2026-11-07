@@ -6,20 +6,20 @@ import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import '../styles/editorial.css';
 
-const works = await getCollection('works');
+const projects = await getCollection('projects');
 
 const sections = [
   {
-    href: '/works/',
+    href: '/projects/',
     label: 'Projects',
-    count: works.length,
+    count: projects.length,
     description: 'Interactive notes on graphics, geometry, and real-time rendering.',
   },
 ];
 const totalEntries = sections.reduce((sum, section) => sum + section.count, 0);
 
 const recent = [
-  ...works.map((entry) => ({ ...entry, href: `/works/${entry.id}/`, section: 'Projects' })),
+  ...projects.map((entry) => ({ ...entry, href: `/projects/${entry.id}/`, section: 'Projects' })),
 ]
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 4);

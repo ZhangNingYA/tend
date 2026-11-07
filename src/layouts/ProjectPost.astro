@@ -7,7 +7,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import '../styles/editorial.css';
 
-type Props = CollectionEntry<'works'>['data'] & {
+type Props = CollectionEntry<'projects'>['data'] & {
   headings?: MarkdownHeading[];
 };
 
@@ -20,17 +20,17 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     <BaseHead title={title} description={description} />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous" />
   </head>
-  <body class="editorial-page works-article-page">
+  <body class="editorial-page projects-article-page">
     <div class="reading-progress" aria-hidden="true"><span data-reading-progress></span></div>
-    <BlogHeader active="works" />
+    <BlogHeader active="projects" />
 
-    <main class="works-page">
-      <header class="works-header">
-        <a class="back-link" href="/works/">
+    <main class="projects-page">
+      <header class="projects-header">
+        <a class="back-link" href="/projects/">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"></path></svg>
           Projects
         </a>
-        <div class="works-meta">
+        <div class="projects-meta">
           <span>Published <FormattedDate date={pubDate} /></span>
           {updatedDate && <span>Updated <FormattedDate date={updatedDate} /></span>}
         </div>
@@ -38,13 +38,13 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
         <p>{description}</p>
       </header>
 
-      <article class="works-body">
+      <article class="projects-body">
         <slot />
       </article>
 
-      <footer class="works-footer">
+      <footer class="projects-footer">
         <span>Continue exploring</span>
-        <a href="/works/">查看全部 Projects</a>
+        <a href="/projects/">查看全部 Projects</a>
       </footer>
     </main>
 
@@ -83,13 +83,13 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     transform-origin: left;
   }
 
-  .works-page {
+  .projects-page {
     width: min(1160px, calc(100% - 48px));
     margin: 0 auto;
     padding-bottom: 72px;
   }
 
-  .works-header {
+  .projects-header {
     max-width: 720px;
     margin: 0 auto;
     padding: 56px 0 44px;
@@ -120,7 +120,7 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     stroke-linejoin: round;
   }
 
-  .works-meta {
+  .projects-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 8px 20px;
@@ -131,7 +131,7 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     text-transform: uppercase;
   }
 
-  .works-header h1 {
+  .projects-header h1 {
     margin: 0 0 22px;
     font-family: Georgia, "Times New Roman", serif;
     font-size: clamp(2.35rem, 4.6vw, 4rem);
@@ -140,7 +140,7 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     letter-spacing: 0;
   }
 
-  .works-header > p {
+  .projects-header > p {
     max-width: 680px;
     margin: 0;
     color: var(--muted);
@@ -148,7 +148,7 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     line-height: 1.75;
   }
 
-  .works-body {
+  .projects-body {
     max-width: 720px;
     margin: 0 auto;
     padding: 44px 0 72px;
@@ -157,7 +157,7 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     line-height: 1.9;
   }
 
-  .works-body > :global(p:first-child) {
+  .projects-body > :global(p:first-child) {
     margin-bottom: 1.65rem;
     color: var(--ink);
     font-family: Georgia, "Times New Roman", serif;
@@ -165,8 +165,8 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     line-height: 1.8;
   }
 
-  .works-body :global(h2),
-  .works-body :global(h3) {
+  .projects-body :global(h2),
+  .projects-body :global(h3) {
     color: var(--ink);
     font-family: Georgia, "Times New Roman", serif;
     font-weight: 500;
@@ -174,7 +174,7 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     scroll-margin-top: 92px;
   }
 
-  .works-body :global(h2) {
+  .projects-body :global(h2) {
     position: relative;
     margin: 4rem 0 1.35rem;
     padding-top: 1.55rem;
@@ -183,7 +183,7 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     line-height: 1.2;
   }
 
-  .works-body :global(h2::before) {
+  .projects-body :global(h2::before) {
     content: "";
     position: absolute;
     top: -1px;
@@ -193,43 +193,43 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     background: var(--accent);
   }
 
-  .works-body :global(h3) {
+  .projects-body :global(h3) {
     margin: 2.2rem 0 0.9rem;
     font-size: 1.35rem;
     line-height: 1.3;
   }
 
-  .works-body :global(p) {
+  .projects-body :global(p) {
     margin: 0 0 1.5rem;
   }
 
-  .works-body :global(a) {
+  .projects-body :global(a) {
     color: #b64f39;
     text-decoration-thickness: 1px;
     text-underline-offset: 3px;
   }
 
-  .works-body :global(strong) {
+  .projects-body :global(strong) {
     color: var(--ink);
   }
 
-  .works-body :global(ul),
-  .works-body :global(ol) {
+  .projects-body :global(ul),
+  .projects-body :global(ol) {
     margin: 0 0 1.7rem;
     padding-left: 1.3rem;
   }
 
-  .works-body :global(li) {
+  .projects-body :global(li) {
     margin-bottom: 0.65rem;
     padding-left: 0.35rem;
   }
 
-  .works-body :global(li::marker) {
+  .projects-body :global(li::marker) {
     color: var(--accent);
     font-weight: 700;
   }
 
-  .works-body :global(blockquote) {
+  .projects-body :global(blockquote) {
     margin: 2.2rem 0;
     padding: 1.15rem 1.25rem;
     border-left: 3px solid var(--accent);
@@ -240,11 +240,11 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     line-height: 1.7;
   }
 
-  .works-body :global(blockquote p) {
+  .projects-body :global(blockquote p) {
     margin: 0;
   }
 
-  .works-body :global(pre) {
+  .projects-body :global(pre) {
     margin: 2rem 0;
     padding: 22px 24px;
     overflow-x: auto;
@@ -256,7 +256,7 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     line-height: 1.7;
   }
 
-  .works-body :global(:not(pre) > code) {
+  .projects-body :global(:not(pre) > code) {
     padding: 0.12em 0.36em;
     border: 1px solid #d8ddd9;
     border-radius: 4px;
@@ -264,7 +264,7 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     font-size: 0.9em;
   }
 
-  .works-body :global(table) {
+  .projects-body :global(table) {
     display: table;
     width: 100%;
     margin: 2.2rem 0 2.4rem;
@@ -273,27 +273,27 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     line-height: 1.55;
   }
 
-  .works-body :global(th),
-  .works-body :global(td) {
+  .projects-body :global(th),
+  .projects-body :global(td) {
     padding: 12px 14px;
     border-bottom: 1px solid var(--line);
     text-align: left;
     vertical-align: top;
   }
 
-  .works-body :global(th) {
+  .projects-body :global(th) {
     border-top: 1px solid var(--ink);
     background: #eef1ee;
     color: var(--ink);
     font-weight: 700;
   }
 
-  .works-body :global(td:first-child) {
+  .projects-body :global(td:first-child) {
     color: var(--ink);
     font-weight: 700;
   }
 
-  .works-footer {
+  .projects-footer {
     max-width: 720px;
     margin: 0 auto;
     padding: 24px 0;
@@ -305,17 +305,17 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
     font-size: 0.82rem;
   }
 
-  .works-footer a {
+  .projects-footer a {
     color: var(--ink);
     text-underline-offset: 3px;
   }
 
   @media (max-width: 720px) {
-    .works-page {
+    .projects-page {
       width: min(100% - 32px, 1160px);
     }
 
-    .works-header {
+    .projects-header {
       padding: 44px 0 36px;
     }
 
@@ -323,33 +323,33 @@ const { title, description, pubDate, updatedDate, headings = [] } = Astro.props;
       margin-bottom: 36px;
     }
 
-    .works-header h1 {
+    .projects-header h1 {
       font-size: 2.35rem;
     }
 
-    .works-body {
+    .projects-body {
       padding: 36px 0 56px;
       font-size: 0.98rem;
       line-height: 1.82;
     }
 
-    .works-body > :global(p:first-child) {
+    .projects-body > :global(p:first-child) {
       font-size: 1.08rem;
       line-height: 1.72;
     }
 
-    .works-body :global(h2) {
+    .projects-body :global(h2) {
       margin-top: 3.2rem;
     }
 
-    .works-body :global(table) {
+    .projects-body :global(table) {
       display: block;
       overflow-x: auto;
       white-space: nowrap;
     }
 
-    .works-body :global(th),
-    .works-body :global(td) {
+    .projects-body :global(th),
+    .projects-body :global(td) {
       padding: 10px 12px;
     }
   }

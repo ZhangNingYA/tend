@@ -46,7 +46,7 @@ base: '/',
 
 - `src/pages/` — Astro pages (file-based routing)
 - `src/components/` — Astro and React components
-- `src/content/` — Content collections (games, projects)
+- `src/content/` — Content collections (field-notes, builds, games)
 - `src/layouts/` — Page layouts
 - `src/styles/` — CSS stylesheets
 - `src/data/` — Structured data for reading and interactive content

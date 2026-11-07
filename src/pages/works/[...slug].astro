@@ -2,11 +2,12 @@
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map((project) => ({
-    params: { slug: project.id },
-  }));
+  const [notes, builds] = await Promise.all([getCollection('fieldNotes'), getCollection('builds')]);
+  return [
+    ...notes.map((note) => ({ params: { slug: note.id }, props: { destination: `/field-notes/${note.id}/` } })),
+    ...builds.filter((build) => !build.data.draft).map((build) => ({ params: { slug: build.id }, props: { destination: `/builds/${build.id}/` } })),
+  ];
 }
 
-return Astro.redirect(`/projects/${Astro.params.slug}/`);
+return Astro.redirect(Astro.props.destination);
 ---

@@ -1,0 +1,26 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import BlogHeader from '../../components/blog/BlogHeader.astro';
+import { SITE_TITLE } from '../../consts';
+import '../../styles/studio.css';
+
+const experiments = [
+  { number: '01', state: 'Next', title: 'Tool call trace', body: '把 Agent 的观察、决策、工具调用和结果放在同一条时间线上。', color: 'cyan' },
+  { number: '02', state: 'Designing', title: 'Retrieval playground', body: '比较切分、召回、重排和引用质量，找到 RAG 失败的具体位置。', color: 'violet' },
+  { number: '03', state: 'Queued', title: 'Memory sandbox', body: '观察短期上下文、长期记忆和遗忘策略怎样改变 Agent 的行为。', color: 'orange' },
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head><BaseHead title={`Experiments · ${SITE_TITLE}`} description="AI Agent 的交互实验和系统验证。" /></head>
+  <body class="studio-page">
+    <BlogHeader active="experiments" theme="dark" />
+    <main class="studio-shell studio-main">
+      <header class="studio-index-hero"><div><div class="studio-kicker"><span class="studio-kicker-dot"></span> Interactive systems</div><h1>Experiments.</h1><p>先把一个问题变成可以操作的东西，再决定它是否值得做成系统。</p></div><div class="studio-index-count"><strong>03</strong> experiments in queue</div></header>
+      <section class="studio-section"><div class="studio-portal-grid">{experiments.map((experiment) => <article class="studio-portal"><div class="studio-portal-top"><span class="studio-portal-index">{experiment.number} / {experiment.state}</span><span class="studio-portal-arrow">↗</span></div><div><h3>{experiment.title}</h3><p>{experiment.body}</p></div></article>)}</div></section>
+      <section class="studio-feature-grid"><article class="studio-now-card"><div class="studio-card-label">How this works</div><h3>每个实验都要回答一个问题。</h3><p>实验会保留参数、过程和失败结果，让笔记可以被复现，让项目决策有证据。</p></article><article class="studio-feature"><div class="studio-card-label">Start with a note</div><h3><a href="/field-notes/rag-introduction/">RAG 的上限，首先是检索的上限。 ↗</a></h3><p>从现有的 RAG 笔记开始，进入第一个实验。</p></article></section>
+    </main>
+    <footer class="studio-shell studio-footer"><span>Experiments / Tend</span><span><a href="/field-notes/">Field Notes</a> · <a href="/builds/">Builds</a></span></footer>
+  </body>
+</html>

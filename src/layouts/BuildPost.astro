@@ -1,0 +1,34 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+import BaseHead from '../components/BaseHead.astro';
+import BlogHeader from '../components/blog/BlogHeader.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import '../styles/studio.css';
+
+type Props = CollectionEntry<'builds'>['data'] & { headings?: MarkdownHeading[] };
+const { title, description, pubDate, updatedDate, status, tags, stack, headings = [] } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head><BaseHead title={`${title} · Build`} description={description} /></head>
+  <body class="studio-page">
+    <BlogHeader active="builds" theme="dark" />
+    <main class="studio-shell studio-prose-shell">
+      <header class="studio-prose-head">
+        <div class="studio-kicker"><span class="studio-kicker-dot"></span> Build / {status}</div>
+        <h1>{title}</h1>
+        <p class="studio-prose-description">{description}</p>
+        <div class="studio-prose-meta" style="margin-top: 24px"><span><FormattedDate date={pubDate} /></span>{updatedDate && <><span>·</span><span>Updated <FormattedDate date={updatedDate} /></span></>}{tags.map((tag) => <span class="studio-tag">#{tag}</span>)}</div>
+        {stack.length > 0 && <div class="studio-prose-meta" style="margin-top: 12px">{stack.map((item) => <span class="studio-tag">{item}</span>)}</div>}
+      </header>
+      <div class="studio-prose-layout">
+        {headings.length > 0 && <aside class="studio-toc"><TableOfContents headings={headings} /></aside>}
+        <article class="studio-prose"><slot /></article>
+      </div>
+    </main>
+    <footer class="studio-shell studio-footer"><span>Builds / Tend</span><span><a href="/builds/">Back to builds</a> · <a href="/experiments/">Experiments</a></span></footer>
+  </body>
+</html>

@@ -2,222 +2,26 @@
 import BaseHead from '../components/BaseHead.astro';
 import BlogHeader from '../components/blog/BlogHeader.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import '../styles/editorial.css';
+import '../styles/studio.css';
 
-const focusItems = [
-  ['Interactive notes', '把教材章节重新组织成可以拖动、旋转、对比和试错的网页。'],
-  ['Quiet tooling', '为单一问题设计克制的小工具，让界面和内容一起解释它自己。'],
+const principles = [
+  ['Make the loop visible', 'Agent 的每一步都应该能被观察：输入、决策、工具调用和结果。'],
+  ['Prefer evidence to vibes', '实验保留参数和失败结果，文章说明判断如何形成。'],
+  ['Ship small systems', '从一个可以测量的小问题开始，再决定是否值得扩展。'],
 ];
-
-const stack = ['Astro', 'React 19', 'MDX', 'TypeScript'];
+const stack = ['Astro', 'React', 'TypeScript', 'Python', 'LLM APIs', 'RAG'];
 ---
 
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <BaseHead title={`About | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
-  </head>
-  <body class="editorial-page about-page">
-    <BlogHeader active="about" />
-
-    <main class="editorial-shell">
-      <header class="editorial-hero">
-        <div class="editorial-hero-copy">
-          <p class="editorial-eyebrow">About / A working practice</p>
-          <h1 class="editorial-title">A small studio for patient work.</h1>
-          <p class="editorial-lede">
-            Tend 是一项持续照料工作与手艺的个人实践，关注实时图形、交互几何，以及那些值得被解释得更清楚的技术问题。
-          </p>
-        </div>
-        <div class="editorial-edition" aria-label="工作室信息">
-          <span>Independent</span>
-          <strong>∞</strong>
-          <span>Learning in public</span>
-        </div>
-      </header>
-
-      <section class="about-band manifesto" aria-labelledby="manifesto-heading">
-        <div class="band-label">
-          <span>01</span>
-          <h2 id="manifesto-heading">Manifesto</h2>
-        </div>
-        <div class="band-copy">
-          <p class="manifesto-line">Care for the work, and the person doing it.</p>
-          <p>
-            目标很朴素：把黑板上显得遥远的想法，做成可以亲手接近的东西。文章负责保留上下文，交互负责暴露直觉，代码负责让两者诚实地工作在一起。
-          </p>
-        </div>
-      </section>
-
-      <section class="about-band" aria-labelledby="focus-heading">
-        <div class="band-label">
-          <span>02</span>
-          <h2 id="focus-heading">Current focus</h2>
-        </div>
-        <ol class="focus-list">
-          {focusItems.map(([title, body], index) => (
-            <li>
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <div>
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section class="about-band" aria-labelledby="stack-heading">
-        <div class="band-label">
-          <span>03</span>
-          <h2 id="stack-heading">Working stack</h2>
-        </div>
-        <div class="stack-list">
-          {stack.map((item) => <span>{item}</span>)}
-        </div>
-      </section>
-
-      <section class="about-band contact-band" aria-labelledby="contact-heading">
-        <div class="band-label">
-          <span>04</span>
-          <h2 id="contact-heading">Elsewhere</h2>
-        </div>
-        <div class="contact-links">
-          <a href="https://github.com/ZhangNingYA">GitHub <span aria-hidden="true">↗</span></a>
-        </div>
-      </section>
+  <head><BaseHead title={`About · ${SITE_TITLE}`} description={SITE_DESCRIPTION} /></head>
+  <body class="studio-page">
+    <BlogHeader active="about" theme="dark" />
+    <main class="studio-shell studio-main">
+      <header class="studio-index-hero"><div><div class="studio-kicker"><span class="studio-kicker-dot"></span> About the lab</div><h1>Small systems.<br />Clear signals.</h1><p>我是一个正在学习 AI Agent Engineering 的独立开发者。Tend 用来记录我如何理解问题、验证假设，并把有用的东西做出来。</p></div><div class="studio-index-count"><strong>∞</strong> learning in public</div></header>
+      <section class="studio-section"><div class="studio-section-heading"><div><div class="studio-section-label">Working principles</div><h2>How I work.</h2></div><p>保持好奇，也让过程足够诚实。</p></div><div class="studio-note-grid">{principles.map(([title, body], index) => <article class="studio-note-card"><div class="studio-card-label">0{index + 1}</div><h3>{title}</h3><p>{body}</p></article>)}</div></section>
+      <section class="studio-section"><div class="studio-section-heading"><div><div class="studio-section-label">Working stack</div><h2>Tools I reach for.</h2></div></div><div class="studio-filter-bar">{stack.map((item) => <span class="studio-tag">{item}</span>)}</div></section>
     </main>
-
-    <footer class="editorial-footer">
-      <span>© {new Date().getFullYear()} Tend</span>
-      <span class="editorial-footer-links"><a href="/">Home</a></span>
-    </footer>
+    <footer class="studio-shell studio-footer"><span>© {new Date().getFullYear()} Tend</span><span><a href="/">Home</a> · <a href="https://github.com/ZhangNingYA">GitHub ↗</a></span></footer>
   </body>
 </html>
-
-<style>
-  .about-band {
-    display: grid;
-    grid-template-columns: 180px minmax(0, 1fr);
-    gap: 64px;
-    padding: 52px 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .band-label span {
-    color: var(--accent);
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.3rem;
-  }
-
-  .band-label h2 {
-    margin: 10px 0 0;
-    font-size: 0.82rem;
-    text-transform: uppercase;
-  }
-
-  .band-copy {
-    max-width: 760px;
-    color: var(--muted);
-    font-size: 1rem;
-    line-height: 1.8;
-  }
-
-  .band-copy p {
-    margin: 0;
-  }
-
-  .manifesto-line {
-    margin-bottom: 24px !important;
-    color: var(--ink);
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: clamp(1.7rem, 3.5vw, 2.8rem);
-    line-height: 1.15;
-  }
-
-  .focus-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .focus-list li {
-    display: grid;
-    grid-template-columns: 48px minmax(0, 1fr);
-    gap: 20px;
-    padding: 0 0 28px;
-    margin-bottom: 28px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .focus-list li:last-child {
-    margin-bottom: 0;
-  }
-
-  .focus-list > li > span {
-    color: var(--accent-green);
-    font-family: Georgia, "Times New Roman", serif;
-  }
-
-  .focus-list h3 {
-    margin: 0 0 8px;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.45rem;
-    font-weight: 500;
-  }
-
-  .focus-list p {
-    max-width: 680px;
-    margin: 0;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  .stack-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    border-top: 1px solid var(--ink);
-  }
-
-  .stack-list span {
-    width: 50%;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--line);
-    color: var(--muted);
-  }
-
-  .stack-list span:nth-child(odd) {
-    padding-right: 24px;
-  }
-
-  .contact-links {
-    display: grid;
-    border-top: 1px solid var(--ink);
-  }
-
-  .contact-links a {
-    display: flex;
-    justify-content: space-between;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--line);
-    color: var(--ink);
-    text-decoration: none;
-  }
-
-  .contact-links a:hover {
-    color: var(--accent);
-  }
-
-  @media (max-width: 720px) {
-    .about-band {
-      grid-template-columns: 1fr;
-      gap: 28px;
-      padding: 38px 0;
-    }
-
-    .stack-list span {
-      width: 100%;
-    }
-  }
-</style>

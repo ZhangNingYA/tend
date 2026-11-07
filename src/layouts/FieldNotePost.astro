@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+import BaseHead from '../components/BaseHead.astro';
+import BlogHeader from '../components/blog/BlogHeader.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import '../styles/studio.css';
+
+type Props = CollectionEntry<'fieldNotes'>['data'] & { headings?: MarkdownHeading[] };
+const { title, description, pubDate, updatedDate, type, stage, status, tags, headings = [] } = Astro.props;
+const typeLabels = { note: 'Note', reading: 'Reading', tutorial: 'Tutorial', experiment: 'Experiment' };
+const stageLabels = { foundations: 'Foundations', llm: 'LLM', agent: 'Agent', production: 'Production' };
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head><BaseHead title={`${title} · Field Note`} description={description} /></head>
+  <body class="studio-page">
+    <BlogHeader active="notes" theme="dark" />
+    <main class="studio-shell studio-prose-shell">
+      <header class="studio-prose-head">
+        <div class="studio-kicker"><span class="studio-kicker-dot"></span> Field note / {typeLabels[type]}</div>
+        <h1>{title}</h1>
+        <p class="studio-prose-description">{description}</p>
+        <div class="studio-prose-meta" style="margin-top: 24px">
+          <span>{stageLabels[stage]}</span><span>·</span><span>{status}</span><span>·</span><FormattedDate date={pubDate} />
+          {updatedDate && <><span>·</span><span>Updated <FormattedDate date={updatedDate} /></span></>}
+          {tags.map((tag) => <span class="studio-tag">#{tag}</span>)}
+        </div>
+      </header>
+
+      <div class="studio-prose-layout">
+        {headings.length > 0 && <aside class="studio-toc"><TableOfContents headings={headings} /></aside>}
+        <article class="studio-prose"><slot /></article>
+      </div>
+    </main>
+    <footer class="studio-shell studio-footer"><span>Field Notes / Tend</span><span><a href="/field-notes/">Back to all notes</a> · <a href="/now/">What’s now</a></span></footer>
+  </body>
+</html>

@@ -1,20 +1,13 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
-import ProjectPost from '../../layouts/ProjectPost.astro';
+import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('projects');
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: post,
-  }));
+  const [notes, builds] = await Promise.all([getCollection('fieldNotes'), getCollection('builds')]);
+  return [
+    ...notes.map((note) => ({ params: { slug: note.id }, props: { destination: `/field-notes/${note.id}/` } })),
+    ...builds.filter((build) => !build.data.draft).map((build) => ({ params: { slug: build.id }, props: { destination: `/builds/${build.id}/` } })),
+  ];
 }
-type Props = CollectionEntry<'projects'>;
 
-const post = Astro.props;
-const { Content, headings } = await render(post);
+return Astro.redirect(Astro.props.destination);
 ---
-
-<ProjectPost {...post.data} headings={headings}>
-  <Content />
-</ProjectPost>

@@ -3,188 +3,37 @@ import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import BlogHeader from '../components/blog/BlogHeader.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import '../styles/editorial.css';
+import { SITE_TITLE } from '../consts';
+import '../styles/studio.css';
 
-const projects = await getCollection('projects');
-
-const sections = [
-  {
-    href: '/projects/',
-    label: 'Projects',
-    count: projects.length,
-    description: 'Interactive notes on graphics, geometry, and real-time rendering.',
-  },
-];
-const totalEntries = sections.reduce((sum, section) => sum + section.count, 0);
-
-const recent = [
-  ...projects.map((entry) => ({ ...entry, href: `/projects/${entry.id}/`, section: 'Projects' })),
-]
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4);
+const notes = (await getCollection('fieldNotes')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const builds = (await getCollection('builds')).filter((build) => !build.data.draft);
+const featured = notes.find((note) => note.data.featured) ?? notes[0];
+const latest = notes.slice(0, 3);
 ---
 
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-  </head>
-  <body class="editorial-page home-page">
-    <BlogHeader />
-
-    <main class="editorial-shell">
-      <header class="editorial-hero home-hero">
-        <div class="editorial-hero-copy">
-          <p class="editorial-eyebrow">A personal practice</p>
-          <h1 class="editorial-title">Care for the work.</h1>
-          <p class="home-statement">Projects, notes, and experiments from a practice in progress.</p>
+  <head><BaseHead title={SITE_TITLE} description="一个公开记录 AI Agent 学习、实验与构建过程的个人实验室。" /></head>
+  <body class="studio-page">
+    <BlogHeader theme="dark" />
+    <main class="studio-shell studio-main">
+      <section class="studio-hero">
+        <div>
+          <div class="studio-kicker"><span class="studio-kicker-dot"></span> AI agent lab / public worklog</div>
+          <h1>Building agents<br /><em>that can explain themselves.</em></h1>
+          <p class="studio-hero-lede">这里记录我如何理解、实验和构建 AI Agent：从检索和工具调用开始，走向可观察、可评测、值得信任的系统。</p>
+          <div class="studio-actions"><a class="studio-button studio-button-primary" href="/field-notes/">Open field notes ↗</a><a class="studio-button studio-button-ghost" href="/now/">See what’s now</a></div>
         </div>
-        <aside class="editorial-edition home-edition" aria-label={`${totalEntries} published entries across ${sections.length} collections`}>
-          <span>Archive index</span>
-          <strong>{String(totalEntries).padStart(2, '0')}</strong>
-          <small>published entries</small>
-        </aside>
-      </header>
-
-      <section class="editorial-index home-directory" aria-labelledby="directory-heading">
-        <div class="editorial-section-heading">
-          <h2 id="directory-heading">Explore the archive</h2>
-          <span>{String(sections.length).padStart(2, '0')} collections</span>
-        </div>
-
-        <div class="editorial-list">
-          {sections.map((section, index) => (
-            <article class="editorial-row directory-row">
-              <a href={section.href}>
-                <span class="editorial-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                <div class="editorial-row-copy">
-                  <div class="editorial-meta">
-                    <span>{section.count} {section.count === 1 ? 'entry' : 'entries'}</span>
-                  </div>
-                  <h3>{section.label}</h3>
-                  <p>{section.description}</p>
-                </div>
-                <span class="editorial-arrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-                </span>
-              </a>
-            </article>
-          ))}
-        </div>
+        <aside class="studio-console" aria-label="当前状态"><div class="studio-console-label">System status</div><div class="studio-console-title"><span class="studio-kicker-dot" style="display:inline-block; margin-right:8px"></span> Learning in public</div><ul class="studio-console-list"><li><span>Current focus</span><strong>Agent systems</strong></li><li><span>Active tracks</span><strong>03</strong></li><li><span>Next experiment</span><strong class="is-live">Tool call trace</strong></li><li><span>Builds shipped</span><strong>{String(builds.length).padStart(2, '0')}</strong></li></ul></aside>
       </section>
 
-      <section class="editorial-index recent-index" aria-labelledby="recent-heading">
-        <div class="editorial-section-heading">
-          <h2 id="recent-heading">Recently published</h2>
-          <span>Projects</span>
-        </div>
+      <section class="studio-section" aria-labelledby="portals-title"><div class="studio-section-heading"><div><div class="studio-section-label">Navigate the lab</div><h2 id="portals-title">Follow the signal.</h2></div><p>四个入口，分别记录理解、验证、构建和当下。</p></div><div class="studio-portal-grid"><a class="studio-portal" href="/field-notes/"><div class="studio-portal-top"><span class="studio-portal-index">01 / notes</span><span class="studio-portal-arrow">↗</span></div><div><h3>Field Notes</h3><p>概念、阅读和正在形成的判断。</p></div></a><a class="studio-portal" href="/experiments/"><div class="studio-portal-top"><span class="studio-portal-index">02 / lab</span><span class="studio-portal-arrow">↗</span></div><div><h3>Experiments</h3><p>把问题变成可以操作和观察的实验。</p></div></a><a class="studio-portal" href="/builds/"><div class="studio-portal-top"><span class="studio-portal-index">03 / shipped</span><span class="studio-portal-arrow">↗</span></div><div><h3>Builds</h3><p>已经运行、测量和交付的系统。</p></div></a></div></section>
 
-        <div class="editorial-list">
-          {recent.map((entry, index) => (
-            <article class="editorial-row">
-              <a href={entry.href}>
-                <span class="editorial-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-                <div class="editorial-row-copy">
-                  <div class="editorial-meta">
-                    <FormattedDate date={entry.data.pubDate} />
-                    <span class="editorial-meta-extra">{entry.section}</span>
-                  </div>
-                  <h3>{entry.data.title}</h3>
-                  <p>{entry.data.description}</p>
-                </div>
-                <span class="editorial-arrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
-                </span>
-              </a>
-            </article>
-          ))}
-        </div>
-      </section>
+      {featured && <section class="studio-section" aria-labelledby="featured-title"><div class="studio-section-heading"><div><div class="studio-section-label">Featured field note</div><h2 id="featured-title">Start with evidence.</h2></div><p>第一篇记录从 RAG 开始：回答之前，先找到证据。</p></div><div class="studio-feature-grid"><article class="studio-feature"><a href={`/field-notes/${featured.id}/`}><div class="studio-feature-meta"><span class="studio-tag">{featured.data.type}</span>{featured.data.tags.map((tag) => <span class="studio-tag">#{tag}</span>)}</div><h3>{featured.data.title} ↗</h3><p>{featured.data.description}</p></a></article><aside class="studio-now-card"><div class="studio-card-label">The loop</div><h3>Observe → decide → call → verify</h3><p>Agent 的可靠性来自过程可见，而不是一句“它应该能完成”。</p><ul class="studio-now-list"><li>Trace the decision</li><li>Keep the evidence</li><li>Measure the result</li></ul></aside></div></section>}
+
+      <section class="studio-section" aria-labelledby="latest-title"><div class="studio-section-heading"><div><div class="studio-section-label">Latest signal</div><h2 id="latest-title">Recent notes.</h2></div><a class="studio-button studio-button-ghost" href="/field-notes/">All field notes ↗</a></div><div class="studio-note-grid">{latest.map((note) => <a class="studio-note-card" href={`/field-notes/${note.id}/`}><div class="studio-card-label">{note.data.type}</div><h3>{note.data.title}</h3><p>{note.data.description}</p><div class="studio-note-card-footer"><span><FormattedDate date={note.data.pubDate} /></span><span>↗</span></div></a>)}</div></section>
     </main>
-
-    <footer class="editorial-footer">
-      <span>© {new Date().getFullYear()} Tend</span>
-      <span class="editorial-footer-links">
-        <a href="/about/">About</a>
-      </span>
-    </footer>
+    <footer class="studio-shell studio-footer"><span>Tend / AI agent lab</span><span><a href="/now/">Now</a> · <a href="/about/">About</a> · <a href="/games/">Personal archive</a></span></footer>
   </body>
 </html>
-
-<style>
-  .home-hero {
-    min-height: 280px;
-    grid-template-columns: minmax(0, 1fr) 190px;
-    align-items: end;
-    gap: 72px;
-    padding: 46px 0 40px;
-  }
-
-  .home-hero .editorial-title {
-    max-width: 760px;
-    margin: 14px 0 16px;
-    font-family: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, serif;
-    font-size: 2.875rem;
-    font-weight: 500;
-    line-height: 1.05;
-  }
-
-  .home-statement {
-    max-width: 620px;
-    margin: 0;
-    color: var(--muted);
-    font-family: 'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 1rem;
-    line-height: 1.65;
-  }
-
-  .home-edition {
-    min-height: 172px;
-  }
-
-  .home-edition small {
-    max-width: 170px;
-    color: var(--muted);
-    font-size: 0.72rem;
-    line-height: 1.45;
-  }
-
-  .directory-row > a {
-    min-height: 138px;
-  }
-
-  .recent-index {
-    padding-top: 0;
-  }
-
-  .recent-index .editorial-row > a {
-    min-height: 158px;
-  }
-
-  @media (max-width: 720px) {
-    .home-hero {
-      min-height: 0;
-      grid-template-columns: 1fr;
-      gap: 20px;
-      padding: 36px 0 26px;
-    }
-
-    .home-hero .editorial-title { font-size: 2.1rem; }
-    .home-statement { font-size: 0.94rem; }
-
-    .home-edition {
-      min-height: 0;
-      border-top-width: 2px;
-    }
-
-    .home-edition strong {
-      font-size: 2.5rem;
-    }
-
-    .home-directory .editorial-section-heading span {
-      display: inline;
-      font-size: 0.68rem;
-    }
-  }
-</style>

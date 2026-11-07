@@ -11,19 +11,19 @@ const { active, theme = 'light' } = Astro.props;
 
 <header class:list={['site-header', theme === 'dark' && 'theme-dark']} data-site-header>
   <div class="header-inner">
-    <a class="brand" href="/" aria-label="Tend home">
+    <a class="brand" href="/" aria-label="Tend 首页">
       <span class="brand-mark" aria-hidden="true">+</span>
       <span class="brand-copy">Tend</span>
     </a>
 
-    <div class="header-utility" aria-hidden="true"><span class="utility-dot"></span><span>AI AGENT FIELD</span></div>
+    <div class="header-utility" aria-hidden="true"><span class="utility-dot"></span><span>AI Agent 学习记录</span></div>
 
-    <nav id="primary-navigation" class="site-nav" aria-label="Primary navigation">
-      <a href="/field-notes/" aria-current={active === 'notes' ? 'page' : undefined}>Field Notes</a>
-      <a href="/experiments/" aria-current={active === 'experiments' ? 'page' : undefined}>Experiments</a>
-      <a href="/builds/" aria-current={active === 'builds' ? 'page' : undefined}>Builds</a>
-      <a href="/now/" aria-current={active === 'now' ? 'page' : undefined}>Now</a>
-      <a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>About</a>
+    <nav id="primary-navigation" class="site-nav" aria-label="主导航">
+      <a href="/field-notes/" aria-current={active === 'notes' ? 'page' : undefined}>笔记</a>
+      <a href="/experiments/" aria-current={active === 'experiments' ? 'page' : undefined}>实验</a>
+      <a href="/builds/" aria-current={active === 'builds' ? 'page' : undefined}>项目</a>
+      <a href="/now/" aria-current={active === 'now' ? 'page' : undefined}>现在</a>
+      <a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>关于</a>
     </nav>
 
     <button
@@ -31,7 +31,7 @@ const { active, theme = 'light' } = Astro.props;
       type="button"
       aria-expanded="false"
       aria-controls="primary-navigation"
-      aria-label="Open navigation"
+      aria-label="打开导航"
       data-menu-toggle
     >
       <span class="menu-open-icon" aria-hidden="true"><Menu size={20} stroke-width={1.8} /></span>
@@ -49,7 +49,7 @@ const { active, theme = 'light' } = Astro.props;
     const setOpen = (open: boolean) => {
       header.classList.toggle('is-menu-open', open);
       toggle.setAttribute('aria-expanded', String(open));
-      toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+      toggle.setAttribute('aria-label', open ? '关闭导航' : '打开导航');
     };
 
     toggle.addEventListener('click', () => {

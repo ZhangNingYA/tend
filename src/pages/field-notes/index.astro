@@ -8,30 +8,30 @@ import '../../styles/studio.css';
 
 const notes = (await getCollection('fieldNotes')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const tags = [...new Set(notes.flatMap((note) => note.data.tags))].sort();
-const typeLabels = { note: 'Note', reading: 'Reading', tutorial: 'Tutorial', experiment: 'Experiment' };
+const typeLabels = { note: '笔记', reading: '阅读', tutorial: '教程', experiment: '实验' };
 ---
 
 <!doctype html>
 <html lang="zh-CN">
-  <head><BaseHead title={`Field Notes · ${SITE_TITLE}`} description="AI Agent 学习、阅读与实验记录。" /></head>
+  <head><BaseHead title={`笔记 · ${SITE_TITLE}`} description="AI Agent 学习、阅读与实验记录。" /></head>
   <body class="studio-page">
     <BlogHeader active="notes" />
     <main class="studio-shell studio-main">
       <header class="studio-index-hero">
-        <div><div class="studio-kicker"><span class="studio-kicker-dot"></span> Public worklog</div><h1>Field<br />Notes.</h1><p>把正在理解的东西写下来：从 LLM、RAG 到工具调用和 Agent 系统。</p></div>
-        <div class="studio-index-count"><strong>{String(notes.length).padStart(2, '0')}</strong> published notes</div>
+        <div><div class="studio-kicker"><span class="studio-kicker-dot"></span> 公开学习记录</div><h1>学习<br />笔记。</h1><p>把正在理解的东西写下来：从 LLM、RAG 到工具调用和 Agent 系统。</p></div>
+        <div class="studio-index-count"><strong>{String(notes.length).padStart(2, '0')}</strong> 篇已发布</div>
       </header>
 
-      {tags.length > 0 && <div class="studio-filter-bar" role="group" aria-label="按标签筛选文章"><button class="studio-filter is-active" type="button" data-note-filter="all">All</button>{tags.map((tag) => <button class="studio-filter" type="button" data-note-filter={tag}>#{tag}</button>)}</div>}
+      {tags.length > 0 && <div class="studio-filter-bar" role="group" aria-label="按标签筛选文章"><button class="studio-filter is-active" type="button" data-note-filter="all">全部</button>{tags.map((tag) => <button class="studio-filter" type="button" data-note-filter={tag}>#{tag}</button>)}</div>}
 
-      <section class="studio-article-grid" aria-label="Field notes">
+      <section class="studio-article-grid" aria-label="学习笔记">
         {notes.map((note) => <a class="studio-article-card" data-featured={note.data.featured} data-note-tags={note.data.tags.join(' ')} href={`/field-notes/${note.id}/`}>
           <div><div class="studio-article-card-footer" style="margin: 0; padding: 0"><span>{typeLabels[note.data.type]}</span><span><FormattedDate date={note.data.pubDate} /></span></div><h2>{note.data.title}</h2><p>{note.data.description}</p></div>
           <div class="studio-article-card-footer">{note.data.tags.map((tag) => <span class="studio-tag">#{tag}</span>)}<span>↗</span></div>
         </a>)}
       </section>
     </main>
-    <footer class="studio-shell studio-footer"><span>Field Notes / Tend</span><span><a href="/experiments/">Experiments</a> · <a href="/now/">Now</a></span></footer>
+    <footer class="studio-shell studio-footer"><span>学习笔记 / Tend</span><span><a href="/experiments/">实验</a> · <a href="/now/">现在</a></span></footer>
     <script>
       const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-note-filter]')];
       const cards = [...document.querySelectorAll<HTMLElement>('[data-note-tags]')];

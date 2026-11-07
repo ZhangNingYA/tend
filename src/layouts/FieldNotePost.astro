@@ -9,23 +9,24 @@ import '../styles/studio.css';
 
 type Props = CollectionEntry<'fieldNotes'>['data'] & { headings?: MarkdownHeading[] };
 const { title, description, pubDate, updatedDate, type, stage, status, tags, headings = [] } = Astro.props;
-const typeLabels = { note: 'Note', reading: 'Reading', tutorial: 'Tutorial', experiment: 'Experiment' };
-const stageLabels = { foundations: 'Foundations', llm: 'LLM', agent: 'Agent', production: 'Production' };
+const typeLabels = { note: '笔记', reading: '阅读', tutorial: '教程', experiment: '实验' };
+const stageLabels = { foundations: '基础', llm: 'LLM', agent: 'Agent', production: '生产实践' };
+const statusLabels = { exploring: '探索中', building: '构建中', published: '已发布' };
 ---
 
 <!doctype html>
 <html lang="zh-CN">
-  <head><BaseHead title={`${title} · Field Note`} description={description} /></head>
+  <head><BaseHead title={`${title} · 笔记`} description={description} /></head>
   <body class="studio-page">
     <BlogHeader active="notes" />
     <main class="studio-shell studio-prose-shell">
       <header class="studio-prose-head">
-        <div class="studio-kicker"><span class="studio-kicker-dot"></span> Field note / {typeLabels[type]}</div>
+        <div class="studio-kicker"><span class="studio-kicker-dot"></span> 学习笔记 / {typeLabels[type]}</div>
         <h1>{title}</h1>
         <p class="studio-prose-description">{description}</p>
         <div class="studio-prose-meta" style="margin-top: 24px">
-          <span>{stageLabels[stage]}</span><span>·</span><span>{status}</span><span>·</span><FormattedDate date={pubDate} />
-          {updatedDate && <><span>·</span><span>Updated <FormattedDate date={updatedDate} /></span></>}
+          <span>{stageLabels[stage]}</span><span>·</span><span>{statusLabels[status]}</span><span>·</span><FormattedDate date={pubDate} />
+          {updatedDate && <><span>·</span><span>更新于 <FormattedDate date={updatedDate} /></span></>}
           {tags.map((tag) => <span class="studio-tag">#{tag}</span>)}
         </div>
       </header>
@@ -35,6 +36,6 @@ const stageLabels = { foundations: 'Foundations', llm: 'LLM', agent: 'Agent', pr
         <article class="studio-prose"><slot /></article>
       </div>
     </main>
-    <footer class="studio-shell studio-footer"><span>Field Notes / Tend</span><span><a href="/field-notes/">Back to all notes</a> · <a href="/now/">What’s now</a></span></footer>
+    <footer class="studio-shell studio-footer"><span>学习笔记 / Tend</span><span><a href="/field-notes/">返回全部笔记</a> · <a href="/now/">当前方向</a></span></footer>
   </body>
 </html>

@@ -7,21 +7,22 @@ import { SITE_TITLE } from '../../consts';
 import '../../styles/studio.css';
 
 const builds = (await getCollection('builds')).filter((build) => !build.data.draft).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const statusLabels = { building: '构建中', shipped: '已发布' };
 ---
 
 <!doctype html>
 <html lang="zh-CN">
-  <head><BaseHead title={`Builds · ${SITE_TITLE}`} description="正在构建和已经交付的 AI Agent 系统。" /></head>
+  <head><BaseHead title={`项目 · ${SITE_TITLE}`} description="正在构建和已经交付的 AI Agent 系统。" /></head>
   <body class="studio-page">
     <BlogHeader active="builds" />
     <main class="studio-shell studio-main">
       <header class="studio-index-hero">
-        <div><div class="studio-kicker"><span class="studio-kicker-dot"></span> Shipped work</div><h1>Builds.</h1><p>把学习变成可以运行、测量和交付的东西。这里记录真正做出来的 Agent 系统。</p></div>
-        <div class="studio-index-count"><strong>{String(builds.length).padStart(2, '0')}</strong> shipped builds</div>
+        <div><div class="studio-kicker"><span class="studio-kicker-dot"></span> 已完成的工作</div><h1>项目。</h1><p>把学习变成可以运行、测量和交付的东西。这里记录真正做出来的 Agent 系统。</p></div>
+        <div class="studio-index-count"><strong>{String(builds.length).padStart(2, '0')}</strong> 个已发布项目</div>
       </header>
 
-      {builds.length > 0 ? <section class="studio-article-grid" aria-label="Builds">{builds.map((build) => <a class="studio-article-card" data-featured={build.data.featured} href={`/builds/${build.id}/`}><div><div class="studio-article-card-footer" style="margin: 0; padding: 0"><span>{build.data.status}</span><span><FormattedDate date={build.data.pubDate} /></span></div><h2>{build.data.title}</h2><p>{build.data.description}</p></div><div class="studio-article-card-footer">{build.data.tags.map((tag) => <span class="studio-tag">#{tag}</span>)}<span>↗</span></div></a>)}</section> : <section class="studio-section"><div class="studio-empty"><strong>第一个 Build 正在酝酿。</strong><span>先从一个可观察、可评测的 Agent 小系统开始。</span></div></section>}
+      {builds.length > 0 ? <section class="studio-article-grid" aria-label="项目">{builds.map((build) => <a class="studio-article-card" data-featured={build.data.featured} href={`/builds/${build.id}/`}><div><div class="studio-article-card-footer" style="margin: 0; padding: 0"><span>{statusLabels[build.data.status]}</span><span><FormattedDate date={build.data.pubDate} /></span></div><h2>{build.data.title}</h2><p>{build.data.description}</p></div><div class="studio-article-card-footer">{build.data.tags.map((tag) => <span class="studio-tag">#{tag}</span>)}<span>↗</span></div></a>)}</section> : <section class="studio-section"><div class="studio-empty"><strong>第一个项目正在酝酿。</strong><span>先从一个可观察、可评测的 Agent 小系统开始。</span></div></section>}
     </main>
-    <footer class="studio-shell studio-footer"><span>Builds / Tend</span><span><a href="/experiments/">See experiments</a> · <a href="/now/">Current focus</a></span></footer>
+    <footer class="studio-shell studio-footer"><span>项目 / Tend</span><span><a href="/experiments/">查看实验</a> · <a href="/now/">当前方向</a></span></footer>
   </body>
 </html>

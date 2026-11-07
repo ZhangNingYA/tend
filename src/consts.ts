@@ -3,4 +3,4 @@
 
 export const SITE_TITLE = 'Tend';
 export const SITE_DESCRIPTION =
-	'An AI agent lab for learning in public, interactive experiments, and systems worth shipping.';
+	'记录 AI Agent 学习、实验与构建的个人网站。';

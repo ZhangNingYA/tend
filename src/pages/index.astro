@@ -19,21 +19,32 @@ const typeLabels = { note: '笔记', reading: '阅读', tutorial: '教程', expe
   <body class="studio-page">
     <BlogHeader />
     <main class="studio-shell studio-main">
-      <section class="studio-hero">
+      <section class="studio-dashboard-head">
         <div>
-          <div class="studio-kicker"><span class="studio-kicker-dot"></span> AI Agent 研究手帖 / 公开日志</div>
-          <h1>把 Agent 做得<br /><em>清楚、可靠、可复现。</em></h1>
-          <p class="studio-hero-lede">这里记录我如何理解、实验和构建 AI Agent：从检索和工具调用开始，走向可观察、可评测、值得信任的系统。</p>
-          <div class="studio-actions"><a class="studio-button studio-button-primary" href="/field-notes/">查看学习笔记 ↗</a><a class="studio-button studio-button-ghost" href="/now/">查看当前方向</a></div>
+          <div class="studio-kicker"><span class="studio-kicker-dot"></span> AI Agent 研究记录 / 工作台</div>
+          <h1>持续学习，持续构建。</h1>
+          <p>这里记录我如何理解、实验和构建 AI Agent：从检索和工具调用开始，走向可观察、可评测、值得信任的系统。</p>
         </div>
-        <aside class="studio-console" aria-label="当前状态"><div class="studio-console-label">当前状态</div><div class="studio-console-title"><span class="studio-kicker-dot" style="display:inline-block; margin-right:8px"></span> 持续公开记录</div><ul class="studio-console-list"><li><span>当前方向</span><strong>Agent 系统</strong></li><li><span>进行中的主题</span><strong>03</strong></li><li><span>下一个实验</span><strong class="is-live">Tool call trace</strong></li><li><span>已发布项目</span><strong>{String(builds.length).padStart(2, '0')}</strong></li></ul></aside>
+        <div class="studio-dashboard-actions"><a class="studio-button studio-button-primary" href="/field-notes/">打开学习笔记 ↗</a><a class="studio-button studio-button-ghost" href="/now/">查看当前方向</a></div>
       </section>
 
-      <section class="studio-section" aria-labelledby="portals-title"><div class="studio-section-heading"><div><div class="studio-section-label">浏览学习记录</div><h2 id="portals-title">沿着问题前进。</h2></div><p>三个入口，分别记录理解、验证和构建。</p></div><div class="studio-portal-grid"><a class="studio-portal" href="/field-notes/"><div class="studio-portal-top"><span class="studio-portal-index">01 / 笔记</span><span class="studio-portal-arrow">↗</span></div><div><h3>学习笔记</h3><p>概念、阅读和正在形成的判断。</p></div></a><a class="studio-portal" href="/experiments/"><div class="studio-portal-top"><span class="studio-portal-index">02 / 实验</span><span class="studio-portal-arrow">↗</span></div><div><h3>实验记录</h3><p>把问题变成可以操作和观察的实验。</p></div></a><a class="studio-portal" href="/builds/"><div class="studio-portal-top"><span class="studio-portal-index">03 / 项目</span><span class="studio-portal-arrow">↗</span></div><div><h3>已做项目</h3><p>已经运行、测量和交付的系统。</p></div></a></div></section>
+      <section class="studio-metric-grid" aria-label="站点概览">
+        <div class="studio-metric"><span>学习笔记</span><strong>{String(notes.length).padStart(2, '0')}</strong><small>持续更新</small></div>
+        <div class="studio-metric"><span>实验主题</span><strong>03</strong><small>进行中</small></div>
+        <div class="studio-metric"><span>已做项目</span><strong>{String(builds.length).padStart(2, '0')}</strong><small>公开展示</small></div>
+        <div class="studio-metric"><span>当前方向</span><strong class="studio-metric-text">Agent 系统</strong><small>观察 · 评测 · 迭代</small></div>
+      </section>
 
-      {featured && <section class="studio-section" aria-labelledby="featured-title"><div class="studio-section-heading"><div><div class="studio-section-label">精选笔记</div><h2 id="featured-title">先从证据开始。</h2></div><p>第一篇记录从 RAG 开始：回答之前，先找到证据。</p></div><div class="studio-feature-grid"><article class="studio-feature"><a href={`/field-notes/${featured.id}/`}><div class="studio-feature-meta"><span class="studio-tag">{typeLabels[featured.data.type]}</span>{featured.data.tags.map((tag) => <span class="studio-tag">#{tag}</span>)}</div><h3>{featured.data.title} ↗</h3><p>{featured.data.description}</p></a></article><aside class="studio-now-card"><div class="studio-card-label">工作循环</div><h3>观察 → 决策 → 调用 → 验证</h3><p>Agent 的可靠性来自过程可见，而不是一句“它应该能完成”。</p><ul class="studio-now-list"><li>追踪每次决策</li><li>保留关键证据</li><li>测量最终结果</li></ul></aside></div></section>}
+      <section class="studio-workspace-grid">
+        <div class="studio-workspace-main">
+          {featured && <a class="studio-feature-row" href={`/field-notes/${featured.id}/`}><div class="studio-feature-row-meta"><span class="studio-section-label">精选笔记</span><span class="studio-tag">{typeLabels[featured.data.type]}</span>{featured.data.tags.map((tag) => <span class="studio-tag">#{tag}</span>)}</div><h2>{featured.data.title} <span>↗</span></h2><p>{featured.data.description}</p></a>}
+          <div class="studio-section-heading"><div><div class="studio-section-label">最新记录</div><h2>最近的笔记</h2></div><a class="studio-inline-link" href="/field-notes/">查看全部 ↗</a></div>
+          <div class="studio-note-list">{latest.map((note) => <a class="studio-note-row" href={`/field-notes/${note.id}/`}><span class="studio-note-row-type">{typeLabels[note.data.type]}</span><span class="studio-note-row-copy"><strong>{note.data.title}</strong><small>{note.data.description}</small></span><FormattedDate date={note.data.pubDate} /><span class="studio-note-row-arrow">↗</span></a>)}</div>
+        </div>
+        <aside class="studio-status-panel" aria-label="当前状态"><div class="studio-card-label">当前状态</div><h2>Agent 系统</h2><p>公开记录观察、决策、调用和结果，让每个判断都能回到证据。</p><ul class="studio-status-list"><li><span>下一步</span><strong>Tool call trace</strong></li><li><span>工作循环</span><strong>观察 → 验证</strong></li><li><span>更新频率</span><strong>按问题推进</strong></li></ul><a class="studio-inline-link" href="/now/">查看现在 ↗</a></aside>
+      </section>
 
-      <section class="studio-section" aria-labelledby="latest-title"><div class="studio-section-heading"><div><div class="studio-section-label">最新记录</div><h2 id="latest-title">最近的笔记。</h2></div><a class="studio-button studio-button-ghost" href="/field-notes/">查看全部笔记 ↗</a></div><div class="studio-note-grid">{latest.map((note) => <a class="studio-note-card" href={`/field-notes/${note.id}/`}><div class="studio-card-label">{typeLabels[note.data.type]}</div><h3>{note.data.title}</h3><p>{note.data.description}</p><div class="studio-note-card-footer"><span><FormattedDate date={note.data.pubDate} /></span><span>↗</span></div></a>)}</div></section>
+      <section class="studio-section studio-routes" aria-labelledby="portals-title"><div class="studio-section-heading"><div><div class="studio-section-label">工作区</div><h2 id="portals-title">按任务浏览。</h2></div><p>笔记、实验和项目各自保持清晰的上下文。</p></div><div class="studio-portal-grid"><a class="studio-portal" href="/field-notes/"><div class="studio-portal-top"><span class="studio-portal-index">01 / 笔记</span><span class="studio-portal-arrow">↗</span></div><div><h3>学习笔记</h3><p>概念、阅读和正在形成的判断。</p></div></a><a class="studio-portal" href="/experiments/"><div class="studio-portal-top"><span class="studio-portal-index">02 / 实验</span><span class="studio-portal-arrow">↗</span></div><div><h3>实验记录</h3><p>把问题变成可以操作和观察的实验。</p></div></a><a class="studio-portal" href="/builds/"><div class="studio-portal-top"><span class="studio-portal-index">03 / 项目</span><span class="studio-portal-arrow">↗</span></div><div><h3>已做项目</h3><p>已经运行、测量和交付的系统。</p></div></a></div></section>
     </main>
     <footer class="studio-shell studio-footer"><span>Tend / AI Agent 学习记录</span><span><a href="/now/">现在</a> · <a href="/about/">关于</a> · <a href="/games/">个人档案</a></span></footer>
   </body>

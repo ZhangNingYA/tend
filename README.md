@@ -9,8 +9,7 @@ Live site: [www.fulafu.com](https://www.fulafu.com/)
 ## What is inside
 
 - Interactive graphics and small tools
-- Guided study labs with experiments and checkpoints
-- Project, paper, and game collections
+- Project and game collections
 - Sitemap generation
 
 ## Stack
@@ -43,8 +42,8 @@ npm run astro -- --help
 ```text
 public/          Static assets
 src/components/ Shared UI components
-src/content/    Site content collections (games, study, works, papers)
-src/data/       Structured learning and visualization data
+src/content/    Site content collections (games, works)
+src/data/       Structured site data
 src/layouts/    Page layouts
 src/pages/      Site routes
 src/styles/     Shared styles

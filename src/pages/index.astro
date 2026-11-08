@@ -22,20 +22,25 @@ const typeLabels = { note: '笔记', reading: '阅读', tutorial: '教程', expe
       <section class="studio-dashboard-head">
         <div class="studio-dashboard-copy">
           <div class="studio-kicker"><span class="studio-kicker-dot"></span> AI Agent 研究记录 / 工作台</div>
-          <h1>Hello，<br /><em>一起把 Agent 做出来。</em></h1>
-          <p>这里记录我如何理解、实验和构建 AI Agent：从检索和工具调用开始，走向可观察、可评测、值得信任的系统。</p>
+          <h1>AI Agent<br /><em>实验工作台。</em></h1>
+          <p>用笔记、实验和项目，把 Agent 的检索、记忆、工具调用与评测过程拆开来看。</p>
           <div class="studio-dashboard-actions"><a class="studio-button studio-button-primary" href="/field-notes/">打开学习笔记 ↗</a><a class="studio-button studio-button-ghost" href="/now/">查看当前方向</a></div>
         </div>
-        <div class="studio-hero-art" aria-hidden="true">
-          <div class="hero-cloud hero-cloud-one"></div>
-          <div class="hero-cloud hero-cloud-two"></div>
-          <span class="hero-star hero-star-one">✦</span><span class="hero-star hero-star-two">✦</span><span class="hero-star hero-star-three">✦</span>
-          <div class="hero-rocket"><span class="hero-rocket-window"></span><i></i></div>
-          <div class="hero-character"><div class="hero-character-hair"></div><div class="hero-character-face"><span></span><span></span><i></i></div><div class="hero-character-body"><b>AI</b></div><div class="hero-character-leg hero-character-leg-one"></div><div class="hero-character-leg hero-character-leg-two"></div></div>
-          <div class="hero-screen"><strong>AI AGENT</strong><small>observe / decide / build</small><span>▰ ▰ ▰</span></div>
-          <div class="hero-robot hero-robot-one"><span></span><i></i></div><div class="hero-robot hero-robot-two"><span></span><i></i></div>
-          <div class="hero-project-label"><small>PROJECTS</small><strong>项目</strong><i></i><i></i><i></i></div>
-          <div class="hero-cta">一起构建 <span>↗</span></div>
+        <div class="studio-hero-art studio-agent-scene" data-agent-scene aria-label="AI Agent 三维系统可视化">
+          <div class="agent-scene-grid"></div>
+          <div class="agent-scene-glow"></div>
+          <span class="agent-spark agent-spark-one">+</span><span class="agent-spark agent-spark-two">✦</span><span class="agent-spark agent-spark-three">·</span>
+          <div class="agent-orbit agent-orbit-outer"><span class="agent-orbit-dot"></span></div>
+          <div class="agent-orbit agent-orbit-middle"><span class="agent-orbit-dot"></span></div>
+          <div class="agent-orbit agent-orbit-inner"><span class="agent-orbit-dot"></span></div>
+          <div class="agent-connection agent-connection-one"></div><div class="agent-connection agent-connection-two"></div><div class="agent-connection agent-connection-three"></div>
+          <div class="agent-core"><div class="agent-core-face"><i></i><i></i><b>✦</b></div><strong>AGENT</strong><small>CORE SYSTEM</small></div>
+          <div class="agent-node agent-node-rag"><span>↗</span><strong>RAG</strong><small>检索</small></div>
+          <div class="agent-node agent-node-memory"><span>◌</span><strong>MEMORY</strong><small>记忆</small></div>
+          <div class="agent-node agent-node-tools"><span>⌘</span><strong>TOOLS</strong><small>调用</small></div>
+          <div class="agent-floating-chip agent-chip-input">INPUT <b>问题</b></div>
+          <div class="agent-floating-chip agent-chip-output">OUTPUT <b>答案</b></div>
+          <div class="agent-scene-caption"><span>LIVE LAB / 01</span><strong>observe → decide → act</strong></div>
         </div>
       </section>
 
@@ -58,5 +63,16 @@ const typeLabels = { note: '笔记', reading: '阅读', tutorial: '教程', expe
       <section class="studio-section studio-routes" aria-labelledby="portals-title"><div class="studio-section-heading"><div><div class="studio-section-label">工作区</div><h2 id="portals-title">按任务浏览。</h2></div><p>笔记、实验和项目各自保持清晰的上下文。</p></div><div class="studio-portal-grid"><a class="studio-portal" href="/field-notes/"><div class="studio-portal-top"><span class="studio-portal-index">01 / 笔记</span><span class="studio-portal-arrow">↗</span></div><div><h3>学习笔记</h3><p>概念、阅读和正在形成的判断。</p></div></a><a class="studio-portal" href="/experiments/"><div class="studio-portal-top"><span class="studio-portal-index">02 / 实验</span><span class="studio-portal-arrow">↗</span></div><div><h3>实验记录</h3><p>把问题变成可以操作和观察的实验。</p></div></a><a class="studio-portal" href="/builds/"><div class="studio-portal-top"><span class="studio-portal-index">03 / 项目</span><span class="studio-portal-arrow">↗</span></div><div><h3>已做项目</h3><p>已经运行、测量和交付的系统。</p></div></a></div></section>
     </main>
     <footer class="studio-shell studio-footer"><span>Tend / AI Agent 学习记录</span><span><a href="/now/">现在</a> · <a href="/about/">关于</a> · <a href="/games/">个人档案</a></span></footer>
+    <script>
+      const scene = document.querySelector<HTMLElement>('[data-agent-scene]');
+      if (scene && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        window.addEventListener('pointermove', (event) => {
+          const x = (event.clientX / window.innerWidth - 0.5) * 2;
+          const y = (event.clientY / window.innerHeight - 0.5) * 2;
+          scene.style.setProperty('--scene-tilt-x', `${y * -3}deg`);
+          scene.style.setProperty('--scene-tilt-y', `${x * 4}deg`);
+        }, { passive: true });
+      }
+    </script>
   </body>
 </html>

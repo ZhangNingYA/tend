@@ -24,12 +24,12 @@ const typeLabels = { note: '笔记', reading: '阅读', tutorial: '教程', expe
 
       {tags.length > 0 && <div class="studio-filter-bar" role="group" aria-label="按标签筛选文章"><button class="studio-filter is-active" type="button" data-note-filter="all">全部</button>{tags.map((tag) => <button class="studio-filter" type="button" data-note-filter={tag}>#{tag}</button>)}</div>}
 
-      <section class="studio-article-grid" aria-label="学习笔记">
+      {notes.length > 0 ? <section class="studio-article-grid" aria-label="学习笔记">
         {notes.map((note) => <a class="studio-article-card" data-featured={note.data.featured} data-note-tags={note.data.tags.join(' ')} href={`/field-notes/${note.id}/`}>
           <div><div class="studio-article-card-footer" style="margin: 0; padding: 0"><span>{typeLabels[note.data.type]}</span><span><FormattedDate date={note.data.pubDate} /></span></div><h2>{note.data.title}</h2><p>{note.data.description}</p></div>
           <div class="studio-article-card-footer">{note.data.tags.map((tag) => <span class="studio-tag">#{tag}</span>)}<span>↗</span></div>
         </a>)}
-      </section>
+      </section> : <section class="studio-section"><div class="studio-empty"><strong>还没有学习笔记。</strong><span>下一篇记录会从一个具体的 Agent 问题开始。</span></div></section>}
     </main>
     <footer class="studio-shell studio-footer"><span>学习笔记 / Tend</span><span><a href="/experiments/">实验</a> · <a href="/now/">现在</a></span></footer>
     <script>

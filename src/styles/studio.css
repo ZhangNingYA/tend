@@ -95,8 +95,38 @@ body.studio-page::before {
 .studio-dashboard-head h1 em { color: var(--studio-coral); font-style: normal; }
 .studio-dashboard-head p { max-width: 470px; margin: 0; color: #53617f; font-size: 0.9rem; line-height: 1.85; }
 .studio-dashboard-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; margin-top: 26px; }
-.studio-hero-art { position: relative; z-index: 1; min-height: 320px; overflow: hidden; border: 7px solid rgba(255, 255, 255, 0.78); border-radius: 22px; background: #68d8d2; box-shadow: 0 14px 30px rgba(33, 75, 135, 0.16); }
-.studio-hero-art img { display: block; width: 100%; height: 100%; min-height: 320px; object-fit: cover; object-position: 78% center; }
+.studio-hero-art { position: relative; z-index: 1; min-height: 320px; overflow: hidden; border: 7px solid rgba(255, 255, 255, 0.78); border-radius: 22px; background: linear-gradient(145deg, #4ed8ce 0%, #8ce7d3 46%, #ffd1d5 100%); box-shadow: 0 14px 30px rgba(33, 75, 135, 0.16); isolation: isolate; }
+.studio-hero-art::before { position: absolute; top: -42%; right: -18%; width: 82%; height: 125%; border-radius: 42% 58% 48% 52%; background: linear-gradient(160deg, rgba(124, 134, 245, 0.7), rgba(80, 209, 195, 0.1)); content: ''; transform: rotate(20deg); }
+.studio-hero-art::after { position: absolute; right: -14%; bottom: -38%; width: 125%; height: 65%; border-radius: 50%; background: linear-gradient(125deg, #ff6d8e, #ffb5a7 60%, rgba(255, 240, 197, 0.7)); content: ''; transform: rotate(-8deg); }
+.hero-cloud { position: absolute; z-index: 1; width: 210px; height: 70px; border-radius: 50%; background: rgba(255, 255, 255, 0.45); filter: blur(1px); transform: rotate(-8deg); }
+.hero-cloud-one { left: -50px; bottom: 38px; }
+.hero-cloud-two { right: -55px; top: 92px; width: 180px; opacity: 0.65; transform: rotate(10deg); }
+.hero-star { position: absolute; z-index: 5; color: #ffef92; font-size: 1.25rem; text-shadow: 0 2px 4px rgba(42, 75, 128, 0.12); }
+.hero-star-one { top: 30px; left: 32%; }
+.hero-star-two { top: 48%; left: 8%; color: #ff7184; }
+.hero-star-three { right: 9%; bottom: 30%; color: #fff; }
+.hero-rocket { position: absolute; z-index: 4; top: 30px; left: 14%; width: 76px; height: 28px; border: 3px solid #141b4d; border-radius: 55% 50% 48% 55%; background: #fff; transform: rotate(-35deg); box-shadow: 0 4px 0 rgba(20, 27, 77, 0.12); }
+.hero-rocket::before { position: absolute; right: -18px; top: 2px; width: 20px; height: 20px; border-radius: 65% 30% 55% 45%; background: #ff6d78; border: 3px solid #141b4d; content: ''; }
+.hero-rocket::after { position: absolute; left: 5px; top: 3px; width: 17px; height: 17px; border: 3px solid #141b4d; border-radius: 50%; background: #67dcd5; content: ''; }
+.hero-rocket-window { position: absolute; left: 34px; top: 7px; width: 9px; height: 9px; border-radius: 50%; background: #141b4d; }
+.hero-rocket i { position: absolute; left: -23px; top: 6px; width: 28px; height: 15px; border-radius: 50% 5% 50% 50%; background: #ffaf57; content: ''; transform: skewX(-18deg); }
+.hero-character { position: absolute; z-index: 4; right: 31%; bottom: 55px; width: 115px; height: 235px; transform: rotate(4deg); }
+.hero-character-hair { position: absolute; top: 0; left: 31px; width: 60px; height: 48px; border-radius: 55% 60% 35% 38%; background: #282453; transform: rotate(-8deg); }
+.hero-character-face { position: absolute; top: 23px; left: 28px; width: 66px; height: 68px; border: 3px solid #141b4d; border-radius: 42% 42% 48% 48%; background: #ffc08a; }
+.hero-character-face span { position: absolute; top: 27px; width: 7px; height: 7px; border-radius: 50%; background: #141b4d; }
+.hero-character-face span:first-child { left: 17px; }.hero-character-face span:nth-child(2) { right: 17px; }
+.hero-character-face i { position: absolute; bottom: 13px; left: 22px; width: 21px; height: 9px; border-bottom: 3px solid #141b4d; border-radius: 0 0 50% 50%; }
+.hero-character-body { position: absolute; top: 91px; left: 10px; width: 92px; height: 88px; border: 3px solid #141b4d; border-radius: 38% 38% 20% 20%; background: #ffb438; transform: rotate(4deg); }
+.hero-character-body b { position: absolute; top: 32px; left: 34px; color: #141b4d; font-size: 1.1rem; }
+.hero-character-leg { position: absolute; bottom: 0; width: 19px; height: 75px; border: 3px solid #141b4d; border-radius: 12px; background: #ff7e8b; }
+.hero-character-leg-one { left: 33px; transform: rotate(17deg); }.hero-character-leg-two { right: 27px; transform: rotate(-17deg); }
+.hero-screen { position: absolute; z-index: 5; bottom: 77px; left: 10%; width: 150px; padding: 14px 15px; border: 3px solid #141b4d; border-radius: 12px; color: #fff; background: #6471dc; box-shadow: 5px 6px 0 rgba(20, 27, 77, 0.13); transform: rotate(10deg); }
+.hero-screen strong, .hero-screen small, .hero-screen span { display: block; }.hero-screen strong { font-size: 0.76rem; letter-spacing: 0.08em; }.hero-screen small { margin-top: 7px; color: #e1fffc; font-size: 0.53rem; }.hero-screen span { margin-top: 9px; color: #ffde83; font-size: 0.72rem; letter-spacing: 0.16em; }
+.hero-robot { position: absolute; z-index: 5; width: 40px; height: 34px; border: 3px solid #141b4d; border-radius: 12px; background: #fff; box-shadow: 3px 4px 0 rgba(20, 27, 77, 0.12); }
+.hero-robot::before { position: absolute; top: -12px; left: 16px; width: 3px; height: 10px; background: #141b4d; content: ''; }.hero-robot::after { position: absolute; top: -16px; left: 13px; width: 9px; height: 9px; border: 2px solid #141b4d; border-radius: 50%; background: #ff7184; content: ''; }.hero-robot span { position: absolute; top: 12px; left: 10px; width: 5px; height: 5px; border-radius: 50%; background: #13b8b0; box-shadow: 14px 0 #13b8b0; }.hero-robot i { position: absolute; bottom: -9px; left: 4px; width: 32px; height: 7px; border-bottom: 2px solid #141b4d; }
+.hero-robot-one { top: 73px; right: 12%; transform: rotate(8deg); }.hero-robot-two { left: 24%; bottom: 23px; transform: rotate(-6deg) scale(0.82); }
+.hero-project-label { position: absolute; z-index: 6; top: 112px; left: 47%; color: #141b4d; transform: rotate(-4deg); }.hero-project-label small, .hero-project-label strong { display: block; }.hero-project-label small { font-size: 0.54rem; font-weight: 800; letter-spacing: 0.08em; }.hero-project-label strong { font-size: 1rem; }.hero-project-label i { display: block; width: 38px; height: 3px; margin-top: 5px; border-radius: 99px; background: #13b8b0; }.hero-project-label i + i { width: 30px; margin-top: 4px; opacity: 0.7; }.hero-project-label i + i + i { width: 20px; opacity: 0.45; }
+.hero-cta { position: absolute; z-index: 7; right: 22%; bottom: 19px; padding: 9px 19px; border: 2px solid #fff; border-radius: 999px; color: #fff; background: #14bbb3; font-size: 0.7rem; font-weight: 750; box-shadow: 0 4px 0 rgba(20, 27, 77, 0.12); }.hero-cta span { margin-left: 5px; font-size: 0.9rem; }
 
 .studio-metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 22px 0 38px; }
 .studio-metric { min-height: 112px; padding: 16px 18px; border: 1px solid var(--studio-line); border-radius: 15px; background: var(--studio-surface); box-shadow: 0 8px 18px rgba(60, 81, 135, 0.05); }
@@ -266,7 +296,6 @@ body.studio-page::before {
   .studio-dashboard-head { display: block; }
   .studio-dashboard-actions { justify-content: flex-start; margin-top: 22px; }
   .studio-hero-art { min-height: 260px; margin-top: 26px; }
-  .studio-hero-art img { min-height: 260px; }
   .studio-workspace-grid { grid-template-columns: 1fr; }
   .studio-console { max-width: 420px; }
   .studio-portal-grid, .studio-note-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -288,7 +317,6 @@ body.studio-page::before {
   .studio-dashboard-head h1 { font-size: 2rem; }
   .studio-dashboard-head { padding: 24px; border-radius: 20px; }
   .studio-hero-art { min-height: 220px; border-width: 5px; border-radius: 16px; }
-  .studio-hero-art img { min-height: 220px; }
   .studio-section-heading, .studio-index-hero { display: block; }
   .studio-section-heading p { margin-top: 12px; text-align: left; }
   .studio-index-count { margin-top: 24px; }

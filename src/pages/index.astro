@@ -46,14 +46,14 @@ const typeLabels = { note: '笔记', reading: '阅读', tutorial: '教程', expe
         <div class="studio-metric"><span>当前方向</span><strong class="studio-metric-text">Agent 系统</strong><small>观察 · 评测 · 迭代</small></div>
       </section>
 
-      <section class="studio-workspace-grid">
+      {latest.length > 0 && <section class="studio-workspace-grid">
         <div class="studio-workspace-main">
           {featured && <a class="studio-feature-row" href={`/field-notes/${featured.id}/`}><div class="studio-feature-row-meta"><span class="studio-section-label">精选笔记</span><span class="studio-tag">{typeLabels[featured.data.type]}</span>{featured.data.tags.map((tag) => <span class="studio-tag">#{tag}</span>)}</div><h2>{featured.data.title} <span>↗</span></h2><p>{featured.data.description}</p></a>}
           <div class="studio-section-heading"><div><div class="studio-section-label">最新记录</div><h2>最近的笔记</h2></div><a class="studio-inline-link" href="/field-notes/">查看全部 ↗</a></div>
-          {latest.length > 0 ? <div class="studio-note-list">{latest.map((note) => <a class="studio-note-row" href={`/field-notes/${note.id}/`}><span class="studio-note-row-type">{typeLabels[note.data.type]}</span><span class="studio-note-row-copy"><strong>{note.data.title}</strong><small>{note.data.description}</small></span><FormattedDate date={note.data.pubDate} /><span class="studio-note-row-arrow">↗</span></a>)}</div> : <div class="studio-empty studio-empty-compact"><strong>笔记区暂时为空。</strong><span>准备好后，从一个具体问题开始记录。</span></div>}
+          <div class="studio-note-list">{latest.map((note) => <a class="studio-note-row" href={`/field-notes/${note.id}/`}><span class="studio-note-row-type">{typeLabels[note.data.type]}</span><span class="studio-note-row-copy"><strong>{note.data.title}</strong><small>{note.data.description}</small></span><FormattedDate date={note.data.pubDate} /><span class="studio-note-row-arrow">↗</span></a>)}</div>
         </div>
         <aside class="studio-status-panel" aria-label="当前状态"><div class="studio-card-label">当前状态</div><h2>Agent 系统</h2><p>公开记录观察、决策、调用和结果，让每个判断都能回到证据。</p><ul class="studio-status-list"><li><span>下一步</span><strong>Tool call trace</strong></li><li><span>工作循环</span><strong>观察 → 验证</strong></li><li><span>更新频率</span><strong>按问题推进</strong></li></ul><a class="studio-inline-link" href="/now/">查看现在 ↗</a></aside>
-      </section>
+      </section>}
 
       <section class="studio-section studio-routes" aria-labelledby="portals-title"><div class="studio-section-heading"><div><div class="studio-section-label">工作区</div><h2 id="portals-title">按任务浏览。</h2></div><p>笔记、实验和项目各自保持清晰的上下文。</p></div><div class="studio-portal-grid"><a class="studio-portal" href="/field-notes/"><div class="studio-portal-top"><span class="studio-portal-index">01 / 笔记</span><span class="studio-portal-arrow">↗</span></div><div><h3>学习笔记</h3><p>概念、阅读和正在形成的判断。</p></div></a><a class="studio-portal" href="/experiments/"><div class="studio-portal-top"><span class="studio-portal-index">02 / 实验</span><span class="studio-portal-arrow">↗</span></div><div><h3>实验记录</h3><p>把问题变成可以操作和观察的实验。</p></div></a><a class="studio-portal" href="/builds/"><div class="studio-portal-top"><span class="studio-portal-index">03 / 项目</span><span class="studio-portal-arrow">↗</span></div><div><h3>已做项目</h3><p>已经运行、测量和交付的系统。</p></div></a></div></section>
     </main>

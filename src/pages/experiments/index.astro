@@ -19,7 +19,6 @@ const experiments = [
     <main class="studio-shell studio-main">
       <header class="studio-index-hero"><div><div class="studio-kicker"><span class="studio-kicker-dot"></span> 交互式验证</div><h1>实验。</h1><p>先把一个问题变成可以操作的东西，再决定它是否值得做成系统。</p></div><div class="studio-index-count"><strong>03</strong> 个待做实验</div></header>
       <section class="studio-section"><div class="studio-portal-grid">{experiments.map((experiment) => <article class="studio-portal"><div class="studio-portal-top"><span class="studio-portal-index">{experiment.number} / {experiment.state}</span><span class="studio-portal-arrow">↗</span></div><div><h3>{experiment.title}</h3><p>{experiment.body}</p></div></article>)}</div></section>
-      <section class="studio-feature-grid"><article class="studio-now-card"><div class="studio-card-label">实验方法</div><h3>每个实验都要回答一个问题。</h3><p>实验会保留参数、过程和失败结果，让笔记可以被复现，让项目决策有证据。</p></article><article class="studio-feature"><div class="studio-card-label">下一篇笔记</div><h3>从一个具体问题开始。</h3><p>笔记区已经清空，下一次记录会从真实的实验问题出发。</p></article></section>
     </main>
     <footer class="studio-shell studio-footer"><span>实验 / Tend</span><span><a href="/field-notes/">笔记</a> · <a href="/builds/">项目</a></span></footer>
   </body>

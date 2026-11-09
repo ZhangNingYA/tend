@@ -9,7 +9,6 @@ const { active } = Astro.props;
 <header class="module-header">
   <div class="module-header-inner">
     <a class="module-brand" href="/" aria-label="Tend 首页"><span class="module-brand-mark">+</span><span>Tend</span></a>
-    <div class="module-header-note"><span class="module-header-pulse"></span> two live shelves</div>
     <nav class="module-nav" aria-label="主导航">
       <a class:list={{ 'is-active': active === 'ai-agent' }} href="/ai-agent/">AI Agent</a>
       <a class:list={{ 'is-active': active === 'projects' }} href="/projects/">Projects</a>

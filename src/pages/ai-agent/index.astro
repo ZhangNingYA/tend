@@ -6,7 +6,6 @@ import { SITE_TITLE } from '../../consts';
 import '../../styles/site.css';
 
 const entries = (await getCollection('aiAgent')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const featured = entries.find((entry) => entry.data.featured) ?? entries[0];
 const typeLabels = { guide: 'guide', note: 'note', experiment: 'lab' };
 const statusLabels = { seed: 'seed', 'in-progress': 'in progress', published: 'published' };
 const dateLabel = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -18,8 +17,7 @@ const dateLabel = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'nume
   <body class="site-page module-page module-ai">
     <ModuleHeader active="ai-agent" />
     <main class="module-frame">
-      <header class="module-hero"><div><p class="module-kicker">AI Agent / systems</p><p class="module-hero-lede">从模型能力出发，继续追问工具、记忆、评测和可靠性。每篇 MDX 都是一个可以继续长大的切片。</p></div><div class="module-hero-count"><strong>{String(entries.length).padStart(2, '0')}</strong> entries</div></header>
-      {featured && <a class="module-feature" href={`/ai-agent/${featured.id}/`}><div><p class="module-feature-label">{statusLabels[featured.data.status]} / {typeLabels[featured.data.type]}</p><p class="module-feature-title">{featured.data.title}</p><p>{featured.data.description}</p></div><div class="module-feature-aside"><span>{featured.data.tags.join(' · ')}</span><span>{dateLabel(featured.data.pubDate)} ↗</span></div></a>}
+      <header class="module-hero"><p class="module-kicker">AI Agent / systems</p><div class="module-hero-count"><strong>{String(entries.length).padStart(2, '0')}</strong> entries</div></header>
       <section aria-label="AI Agent entries">{entries.length > 0 ? <div class="module-list">{entries.map((entry) => <a class="module-entry" href={`/ai-agent/${entry.id}/`}><div><div class="module-entry-meta"><span class="module-entry-type">{typeLabels[entry.data.type]}</span><span>{dateLabel(entry.data.pubDate)}</span></div><p class="module-entry-title">{entry.data.title}</p><p>{entry.data.description}</p></div><div class="module-entry-footer"><span class="module-tags">{entry.data.tags.map((tag) => <span class="module-tag">#{tag}</span>)}</span><span>↗</span></div></a>)}</div> : <div class="module-empty"><strong>第一篇记录还在准备中。</strong><span>从一个具体的 Agent 问题开始。</span></div>}</section>
     </main>
     <footer class="module-footer"><span>AI Agent / Tend</span><a href="/">回到首页 ↗</a></footer>

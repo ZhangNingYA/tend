@@ -34,7 +34,7 @@
 .module-nav a:hover::after, .module-nav a.is-active::after { transform: scaleX(1); transform-origin: left; }
 
 .home-frame { width: min(1120px, calc(100% - 48px)); margin: 0 auto; }
-.home-intro { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 70px; align-items: end; padding: 86px 0 65px; border-bottom: 1px solid var(--site-ink); }
+.home-intro { display: grid; grid-template-columns: 1fr; align-items: end; padding: 72px 0 48px; border-bottom: 1px solid var(--site-ink); }
 .eyebrow { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--site-muted); font-size: .6rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
 .eyebrow-line { display: inline-block; width: 25px; height: 1px; background: var(--site-ink); opacity: .5; }
 .home-intro h1 { max-width: 650px; margin: 21px 0 15px; color: var(--site-ink); font-family: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, serif; font-size: clamp(1.65rem, 3vw, 2.35rem); font-weight: 500; letter-spacing: -.055em; line-height: 1.15; }
@@ -53,7 +53,7 @@
 .home-shelf-agent { background: var(--site-mint); }.home-shelf-projects { background: var(--site-sand); }
 .shelf-top, .shelf-footer { display: flex; justify-content: space-between; gap: 14px; color: var(--site-muted); font-size: .59rem; font-weight: 700; letter-spacing: .13em; }
 .shelf-arrow { color: var(--site-coral); font-size: 1rem; line-height: .6; }
-.shelf-copy { margin: 30px 0; }.shelf-copy p { margin: 0 0 13px; color: var(--site-coral); font-size: .62rem; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+.shelf-copy { margin: 30px 0; }.shelf-copy p { margin: 0; color: var(--site-coral); font-size: 1rem; font-weight: 650; letter-spacing: -.02em; }
 .shelf-copy h3 { margin: 0; color: var(--site-ink); font-family: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, serif; font-size: clamp(1.45rem, 2.5vw, 2rem); font-weight: 500; letter-spacing: -.055em; line-height: 1.08; }.shelf-copy h3 em { color: var(--site-coral); font-style: normal; }
 .shelf-caption { display: block; margin-top: 18px; color: var(--site-muted); font-size: .62rem; letter-spacing: .05em; }.shelf-footer { padding-top: 13px; border-top: 1px solid rgba(32, 38, 34, .18); }.shelf-footer strong { color: var(--site-ink); font-size: .58rem; }
 .site-footer { width: min(1120px, calc(100% - 48px)); margin: 0 auto; display: flex; justify-content: space-between; gap: 20px; padding: 22px 0 34px; border-top: 1px solid var(--site-line); color: var(--site-muted); font-size: .61rem; letter-spacing: .04em; }
@@ -63,7 +63,7 @@
 .module-page .module-header { background: color-mix(in srgb, var(--module-bg) 90%, transparent); border-color: color-mix(in srgb, var(--module-ink) 15%, transparent); }
 .module-page .module-brand, .module-page .module-nav a:hover, .module-page .module-nav a.is-active { color: var(--module-ink); }.module-page .module-header-note, .module-page .module-nav a { color: var(--module-muted); }.module-page .module-brand-mark { color: #fff; background: var(--module-ink); }.module-page .module-nav a::after { background: var(--module-accent); }
 .module-frame { width: min(1120px, calc(100% - 48px)); margin: 0 auto; }
-.module-hero { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 38px; align-items: end; padding: 65px 0 42px; border-bottom: 1px solid color-mix(in srgb, var(--module-ink) 20%, transparent); }
+.module-hero { display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 38px; align-items: center; padding: 55px 0 30px; border-bottom: 1px solid color-mix(in srgb, var(--module-ink) 20%, transparent); }
 .module-kicker { display: flex; align-items: center; gap: 8px; color: var(--module-accent); font-size: .59rem; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; }.module-kicker::before { width: 22px; height: 1px; background: var(--module-accent); content: ''; }
 .module-hero h1 { margin: 17px 0 12px; color: var(--module-ink); font-family: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, serif; font-size: 1.8rem; font-weight: 500; letter-spacing: -.045em; line-height: 1.1; }.module-hero h1 em { color: var(--module-accent); font-style: normal; }
 .module-hero-lede { max-width: 530px; margin: 0; color: var(--module-muted); font-size: .84rem; line-height: 1.85; }.module-hero-count { padding-top: 10px; border-top: 1px solid var(--module-accent); color: var(--module-muted); font-size: .58rem; }.module-hero-count strong { display: block; margin-bottom: 4px; color: var(--module-ink); font: 500 2rem/1 'SFMono-Regular', Consolas, monospace; }

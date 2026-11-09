@@ -6,7 +6,6 @@ import { SITE_TITLE } from '../../consts';
 import '../../styles/site.css';
 
 const entries = (await getCollection('projects')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const featured = entries.find((entry) => entry.data.featured) ?? entries[0];
 const statusLabels = { incubating: 'incubating', building: 'building', shipped: 'shipped' };
 const dateLabel = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
 ---
@@ -17,8 +16,7 @@ const dateLabel = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'nume
   <body class="site-page module-page module-projects">
     <ModuleHeader active="projects" />
     <main class="module-frame">
-      <header class="module-hero"><div><p class="module-kicker">Projects / showcase</p><p class="module-hero-lede">把想法变成可以运行的东西。这里记录取舍、过程和最后真正留下来的结果。</p></div><div class="module-hero-count"><strong>{String(entries.length).padStart(2, '0')}</strong> builds</div></header>
-      {featured && <a class="module-feature" href={`/projects/${featured.id}/`}><div><p class="module-feature-label">{statusLabels[featured.data.status]}</p><p class="module-feature-title">{featured.data.title}</p><p>{featured.data.description}</p></div><div class="module-feature-aside"><span>{featured.data.stack.join(' · ')}</span><span>{dateLabel(featured.data.pubDate)} ↗</span></div></a>}
+      <header class="module-hero"><p class="module-kicker">Projects / showcase</p><div class="module-hero-count"><strong>{String(entries.length).padStart(2, '0')}</strong> builds</div></header>
       <section aria-label="Project entries">{entries.length > 0 ? <div class="module-list">{entries.map((entry) => <a class="module-entry" href={`/projects/${entry.id}/`}><div><div class="module-entry-meta"><span class="module-entry-type">{statusLabels[entry.data.status]}</span><span>{dateLabel(entry.data.pubDate)}</span></div><p class="module-entry-title">{entry.data.title}</p><p>{entry.data.description}</p></div><div class="module-entry-footer"><span class="module-tags">{entry.data.stack.map((item) => <span class="module-tag">{item}</span>)}</span><span>↗</span></div></a>)}</div> : <div class="module-empty"><strong>第一个项目的位置已经留好。</strong><span>下一个值得运行的想法会从这里开始。</span></div>}</section>
     </main>
     <footer class="module-footer"><span>Projects / Tend</span><a href="/">回到首页 ↗</a></footer>

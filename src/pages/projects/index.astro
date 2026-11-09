@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import ModuleHeader from '../../components/ModuleHeader.astro';
+import { SITE_TITLE } from '../../consts';
+import '../../styles/site.css';
+
+const entries = (await getCollection('projects')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const featured = entries.find((entry) => entry.data.featured) ?? entries[0];
+const statusLabels = { incubating: 'incubating', building: 'building', shipped: 'shipped' };
+const dateLabel = (date: Date) => date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head><BaseHead title={`Projects · ${SITE_TITLE}`} description="正在构建和已经交付的项目展示。" /></head>
+  <body class="site-page module-page module-projects">
+    <ModuleHeader active="projects" />
+    <main class="module-frame">
+      <header class="module-hero"><div><p class="module-kicker">module 02 / showcase</p><h1>Pro<em>jects</em></h1><p class="module-hero-lede">把想法变成可以运行的东西。这里记录取舍、过程和最后真正留下来的结果。</p></div><div class="module-hero-count"><strong>{String(entries.length).padStart(2, '0')}</strong> builds / in public</div></header>
+      {featured && <a class="module-feature" href={`/projects/${featured.id}/`}><div><p class="module-feature-label">featured / {statusLabels[featured.data.status]}</p><h2>{featured.data.title}</h2><p>{featured.data.description}</p></div><div class="module-feature-aside"><strong>{statusLabels[featured.data.status]}</strong><span>{featured.data.stack.join(' · ')}</span><span>{dateLabel(featured.data.pubDate)} ↗</span></div></a>}
+      <section aria-labelledby="projects-list-title"><div class="module-list-heading"><h2 id="projects-list-title">Project shelf</h2><span>从一个小而清楚的版本开始。</span></div>{entries.length > 0 ? <div class="module-list">{entries.map((entry) => <a class="module-entry" href={`/projects/${entry.id}/`}><div><div class="module-entry-meta"><span class="module-entry-type">{statusLabels[entry.data.status]}</span><span>{dateLabel(entry.data.pubDate)}</span></div><h3>{entry.data.title}</h3><p>{entry.data.description}</p></div><div class="module-entry-footer"><span class="module-tags">{entry.data.stack.map((item) => <span class="module-tag">{item}</span>)}</span><span>↗</span></div></a>)}</div> : <div class="module-empty"><strong>第一个项目的位置已经留好。</strong><span>下一个值得运行的想法会从这里开始。</span></div>}</section>
+    </main>
+    <footer class="module-footer"><span>Projects / Tend</span><a href="/">回到首页 ↗</a></footer>
+  </body>
+</html>

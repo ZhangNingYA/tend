@@ -1,0 +1,36 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import ModuleHeader from '../components/ModuleHeader.astro';
+import '../styles/site.css';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags?: string[];
+  stack?: string[];
+  module: 'ai-agent' | 'projects';
+  moduleLabel: string;
+}
+
+const { title, description, pubDate, tags = [], stack = [], module, moduleLabel } = Astro.props;
+const dateLabel = pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head><BaseHead title={`${title} · ${moduleLabel}`} description={description} /></head>
+  <body class:list={['site-page', 'module-page', module === 'projects' && 'module-projects']}>
+    <ModuleHeader active={module} />
+    <main class="module-frame module-article">
+      <header class="module-article-head">
+        <p class="module-kicker">{moduleLabel} / entry</p>
+        <h1>{title}</h1>
+        <p class="module-article-description">{description}</p>
+        <div class="module-article-meta"><time datetime={pubDate.toISOString()}>{dateLabel}</time>{tags.map((tag) => <span class="module-tag">#{tag}</span>)}{stack.map((item) => <span class="module-tag">{item}</span>)}</div>
+      </header>
+      <article class="module-article-body"><slot /></article>
+    </main>
+    <footer class="module-footer"><span>{moduleLabel} / Tend</span><a href={`/${module}/`}>返回模块首页 ↗</a></footer>
+  </body>
+</html>

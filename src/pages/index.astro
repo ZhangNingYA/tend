@@ -1,50 +1,47 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import BlogHeader from '../components/blog/BlogHeader.astro';
+import ModuleHeader from '../components/ModuleHeader.astro';
 import { SITE_TITLE } from '../consts';
-import '../styles/studio.css';
-import '../styles/home.css';
-
-const dateLabel = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long' }).format(new Date());
-const principles = ['让过程可见', '用证据做判断', '先做小系统'];
+import '../styles/site.css';
 ---
 
 <!doctype html>
 <html lang="zh-CN">
-  <head><BaseHead title={SITE_TITLE} description="Tend 是一个记录学习方向与工作方法的个人空间。" /></head>
-  <body class="studio-page home-page">
-    <BlogHeader />
-    <main class="home-shell">
+  <head><BaseHead title={SITE_TITLE} description="Tend：两个持续生长的内容模块，记录 AI Agent 与项目实践。" /></head>
+  <body class="site-page home-page">
+    <ModuleHeader />
+    <main class="home-frame">
       <section class="home-hero" aria-labelledby="home-title">
         <div class="home-hero-copy">
-          <div class="home-eyebrow"><span class="home-live-dot"></span><span>PERSONAL INDEX</span><span class="home-eyebrow-line"></span><span>{dateLabel}</span></div>
-          <h1 id="home-title">把正在做的事，<em>说清楚。</em></h1>
-          <p class="home-lede">这里放正在理解的问题、正在构建的小系统，以及一套可以反复使用的工作方法。每个入口都指向一件具体的事。</p>
-          <div class="home-actions"><a class="home-button home-button-dark" href="/now/">看看现在在做什么 <span>↗</span></a><a class="home-text-link" href="/about/">了解 Tend <span>→</span></a></div>
+          <p class="eyebrow"><span class="eyebrow-line"></span> TEND / 2026</p>
+          <h1 id="home-title">Make room<br /><em>for the work.</em></h1>
+          <p class="home-lede">一个轻量的个人工作台。把正在理解的系统，和已经做出来的东西，放在两个清晰的入口里。</p>
+          <div class="home-hero-meta"><span>02 modules</span><span>∞ entries to come</span></div>
         </div>
-        <aside class="home-hero-note" aria-label="Tend 简介">
-          <div class="home-note-top"><span>TEND / 001</span><span>OPEN NOTEBOOK</span></div>
-          <div class="home-note-orbit" aria-hidden="true"><span class="home-note-orbit-ring ring-one"></span><span class="home-note-orbit-ring ring-two"></span><span class="home-note-orbit-core">+</span></div>
-          <div class="home-note-bottom"><strong>观察 · 试做</strong><span>一个慢慢长出来的个人空间</span></div>
-        </aside>
+        <div class="home-hero-art" aria-hidden="true">
+          <div class="hero-art-orbit orbit-a"></div><div class="hero-art-orbit orbit-b"></div><div class="hero-art-core">T</div>
+          <span class="hero-art-label label-a">observe</span><span class="hero-art-label label-b">build</span><span class="hero-art-label label-c">repeat</span>
+        </div>
       </section>
 
-      <section class="home-module-grid" aria-label="Tend 内容入口">
-        <a class="home-module home-now-module" href="/now/">
-          <div class="home-module-head"><span class="home-module-index">01 / NOW</span><span class="home-module-arrow">↗</span></div>
-          <div class="home-now-body"><div><p class="home-module-label">正在发生</p><h2>现在，<br /><em>在做什么。</em></h2><p class="home-module-copy">把 AI Agent 当成需要观察、评测和持续照料的系统。</p></div><div class="home-signal"><span class="home-signal-dot"></span><span>AGENT SYSTEMS</span><b>LIVE</b></div></div>
-          <div class="home-now-track"></div>
-          <div class="home-now-meta"><span>当前主线</span><strong>观察 → 验证</strong><span>03 个主题</span></div>
-        </a>
-
-        <a class="home-module home-about-module" href="/about/">
-          <div class="home-module-head"><span class="home-module-index">02 / METHOD</span><span class="home-module-arrow">↗</span></div>
-          <p class="home-module-label">工作方式</p><h2>少一点口号，<br /><em>多一点证据。</em></h2>
-          <div class="home-principle-list">{principles.map((principle, index) => <div><span>0{index + 1}</span><strong>{principle}</strong></div>)}</div>
-          <div class="home-about-foot"><span>Astro · React · Python</span><span>关于这个实验室 →</span></div>
-        </a>
+      <section class="home-shelves" aria-labelledby="shelves-title">
+        <div class="home-shelves-heading"><p class="eyebrow"><span class="eyebrow-line"></span> THE SHELVES</p><h2 id="shelves-title">选择一个方向。</h2></div>
+        <div class="home-shelf-grid">
+          <a class="home-shelf home-shelf-agent" href="/ai-agent/">
+            <div class="shelf-top"><span>01 / SYSTEMS</span><span class="shelf-arrow">↗</span></div>
+            <div class="shelf-index">A</div>
+            <div class="shelf-copy"><p>AI Agent</p><h3>从模型到<br /><em>可工作的系统。</em></h3><span class="shelf-caption">notes · experiments · patterns</span></div>
+            <div class="shelf-footer"><span>进入模块</span><strong>OPEN / 01</strong></div>
+          </a>
+          <a class="home-shelf home-shelf-projects" href="/projects/">
+            <div class="shelf-top"><span>02 / SHOWCASE</span><span class="shelf-arrow">↗</span></div>
+            <div class="shelf-index">P</div>
+            <div class="shelf-copy"><p>Projects</p><h3>把想法变成<br /><em>可以运行的东西。</em></h3><span class="shelf-caption">builds · decisions · shipped work</span></div>
+            <div class="shelf-footer"><span>进入模块</span><strong>OPEN / 02</strong></div>
+          </a>
+        </div>
       </section>
     </main>
-    <footer class="home-footer home-shell"><span>Tend / 个人索引</span><span><a href="/now/">现在</a><i>·</i><a href="/about/">关于</a></span></footer>
+    <footer class="site-footer"><span>Tend / personal workspace</span><span>AI Agent + Projects</span></footer>
   </body>
 </html>

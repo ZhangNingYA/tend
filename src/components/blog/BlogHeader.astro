@@ -2,7 +2,7 @@
 import { Menu, X } from 'lucide-astro';
 
 interface Props {
-  active?: 'notes' | 'experiments' | 'builds' | 'now' | 'about';
+  active?: 'now' | 'about';
   theme?: 'light' | 'dark';
 }
 
@@ -19,9 +19,6 @@ const { active, theme = 'light' } = Astro.props;
     <div class="header-utility" aria-hidden="true"><span class="utility-dot"></span><span>AI Agent 研究手帖</span></div>
 
     <nav id="primary-navigation" class="site-nav" aria-label="主导航">
-      <a href="/field-notes/" aria-current={active === 'notes' ? 'page' : undefined}>笔记</a>
-      <a href="/experiments/" aria-current={active === 'experiments' ? 'page' : undefined}>实验</a>
-      <a href="/builds/" aria-current={active === 'builds' ? 'page' : undefined}>项目</a>
       <a href="/now/" aria-current={active === 'now' ? 'page' : undefined}>现在</a>
       <a href="/about/" aria-current={active === 'about' ? 'page' : undefined}>关于</a>
     </nav>

@@ -1,41 +1,31 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import BlogHeader from '../components/blog/BlogHeader.astro';
 import { SITE_TITLE } from '../consts';
 import '../styles/studio.css';
 import '../styles/home.css';
 
-const games = (await getCollection('games')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const fieldNotes = await getCollection('fieldNotes');
-const builds = (await getCollection('builds')).filter((build) => !build.data.draft);
-const latestGame = games[0];
 const dateLabel = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long' }).format(new Date());
-const experimentQueue = [
-  ['01', 'Tool call trace', '让每一次调用都能回到上下文。', '下一步'],
-  ['02', 'Retrieval playground', '找到 RAG 失败的具体位置。', '设计中'],
-  ['03', 'Memory sandbox', '观察记忆如何改变行为。', '排队中'],
-];
 const principles = ['让过程可见', '用证据做判断', '先做小系统'];
 ---
 
 <!doctype html>
 <html lang="zh-CN">
-  <head><BaseHead title={SITE_TITLE} description="Tend 是一个记录实验、方向与重要记忆的个人空间。" /></head>
+  <head><BaseHead title={SITE_TITLE} description="Tend 是一个记录学习方向与工作方法的个人空间。" /></head>
   <body class="studio-page home-page">
     <BlogHeader />
     <main class="home-shell">
       <section class="home-hero" aria-labelledby="home-title">
         <div class="home-hero-copy">
           <div class="home-eyebrow"><span class="home-live-dot"></span><span>PERSONAL INDEX</span><span class="home-eyebrow-line"></span><span>{dateLabel}</span></div>
-          <h1 id="home-title">把值得留下的东西，<em>放在手边。</em></h1>
-          <p class="home-lede">这里放正在理解的事、正在做的小系统，以及不想被时间带走的记忆。每个入口都指向一件具体的事。</p>
+          <h1 id="home-title">把正在做的事，<em>说清楚。</em></h1>
+          <p class="home-lede">这里放正在理解的问题、正在构建的小系统，以及一套可以反复使用的工作方法。每个入口都指向一件具体的事。</p>
           <div class="home-actions"><a class="home-button home-button-dark" href="/now/">看看现在在做什么 <span>↗</span></a><a class="home-text-link" href="/about/">了解 Tend <span>→</span></a></div>
         </div>
         <aside class="home-hero-note" aria-label="Tend 简介">
           <div class="home-note-top"><span>TEND / 001</span><span>OPEN NOTEBOOK</span></div>
           <div class="home-note-orbit" aria-hidden="true"><span class="home-note-orbit-ring ring-one"></span><span class="home-note-orbit-ring ring-two"></span><span class="home-note-orbit-core">+</span></div>
-          <div class="home-note-bottom"><strong>观察 · 试做 · 记住</strong><span>一个慢慢长出来的个人空间</span></div>
+          <div class="home-note-bottom"><strong>观察 · 试做</strong><span>一个慢慢长出来的个人空间</span></div>
         </aside>
       </section>
 
@@ -43,40 +33,18 @@ const principles = ['让过程可见', '用证据做判断', '先做小系统'];
         <a class="home-module home-now-module" href="/now/">
           <div class="home-module-head"><span class="home-module-index">01 / NOW</span><span class="home-module-arrow">↗</span></div>
           <div class="home-now-body"><div><p class="home-module-label">正在发生</p><h2>现在，<br /><em>在做什么。</em></h2><p class="home-module-copy">把 AI Agent 当成需要观察、评测和持续照料的系统。</p></div><div class="home-signal"><span class="home-signal-dot"></span><span>AGENT SYSTEMS</span><b>LIVE</b></div></div>
-          <div class="home-now-track"><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="home-now-track"></div>
           <div class="home-now-meta"><span>当前主线</span><strong>观察 → 验证</strong><span>03 个主题</span></div>
         </a>
 
-        <a class="home-module home-experiments-module" href="/experiments/">
-          <div class="home-module-head"><span class="home-module-index">02 / QUEUE</span><span class="home-module-arrow">↗</span></div>
-          <div><p class="home-module-label">实验队列</p><h2>先做一个<br /><em>可观察的问题。</em></h2></div>
-          <ol class="home-queue-list">{experimentQueue.map(([number, title, body, state]) => <li><span>{number}</span><div><strong>{title}</strong><small>{body}</small></div><b>{state}</b></li>)}</ol>
-        </a>
-
-        <a class="home-module home-memory-module" href="/games/">
-          <div class="home-memory-image"><img src="/images/memories/taishan-us.webp" alt="一起在泰山的合影" loading="lazy" /></div>
-          <div class="home-memory-overlay"></div>
-          <div class="home-module-head home-memory-head"><span class="home-module-index">03 / MEMORY</span><span class="home-module-arrow">↗</span></div>
-          <div class="home-memory-copy"><p class="home-module-label">个人档案</p><h2>有些事，<br /><em>应该被认真收好。</em></h2><p>{games.length} 个故事，从第一次相遇到一起走过的路。</p></div>
-          <div class="home-memory-foot"><span>{latestGame?.data.title ?? '我们的故事'}</span><span>打开纪念册 →</span></div>
-        </a>
-
         <a class="home-module home-about-module" href="/about/">
-          <div class="home-module-head"><span class="home-module-index">04 / METHOD</span><span class="home-module-arrow">↗</span></div>
+          <div class="home-module-head"><span class="home-module-index">02 / METHOD</span><span class="home-module-arrow">↗</span></div>
           <p class="home-module-label">工作方式</p><h2>少一点口号，<br /><em>多一点证据。</em></h2>
           <div class="home-principle-list">{principles.map((principle, index) => <div><span>0{index + 1}</span><strong>{principle}</strong></div>)}</div>
           <div class="home-about-foot"><span>Astro · React · Python</span><span>关于这个实验室 →</span></div>
         </a>
       </section>
-
-      <section class="home-inbox" aria-labelledby="inbox-title">
-        <div class="home-inbox-intro"><p class="home-module-label">正在积累</p><h2 id="inbox-title">下一张空白页。</h2><p>笔记和项目会在真正有内容时出现。这里先把它们留在视线里，等一个值得记录的问题。</p></div>
-        <div class="home-inbox-items">
-          <a href="/field-notes/"><span>学习笔记</span><strong>{fieldNotes.length ? `${fieldNotes.length} 篇已发布` : '等待第一篇公开记录'}</strong><b>→</b></a>
-          <a href="/builds/"><span>已做项目</span><strong>{builds.length ? `${builds.length} 个已发布` : '等待一个可运行版本'}</strong><b>→</b></a>
-        </div>
-      </section>
     </main>
-    <footer class="home-footer home-shell"><span>Tend / 个人索引</span><span><a href="/now/">现在</a><i>·</i><a href="/about/">关于</a><i>·</i><a href="/games/">记忆</a></span></footer>
+    <footer class="home-footer home-shell"><span>Tend / 个人索引</span><span><a href="/now/">现在</a><i>·</i><a href="/about/">关于</a></span></footer>
   </body>
 </html>

@@ -127,7 +127,7 @@ function hashToken(token) {
 }
 
 function parsePasswordHash(value) {
-  const [algorithm, cost, blockSize, parallelism, salt, digest] = String(value || '').split('$');
+  const [algorithm, cost, blockSize, parallelism, salt, digest] = String(value || '').split(':');
   if (algorithm !== 'scrypt' || !cost || !blockSize || !parallelism || !salt || !digest) return null;
   return {
     cost: Number(cost),

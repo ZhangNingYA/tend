@@ -17,4 +17,4 @@ const digest = scryptSync(password, salt, 32, {
   maxmem: 64 * 1024 * 1024,
 });
 
-console.log(`scrypt$${cost}$${blockSize}$${parallelism}$${salt.toString('base64url')}$${digest.toString('base64url')}`);
+console.log(`scrypt:${cost}:${blockSize}:${parallelism}:${salt.toString('base64url')}:${digest.toString('base64url')}`);

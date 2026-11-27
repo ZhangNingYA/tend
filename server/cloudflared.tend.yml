@@ -1,0 +1,9 @@
+tunnel: 53558021-801b-48f5-b10b-1249366a60fc
+credentials-file: /home/cyan/.cloudflared/53558021-801b-48f5-b10b-1249366a60fc.json
+
+ingress:
+  - hostname: tend-preview.fulafu.com
+    service: http://127.0.0.1:13101
+  - hostname: www.fulafu.com
+    service: http://127.0.0.1:13101
+  - service: http_status:404

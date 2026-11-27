@@ -1,0 +1,18 @@
+[Unit]
+Description=Cloudflare Tunnel for Tend web and comments
+After=network-online.target docker.service
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/cloudflared tunnel --no-autoupdate --config /home/cyan/tend-live/server/cloudflared.tend.yml run
+Restart=on-failure
+RestartSec=5s
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=/home/cyan/tend-live/server/cloudflared.tend.yml /home/cyan/.cloudflared/53558021-801b-48f5-b10b-1249366a60fc.json
+
+[Install]
+WantedBy=multi-user.target

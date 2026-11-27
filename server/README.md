@@ -28,3 +28,7 @@ The SQLite file is mounted at `server/data/comments.sqlite` and backups can be c
 
 Install `server/systemd/tend-comments-backup.service` and
 `server/systemd/tend-comments-backup.timer` on the server to run the backup every day.
+
+The production server uses `server/cloudflared.tend.yml` and
+`server/systemd/tend-web.service` to route the preview and production hostnames through
+the server's Cloudflare Tunnel.

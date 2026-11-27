@@ -3,6 +3,8 @@ set -eu
 
 node_bin=${NODE_BIN:-node}
 env_file=${1:-server/.env}
+restore_terminal() { stty echo 2>/dev/null || true; }
+trap restore_terminal EXIT INT TERM
 
 printf '第一个显示名称 [我]: '
 read -r first_name

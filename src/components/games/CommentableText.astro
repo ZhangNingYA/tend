@@ -1,0 +1,18 @@
+---
+import { commentableHtml } from '../../lib/comments';
+
+interface Props {
+  articleSlug: string;
+  anchorPrefix: string;
+  text: string;
+  tag?: 'p' | 'span' | 'strong';
+  className?: string;
+}
+
+const { articleSlug, anchorPrefix, text, tag = 'p', className } = Astro.props;
+const html = commentableHtml(text, articleSlug, anchorPrefix);
+---
+
+{tag === 'span' && <span class={className} set:html={html} />}
+{tag === 'strong' && <strong class={className} set:html={html} />}
+{tag === 'p' && <p class={className} set:html={html} />}

@@ -25,3 +25,6 @@ curl http://127.0.0.1:13101/api/health
 The web container serves the Astro build and proxies `/api` to the comments container.
 The SQLite file is mounted at `server/data/comments.sqlite` and backups can be created with
 `server/backup-comments.sh`.
+
+Install `server/systemd/tend-comments-backup.service` and
+`server/systemd/tend-comments-backup.timer` on the server to run the backup every day.

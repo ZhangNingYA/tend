@@ -1,0 +1,9 @@
+[Unit]
+Description=Back up Tend comments database
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/cyan/tend-live
+ExecStart=/home/cyan/tend-live/server/backup-comments.sh

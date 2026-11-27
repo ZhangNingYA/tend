@@ -32,47 +32,119 @@ function updateAnchorDecorations(articleSlug, commentsByAnchor, selectedKey) {
     else delete element.dataset.commentCount;
     element.classList.toggle('is-comment-selected', key === selectedKey);
     const label = element.textContent?.trim() || '';
-    element.setAttribute('aria-label', count ? `${label}，${count} 条留言` : label);
+    element.setAttribute('aria-label', count ? `${label}，${count} 条留言` : `${label}，点击查看留言`);
   });
 }
 
 function findSentenceElements(articleSlug) {
+  if (typeof document === 'undefined') return [];
   return [...document.querySelectorAll('[data-comment-anchor]')]
     .filter((element) => element.dataset.commentArticle === articleSlug);
 }
 
-function CommentEntry({ comment, canEdit, editing, editingBody, busy, onEdit, onSave, onCancel, onDelete }) {
+function formatDate(value) {
+  return new Date(value).toLocaleString('zh-CN', { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+function CommentEntry({ comment, canEdit, editing, editingBody, busy, onEdit, onEditBody, onSave, onCancel, onDelete }) {
   if (editing) {
     return (
-      <span className="comment-entry comment-entry-editing">
+      <li className="comment-entry comment-entry-editing">
         <form onSubmit={onSave}>
-          <textarea value={editingBody} onChange={(event) => onEdit(event.target.value)} maxLength={2000} autoFocus aria-label="修改留言" />
-          <span className="comment-form-actions"><button type="submit" disabled={busy}>保存</button><button type="button" onClick={onCancel}>取消</button></span>
+          <textarea value={editingBody} onChange={(event) => onEditBody(event.target.value)} maxLength={2000} autoFocus aria-label="修改留言" />
+          <div className="comment-form-actions">
+            <button className="comment-button comment-button-primary" type="submit" disabled={busy}>保存</button>
+            <button className="comment-button" type="button" onClick={onCancel}>取消</button>
+          </div>
         </form>
-      </span>
+      </li>
     );
   }
 
   return (
-    <span className="comment-entry">
-      <span className="comment-entry-meta"><strong>{comment.authorName}</strong><time dateTime={comment.createdAt}>{new Date(comment.createdAt).toLocaleString('zh-CN', { dateStyle: 'medium', timeStyle: 'short' })}</time></span>
-      <span className="comment-entry-body">{comment.body}</span>
-      {canEdit && <span className="comment-entry-actions"><button type="button" onClick={onEdit}>修改</button><button type="button" onClick={onDelete}>删除</button></span>}
-    </span>
+    <li className="comment-entry">
+      <div className="comment-entry-meta">
+        <strong>{comment.authorName}</strong>
+        <time dateTime={comment.createdAt}>{formatDate(comment.createdAt)}</time>
+      </div>
+      <p className="comment-entry-body">{comment.body}</p>
+      {canEdit && (
+        <div className="comment-entry-actions">
+          <button className="comment-button" type="button" onClick={onEdit}>修改</button>
+          <button className="comment-button comment-button-danger" type="button" onClick={onDelete}>删除</button>
+        </div>
+      )}
+    </li>
   );
 }
 
-function InlineThread({ anchorKey, comments, selected, me, password, draft, editingId, editingBody, busy, error, onActivate, onPassword, onLogin, onLogout, onDraft, onSubmit, onEditStart, onEditBody, onEditSave, onEditCancel, onDelete }) {
-  const active = selected?.anchorKey === anchorKey;
+function LoginForm({ password, busy, onPassword, onLogin }) {
   return (
-    <div className={`comment-thread ${active ? 'is-active' : ''}`} data-comment-thread={anchorKey} role="region" aria-label="句子留言">
-      <div className="comment-thread-head">
-        <span className="comment-thread-label">{comments.length ? `${comments.length} 条留言` : '还没有留言'}</span>
-        {!active && <button className="comment-thread-open" type="button" onClick={onActivate}>写留言</button>}
+    <form className="comment-login-form" onSubmit={onLogin}>
+      <label htmlFor="comment-password">留言密码</label>
+      <div className="comment-login-row">
+        <input id="comment-password" type="password" value={password} onChange={(event) => onPassword(event.target.value)} autoComplete="current-password" required />
+        <button className="comment-button comment-button-primary" type="submit" disabled={busy}>进入</button>
       </div>
+    </form>
+  );
+}
 
+function Composer({ me, draft, busy, onDraft, onSubmit, onLogout }) {
+  return (
+    <form className="comment-composer" onSubmit={onSubmit}>
+      <div className="comment-composer-user">
+        <span><i aria-hidden="true"></i>以 {me.name} 的身份留言</span>
+        <button className="comment-button" type="button" onClick={onLogout} disabled={busy}>退出</button>
+      </div>
+      <textarea value={draft} onChange={(event) => onDraft(event.target.value)} maxLength={2000} placeholder="写下想留在这里的话" aria-label="留言内容" />
+      <div className="comment-composer-footer">
+        <span>{draft.length}/2000</span>
+        <button className="comment-button comment-button-primary" type="submit" disabled={busy || !draft.trim()}>发布留言</button>
+      </div>
+    </form>
+  );
+}
+
+function BoardOverview({ entries, selectedKey, onSelect }) {
+  return (
+    <div className="comment-board-overview">
+      <div className="comment-board-overview-head">
+        <span>全部留言</span>
+        <span>{entries.reduce((total, entry) => total + entry.comments.length, 0)} 条</span>
+      </div>
+      {entries.length ? (
+        <ul className="comment-anchor-list">
+          {entries.map(({ anchorKey, text, comments }) => {
+            const latest = comments[comments.length - 1];
+            return (
+              <li key={anchorKey}>
+                <button className={`comment-anchor-item ${selectedKey === anchorKey ? 'is-selected' : ''}`} type="button" onClick={() => onSelect(anchorKey)}>
+                  <span className="comment-anchor-quote">“{text}”</span>
+                  <span className="comment-anchor-meta"><span>{comments.length} 条留言</span><time dateTime={latest.createdAt}>{formatDate(latest.createdAt)}</time></span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div className="comment-empty"><span className="comment-empty-mark" aria-hidden="true">♡</span><strong>还没有留言</strong><span>从正文中选一句话开始。</span></div>
+      )}
+    </div>
+  );
+}
+
+function ThreadView({ selected, comments, me, password, draft, editingId, editingBody, busy, error, onPassword, onLogin, onLogout, onDraft, onSubmit, onEditStart, onEditBody, onEditSave, onEditCancel, onDelete, onBack }) {
+  return (
+    <div className="comment-thread-view">
+      <button className="comment-back-button" type="button" onClick={onBack}>← 全部留言</button>
+      <blockquote className="comment-selected-quote">{selected.text}</blockquote>
+      <div className="comment-thread-heading">
+        <span>这句话的留言</span>
+        <span>{comments.length} 条</span>
+      </div>
       {comments.length > 0 && (
-        <div className="comment-thread-list">
+        <ul className="comment-thread-list">
           {comments.map((comment) => (
             <CommentEntry
               key={comment.id}
@@ -81,33 +153,23 @@ function InlineThread({ anchorKey, comments, selected, me, password, draft, edit
               editing={editingId === comment.id}
               editingBody={editingBody}
               busy={busy}
-              onEdit={(value) => editingId === comment.id ? onEditBody(value) : onEditStart(comment)}
-              onSave={(event) => onEditSave(event, comment.id, anchorKey)}
+              onEdit={() => onEditStart(comment)}
+              onEditBody={onEditBody}
+              onSave={(event) => onEditSave(event, comment.id, selected.anchorKey)}
               onCancel={onEditCancel}
-              onDelete={() => onDelete(comment.id, anchorKey)}
+              onDelete={() => onDelete(comment.id, selected.anchorKey)}
             />
           ))}
-        </div>
+        </ul>
       )}
-
-      {active && (
-        <div className="comment-thread-composer">
-          {me ? (
-            <form onSubmit={(event) => onSubmit(event, anchorKey)}>
-              <div className="comment-composer-user"><span>以 {me.name} 的身份留言</span><button type="button" onClick={onLogout} disabled={busy}>退出</button></div>
-              <textarea value={draft} onChange={(event) => onDraft(event.target.value)} maxLength={2000} placeholder="写一句想留在这里的话" aria-label="留言内容" />
-              <div className="comment-composer-footer"><span>{draft.length}/2000</span><button type="submit" disabled={busy || !draft.trim()}>发布留言</button></div>
-            </form>
-          ) : (
-            <form onSubmit={onLogin}>
-              <label className="comment-login-label">输入密码后发表评论</label>
-              <input type="password" value={password} onChange={(event) => onPassword(event.target.value)} autoComplete="current-password" required aria-label="评论密码" />
-              <div className="comment-form-actions"><button type="submit" disabled={busy}>进入</button></div>
-            </form>
-          )}
-          {error && <p className="comment-error">{error}</p>}
-        </div>
-      )}
+      <div className="comment-composer-wrap">
+        {me ? (
+          <Composer me={me} draft={draft} busy={busy} onDraft={onDraft} onSubmit={(event) => onSubmit(event, selected.anchorKey)} onLogout={onLogout} />
+        ) : (
+          <LoginForm password={password} busy={busy} onPassword={onPassword} onLogin={onLogin} />
+        )}
+        {error && <p className="comment-error" role="alert">{error}</p>}
+      </div>
     </div>
   );
 }
@@ -115,7 +177,7 @@ function InlineThread({ anchorKey, comments, selected, me, password, draft, edit
 export default function CommentLayer({ articleSlug }) {
   const [commentsByAnchor, setCommentsByAnchor] = useState({});
   const [selected, setSelected] = useState(null);
-  const [hosts, setHosts] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
   const [me, setMe] = useState(null);
   const [password, setPassword] = useState('');
   const [draft, setDraft] = useState('');
@@ -131,6 +193,16 @@ export default function CommentLayer({ articleSlug }) {
       comments.slice().sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)),
     ]),
   ), [commentsByAnchor]);
+
+  const boardEntries = useMemo(() => Object.entries(groupedComments)
+    .map(([anchorKey, comments]) => {
+      const sentence = findSentenceElements(articleSlug).find((element) => element.dataset.commentAnchor === anchorKey);
+      return { anchorKey, comments, text: sentence?.textContent?.trim() || comments[0]?.anchorTextSnapshot || '原文句子' };
+    })
+    .sort((a, b) => new Date(b.comments[b.comments.length - 1].createdAt) - new Date(a.comments[a.comments.length - 1].createdAt)),
+  [articleSlug, groupedComments]);
+
+  const totalComments = boardEntries.reduce((total, entry) => total + entry.comments.length, 0);
 
   useEffect(() => {
     let active = true;
@@ -162,27 +234,11 @@ export default function CommentLayer({ articleSlug }) {
   }, [articleSlug, groupedComments, selected]);
 
   useEffect(() => {
-    if (serviceState !== 'ready') return undefined;
-    const wanted = new Set(Object.keys(groupedComments));
-    if (selected?.anchorKey) wanted.add(selected.anchorKey);
-    const entries = [];
-    findSentenceElements(articleSlug).forEach((sentence) => {
-      const anchorKey = sentence.dataset.commentAnchor;
-      if (!wanted.has(anchorKey)) return;
-      const parentTag = sentence.parentElement?.tagName;
-      const insertionPoint = parentTag === 'STRONG' || parentTag === 'H3' ? sentence.parentElement : sentence;
-      let host = insertionPoint.nextElementSibling;
-      if (!host?.matches?.('[data-comment-thread-host]')) {
-        host = document.createElement('span');
-        host.className = 'comment-thread-host';
-        host.dataset.commentThreadHost = anchorKey;
-        insertionPoint.after(host);
-      }
-      entries.push({ anchorKey, host });
-    });
-    setHosts(entries);
-    return undefined;
-  }, [articleSlug, groupedComments, selected, serviceState]);
+    if (!isOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previousOverflow; };
+  }, [isOpen]);
 
   useEffect(() => {
     const activate = (event) => {
@@ -190,16 +246,17 @@ export default function CommentLayer({ articleSlug }) {
       if (!target || target.dataset.commentArticle !== articleSlug) return;
       event.preventDefault();
       setSelected({ anchorKey: target.dataset.commentAnchor, text: target.textContent?.trim() || '' });
+      setIsOpen(true);
       setError('');
-      window.setTimeout(() => {
-        const host = [...document.querySelectorAll('[data-comment-thread-host]')]
-          .find((element) => element.dataset.commentThreadHost === target.dataset.commentAnchor);
-        host?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      }, 0);
     };
     const onKeyDown = (event) => {
-      if ((event.key !== 'Enter' && event.key !== ' ') || !event.target.matches?.('[data-comment-anchor]')) return;
-      activate(event);
+      if ((event.key === 'Enter' || event.key === ' ') && event.target.matches?.('[data-comment-anchor]')) {
+        activate(event);
+      }
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        setSelected(null);
+      }
     };
     document.addEventListener('click', activate);
     document.addEventListener('keydown', onKeyDown);
@@ -209,10 +266,19 @@ export default function CommentLayer({ articleSlug }) {
     };
   }, [articleSlug]);
 
-  const activateAnchor = (anchorKey) => {
-    const sentence = findSentenceElements(articleSlug).find((element) => element.dataset.commentAnchor === anchorKey);
-    setSelected({ anchorKey, text: sentence?.textContent?.trim() || '' });
+  const closeBoard = () => {
+    setIsOpen(false);
+    setSelected(null);
+    setEditing(null);
+    setEditingBody('');
     setError('');
+  };
+
+  const selectAnchor = (anchorKey) => {
+    const sentence = findSentenceElements(articleSlug).find((element) => element.dataset.commentAnchor === anchorKey);
+    setSelected({ anchorKey, text: sentence?.textContent?.trim() || groupedComments[anchorKey]?.[0]?.anchorTextSnapshot || '原文句子' });
+    setError('');
+    sentence?.scrollIntoView({ block: 'center', behavior: 'smooth' });
   };
 
   const login = async (event) => {
@@ -255,7 +321,7 @@ export default function CommentLayer({ articleSlug }) {
       setCommentsByAnchor((current) => ({ ...current, [anchorKey]: [...(current[anchorKey] || []), payload.comment] }));
       setDraft('');
     } catch (requestError) {
-      if (requestError.status === 401) setLoginOpen(true);
+      if (requestError.status === 401) setMe(null);
       setError(requestError.message || '留言发布失败');
     } finally {
       setBusy(false);
@@ -285,7 +351,13 @@ export default function CommentLayer({ articleSlug }) {
     setError('');
     try {
       await request(`/comments/${commentId}`, { method: 'DELETE' });
-      setCommentsByAnchor((current) => ({ ...current, [anchorKey]: current[anchorKey].filter((comment) => comment.id !== commentId) }));
+      setCommentsByAnchor((current) => {
+        const next = { ...current };
+        const remaining = (next[anchorKey] || []).filter((comment) => comment.id !== commentId);
+        if (remaining.length) next[anchorKey] = remaining;
+        else delete next[anchorKey];
+        return next;
+      });
     } catch (requestError) {
       setError(requestError.message || '留言删除失败');
     } finally {
@@ -295,35 +367,52 @@ export default function CommentLayer({ articleSlug }) {
 
   if (serviceState !== 'ready') return null;
 
-  return (
-    <div className="comment-layer-inline" aria-live="polite">
-      {hosts.map(({ anchorKey, host }) => createPortal(
-        <InlineThread
-          key={anchorKey}
-          anchorKey={anchorKey}
-          comments={groupedComments[anchorKey] || []}
-          selected={selected}
-          me={me}
-          password={password}
-          draft={draft}
-          editingId={editing?.anchorKey === anchorKey ? editing.id : null}
-          editingBody={editingBody}
-          busy={busy}
-          error={selected?.anchorKey === anchorKey ? error : ''}
-          onActivate={() => activateAnchor(anchorKey)}
-          onPassword={setPassword}
-          onLogin={login}
-          onLogout={logout}
-          onDraft={setDraft}
-          onSubmit={submitComment}
-          onEditStart={(comment) => { setEditing({ anchorKey, id: comment.id }); setEditingBody(comment.body); }}
-          onEditBody={setEditingBody}
-          onEditSave={updateComment}
-          onEditCancel={() => { setEditing(null); setEditingBody(''); }}
-          onDelete={deleteComment}
-        />,
-        host,
-      ))}
-    </div>
+  const board = (
+    <>
+      <button className="comment-board-trigger" type="button" onClick={() => setIsOpen(true)} aria-expanded={isOpen} aria-controls="comment-board">
+        <span className="comment-board-trigger-mark" aria-hidden="true">✳</span>
+        <span>留言板</span>
+        {totalComments > 0 && <b>{totalComments}</b>}
+      </button>
+      {isOpen && (
+        <div className="comment-board-layer">
+          <button className="comment-board-scrim" type="button" aria-label="关闭留言板" onClick={closeBoard}></button>
+          <aside className="comment-board" id="comment-board" role="dialog" aria-modal="true" aria-label="留言板">
+            <header className="comment-board-header">
+              <div><p className="comment-board-kicker">OUR LITTLE NOTES</p><h2>留言板</h2><span>{totalComments ? `${totalComments} 条留言` : '留下一点想说的话'}</span></div>
+              <button className="comment-board-close" type="button" onClick={closeBoard} aria-label="关闭留言板">×</button>
+            </header>
+            {selected ? (
+              <ThreadView
+                selected={selected}
+                comments={groupedComments[selected.anchorKey] || []}
+                me={me}
+                password={password}
+                draft={draft}
+                editingId={editing?.anchorKey === selected.anchorKey ? editing.id : null}
+                editingBody={editingBody}
+                busy={busy}
+                error={error}
+                onPassword={setPassword}
+                onLogin={login}
+                onLogout={logout}
+                onDraft={setDraft}
+                onSubmit={submitComment}
+                onEditStart={(comment) => { setEditing({ anchorKey: selected.anchorKey, id: comment.id }); setEditingBody(comment.body); }}
+                onEditBody={setEditingBody}
+                onEditSave={updateComment}
+                onEditCancel={() => { setEditing(null); setEditingBody(''); }}
+                onDelete={deleteComment}
+                onBack={() => { setSelected(null); setError(''); }}
+              />
+            ) : (
+              <BoardOverview entries={boardEntries} selectedKey={selected?.anchorKey} onSelect={selectAnchor} />
+            )}
+          </aside>
+        </div>
+      )}
+    </>
   );
+
+  return createPortal(board, document.body);
 }

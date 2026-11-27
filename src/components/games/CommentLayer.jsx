@@ -62,7 +62,7 @@ function CommentEntry({ comment, canEdit, editing, editingBody, busy, onEdit, on
   );
 }
 
-function InlineThread({ anchorKey, comments, selected, me, loginOpen, password, draft, editingId, editingBody, busy, error, onActivate, onLoginOpen, onPassword, onLogin, onLogout, onDraft, onSubmit, onEditStart, onEditBody, onEditSave, onEditCancel, onDelete }) {
+function InlineThread({ anchorKey, comments, selected, me, password, draft, editingId, editingBody, busy, error, onActivate, onPassword, onLogin, onLogout, onDraft, onSubmit, onEditStart, onEditBody, onEditSave, onEditCancel, onDelete }) {
   const active = selected?.anchorKey === anchorKey;
   return (
     <div className={`comment-thread ${active ? 'is-active' : ''}`} data-comment-thread={anchorKey} role="region" aria-label="句子留言">
@@ -98,14 +98,12 @@ function InlineThread({ anchorKey, comments, selected, me, loginOpen, password, 
               <textarea value={draft} onChange={(event) => onDraft(event.target.value)} maxLength={2000} placeholder="写一句想留在这里的话" aria-label="留言内容" />
               <div className="comment-composer-footer"><span>{draft.length}/2000</span><button type="submit" disabled={busy || !draft.trim()}>发布留言</button></div>
             </form>
-          ) : loginOpen ? (
+          ) : (
             <form onSubmit={onLogin}>
               <label className="comment-login-label">输入密码后发表评论</label>
               <input type="password" value={password} onChange={(event) => onPassword(event.target.value)} autoComplete="current-password" required aria-label="评论密码" />
-              <div className="comment-form-actions"><button type="submit" disabled={busy}>进入</button><button type="button" onClick={() => onLoginOpen(false)}>取消</button></div>
+              <div className="comment-form-actions"><button type="submit" disabled={busy}>进入</button></div>
             </form>
-          ) : (
-            <button className="comment-login-trigger" type="button" onClick={() => onLoginOpen(true)}>输入密码，留下留言</button>
           )}
           {error && <p className="comment-error">{error}</p>}
         </div>
@@ -126,7 +124,6 @@ export default function CommentLayer({ articleSlug }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [serviceState, setServiceState] = useState('loading');
-  const [loginOpen, setLoginOpen] = useState(false);
 
   const groupedComments = useMemo(() => Object.fromEntries(
     Object.entries(commentsByAnchor).map(([key, comments]) => [
@@ -226,7 +223,6 @@ export default function CommentLayer({ articleSlug }) {
       const payload = await request('/auth/login', { method: 'POST', body: JSON.stringify({ password }) });
       setMe(payload.user);
       setPassword('');
-      setLoginOpen(false);
     } catch (requestError) {
       setError(requestError.message || '密码错误');
     } finally {
@@ -308,7 +304,6 @@ export default function CommentLayer({ articleSlug }) {
           comments={groupedComments[anchorKey] || []}
           selected={selected}
           me={me}
-          loginOpen={loginOpen && selected?.anchorKey === anchorKey}
           password={password}
           draft={draft}
           editingId={editing?.anchorKey === anchorKey ? editing.id : null}
@@ -316,7 +311,6 @@ export default function CommentLayer({ articleSlug }) {
           busy={busy}
           error={selected?.anchorKey === anchorKey ? error : ''}
           onActivate={() => activateAnchor(anchorKey)}
-          onLoginOpen={setLoginOpen}
           onPassword={setPassword}
           onLogin={login}
           onLogout={logout}

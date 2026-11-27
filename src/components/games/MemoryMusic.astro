@@ -31,15 +31,6 @@ const song = tracks[track];
       const label = this.querySelector('[data-music-label]')!;
       const status = this.querySelector('[data-music-status]')!;
       const key = `tend-music-${this.dataset.track}`;
-      const preferenceKey = 'tend-memory-music-playback';
-      const readPreference = () => {
-        try { return sessionStorage.getItem(preferenceKey); } catch { return null; }
-      };
-      let preference = readPreference();
-      const rememberPreference = (value: 'playing' | 'paused') => {
-        preference = value;
-        try { sessionStorage.setItem(preferenceKey, value); } catch {}
-      };
       let lastSaved = 0;
       let starting = false;
       audio.volume = 0.3;
@@ -65,24 +56,19 @@ const song = tracks[track];
         label.textContent = playing ? '暂停音乐' : '播放音乐';
       };
 
-      const stopAutoStart = () => document.removeEventListener('click', startOnInteraction);
       const play = async () => {
         if (starting || !audio.paused) return;
         starting = true;
         button.disabled = true;
         status.textContent = '';
-        rememberPreference('playing');
         try {
           if (audio.error) audio.load();
           // Keep play() inside the real click handler for mobile browsers.
           await audio.play();
-          stopAutoStart();
         } catch (error) {
-          // A new document may need another gesture (notably on iOS). Keep
-          // listening for that click without reporting an audio-file error.
+          // A new document may need another gesture on some mobile browsers.
           if (!(error instanceof DOMException && error.name === 'NotAllowedError')) {
             status.textContent = '音乐暂时无法播放，点音乐按钮可以重试。';
-            stopAutoStart();
           }
         } finally {
           starting = false;
@@ -90,17 +76,8 @@ const song = tracks[track];
           sync();
         }
       };
-      const startOnInteraction = (event: MouseEvent) => {
-        if (!event.isTrusted || this.contains(event.target as Node) || preference === 'paused') return;
-        void play();
-      };
-      const armAutoStart = () => {
-        if (preference !== 'paused') document.addEventListener('click', startOnInteraction, { passive: true, signal });
-      };
       button.addEventListener('click', () => {
-        stopAutoStart();
         if (!audio.paused) {
-          rememberPreference('paused');
           audio.pause();
           save();
         } else {
@@ -113,17 +90,6 @@ const song = tracks[track];
         if (Date.now() - lastSaved > 5000) { save(); lastSaved = Date.now(); }
       }, { signal });
       window.addEventListener('pagehide', () => { save(); audio.pause(); }, { signal });
-      window.addEventListener('pageshow', (event) => {
-        if (!event.persisted) return;
-        preference = readPreference();
-        stopAutoStart();
-        armAutoStart();
-        if (preference === 'playing') void play();
-      }, { signal });
-      armAutoStart();
-      // Continue the reader's choice on navigation; if the browser blocks it,
-      // the next page click will start the music instead.
-      if (preference === 'playing') void play();
     }
 
     disconnectedCallback() {

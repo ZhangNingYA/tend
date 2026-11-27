@@ -1,4 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
+import CommentLayer from './CommentLayer.jsx';
+import CommentableText from './CommentableText.jsx';
 
 const MUSIC_SRC = '/music/lucky.mp3';
 
@@ -129,7 +131,7 @@ function SecretCard({ card, open, onToggle }) {
 
       <div className="cw-card-secret" aria-hidden={!open}>
         <span>口令</span>
-        <strong>{card.secret}</strong>
+        <CommentableText articleSlug="fifth" anchorPrefix={`card/${card.id}`} tag="strong" text={card.secret} />
       </div>
     </article>
   );
@@ -215,7 +217,7 @@ export default function MoonlitWishScene() {
           <div className="cw-paper">
             <p className="cw-kicker">Children's Day · 06.01</p>
             <h1>儿童节快乐呀</h1>
-            <p className="cw-blessing">希望我的宝贝一直年轻，永远有糖，被生活温柔地偏爱。</p>
+            <CommentableText articleSlug="fifth" anchorPrefix="hero/blessing" className="cw-blessing" text="希望我的宝贝一直年轻，永远有糖，被生活温柔地偏爱。" />
 
             <div className="cw-scene" aria-hidden="true">
               <span className="cw-sun" />
@@ -245,6 +247,7 @@ export default function MoonlitWishScene() {
             ))}
           </div>
         </section>
+        <CommentLayer articleSlug="fifth" />
       </div>
     </main>
   );

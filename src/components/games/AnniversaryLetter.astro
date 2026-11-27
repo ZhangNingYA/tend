@@ -4,6 +4,8 @@ import DiaryText from './DiaryText.astro';
 import MemoryPhoto from './MemoryPhoto.astro';
 import MemoryMusic from './MemoryMusic.astro';
 import MemoryEffects from './MemoryEffects.astro';
+import CommentableText from './CommentableText.astro';
+import CommentLayer from './CommentLayer.jsx';
 import '../../styles/memory-book.css';
 ---
 <main class="memory-book anniversary-book">
@@ -13,18 +15,19 @@ import '../../styles/memory-book.css';
 
     <details class="anniversary-envelope" id="letter">
       <summary><span class="anniversary-envelope-address"><small>TO MY FAVORITE PERSON</small><strong>给我的猪猪</strong><i>一周年快乐呀。</i></span><span class="anniversary-wax" aria-hidden="true">♡</span><span class="envelope-open-label">轻轻拆开这封信 <span aria-hidden="true">↗</span></span><span class="envelope-close-label">把信轻轻合上 <span aria-hidden="true">↙</span></span></summary>
-      <div class="anniversary-letter-paper"><span class="letter-paper-flower" aria-hidden="true">✳</span><p class="book-eyebrow">OCTOBER 18, 2026</p><div class="anniversary-letter-copy">{anniversaryLetter.map((paragraph, index) => <p class:list={{ 'letter-salutation': index === 0, 'letter-promise': paragraph === '第二年，我们继续往前走吧。' || index === anniversaryLetter.length - 1 }}>{paragraph}</p>)}</div><footer><span>好好牵着你的我</span><time datetime="2026-10-18">2026.10.18</time><i aria-hidden="true">♡</i></footer></div>
+      <div class="anniversary-letter-paper"><span class="letter-paper-flower" aria-hidden="true">✳</span><p class="book-eyebrow">OCTOBER 18, 2026</p><div class="anniversary-letter-copy">{anniversaryLetter.map((paragraph, index) => <CommentableText articleSlug="year-one" anchorPrefix={`letter/paragraph-${String(index + 1).padStart(2, '0')}`} text={paragraph} className={[index === 0 ? 'letter-salutation' : '', paragraph === '第二年，我们继续往前走吧。' || index === anniversaryLetter.length - 1 ? 'letter-promise' : ''].filter(Boolean).join(' ')} />)}</div><footer><span>好好牵着你的我</span><time datetime="2026-10-18">2026.10.18</time><i aria-hidden="true">♡</i></footer></div>
     </details>
 
     <section class="anniversary-photo-pair" aria-label="一起走到的地方" data-book-reveal><MemoryPhoto photo={memoryPhotos.selfie} /><MemoryPhoto photo={memoryPhotos.taian} /><p class="book-handwritten">有你在身边，<br />就想把路走得更远一点。</p></section>
 
     <section class="anniversary-next-year" aria-labelledby="next-year-title"><p class="book-eyebrow">THE SECOND YEAR / 我们的下一年</p><h2 id="next-year-title">继续往前走。<br /><em>继续，好好爱你。</em></h2><div class="year-two-promises"><p><span>01</span>遇到困难，<br /><strong>我们一起慢慢解决。</strong></p><p><span>02</span>照顾好彼此，<br /><strong>也一起变得更好。</strong></p><p><span>03</span>再去新的城市，<br /><strong>牵着手，走得更远。</strong></p></div></section>
 
-    <section class="anniversary-afterword" id="afterword" aria-labelledby="afterword-title"><header class="book-section-head"><div><p class="book-eyebrow">AFTER THREE JOURNEYS</p><h2 id="afterword-title">写在三次旅行之后</h2></div><span class="book-handwritten">把零零碎碎，都认真收好。</span></header><div class="diary-prose"><DiaryText blocks={travelAfterword} /></div></section>
+    <section class="anniversary-afterword" id="afterword" aria-labelledby="afterword-title"><header class="book-section-head"><div><p class="book-eyebrow">AFTER THREE JOURNEYS</p><h2 id="afterword-title">写在三次旅行之后</h2></div><span class="book-handwritten">把零零碎碎，都认真收好。</span></header><div class="diary-prose"><DiaryText blocks={travelAfterword} articleSlug="year-one" scope="afterword" /></div></section>
 
     <footer class="anniversary-footer"><span aria-hidden="true">♡</span><p>第二年，也继续牵着我吧，猪猪。</p><a href="/games/" class="book-text-link">回到我们的第一年 <span aria-hidden="true">↗</span></a><small>OUR STORY IS STILL BEING WRITTEN.</small></footer>
   </div>
   <MemoryMusic track="love-message" /><MemoryEffects />
+  <CommentLayer articleSlug="year-one" client:load />
 </main>
 <script>
   const envelope = document.querySelector<HTMLDetailsElement>('.anniversary-envelope');

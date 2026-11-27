@@ -1,10 +1,25 @@
 ---
 import { diaryInline, type DiaryBlock } from '../../data/travelDiary';
-interface Props { blocks: DiaryBlock[] }
-const { blocks } = Astro.props;
+import { commentableHtml } from '../../lib/comments';
+
+interface Props {
+  blocks: DiaryBlock[];
+  articleSlug?: string;
+  scope?: string;
+  blockIndex?: number;
+  commentable?: boolean;
+}
+
+const { blocks, articleSlug = 'games', scope = 'body', blockIndex, commentable = true } = Astro.props;
 ---
-{blocks.map((block) => block.kind === 'subheading'
-  ? <h3 class="diary-subheading" set:html={diaryInline(block.text)} />
-  : block.kind === 'quote'
-    ? <blockquote class="diary-original-quote" set:html={diaryInline(block.text)} />
-    : <p set:html={diaryInline(block.text)} />)}
+{blocks.map((block, index) => {
+  const currentBlockIndex = blockIndex ?? index;
+  const html = commentable
+    ? commentableHtml(block.text, articleSlug, `${scope}/block-${String(currentBlockIndex + 1).padStart(2, '0')}`)
+    : diaryInline(block.text);
+  return block.kind === 'subheading'
+    ? <h3 class="diary-subheading" set:html={html} />
+    : block.kind === 'quote'
+      ? <blockquote class="diary-original-quote" set:html={html} />
+      : <p set:html={html} />;
+})}

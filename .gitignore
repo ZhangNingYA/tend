@@ -14,6 +14,11 @@ pnpm-debug.log*
 .dev-server.*.log
 .dev-server-*.log
 
+# server runtime data
+server/.env
+server/data/
+server/backups/
+
 
 # environment variables
 .env

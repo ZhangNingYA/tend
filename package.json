@@ -8,6 +8,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "comments:dev": "node server/comments-api.mjs",
+    "comments:hash-password": "node server/hash-password.mjs",
+    "comments:backup": "node server/backup-comments.mjs",
     "check:memories": "node scripts/check-memories.mjs",
     "preview": "astro preview",
     "astro": "astro"

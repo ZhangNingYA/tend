@@ -1,0 +1,35 @@
+services:
+  comments-api:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    env_file:
+      - ./server/.env
+    environment:
+      TEND_HOST: 0.0.0.0
+      TEND_PORT: 8787
+      TEND_DB_PATH: /data/comments.sqlite
+      TEND_COOKIE_SECURE: '1'
+      TEND_ALLOWED_ORIGIN: https://www.fulafu.com
+    volumes:
+      - ./server/data:/data
+      - ./server/backups:/backups
+    expose:
+      - '8787'
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:8787/health').then((response) => { if (!response.ok) process.exit(1); })"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  tend-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      comments-api:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:13101:80'
+    restart: unless-stopped

@@ -1,4 +1,6 @@
 import { useMemo, useRef, useState, useEffect } from 'react';
+import CommentLayer from './CommentLayer.jsx';
+import CommentableText from './CommentableText.jsx';
 
 const MUSIC_SRC = '/music/onlyone.mp3';
 
@@ -321,7 +323,7 @@ export default function KunmingFirstMeeting() {
                   <div className="km-timeline-content">
                     <time className="km-time">{item.time}</time>
                     <h3 className="km-event-title">{item.title}</h3>
-                    <p className="km-event-desc">{item.desc}</p>
+                    <CommentableText articleSlug="kunming-first-meeting" anchorPrefix={`timeline/${index + 1}`} className="km-event-desc" text={item.desc} />
                   </div>
                 </div>
               ))}
@@ -331,6 +333,7 @@ export default function KunmingFirstMeeting() {
           <section className="km-timer-section">
             <TimeSinceGoodbye />
           </section>
+          <CommentLayer articleSlug="kunming-first-meeting" />
         </div>
       </div>
     </main>

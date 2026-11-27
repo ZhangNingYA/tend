@@ -6,6 +6,7 @@ import PlacePhotos from './PlacePhotos.astro';
 import CinemaMemory from './CinemaMemory.astro';
 import MemoryMusic from './MemoryMusic.astro';
 import MemoryEffects from './MemoryEffects.astro';
+import CommentLayer from './CommentLayer.jsx';
 import '../../styles/memory-book.css';
 
 interface Props { variant: TripId }
@@ -13,6 +14,7 @@ const { variant } = Astro.props;
 const tripIndex = trips.findIndex((item) => item.id === variant);
 const trip = trips[tripIndex];
 if (!trip) throw new Error(`Unknown travel diary: ${variant}`);
+const articleSlug = `${variant}-trip`;
 const previous = trips[tripIndex - 1];
 const next = trips[tripIndex + 1];
 const musicTracks = { gaoyou: 'rain-love', xuzhou: 'magic-potion', taian: 'primrose' } as const;
@@ -41,8 +43,8 @@ const shortDate = (date: string) => date.replace('月', '.').replace('日', '');
       {trip.days.map((day, dayIndex) => <section class="diary-day" id={`day-${dayIndex + 1}`} data-diary-day>
         <header class="diary-day-heading" data-book-reveal><div class="diary-day-number"><span>DAY</span><strong>{String(dayIndex + 1).padStart(2, '0')}</strong></div><div><p>{day.date} · {trip.city}</p><h2>{day.title}</h2></div></header>
         <p class="diary-margin-note">{trip.dayNotes[dayIndex]} <span aria-hidden="true">↙</span></p>
-        <div class="diary-prose">{day.blocks.map((block) => <Fragment>
-          <DiaryText blocks={[block]} />
+        <div class="diary-prose">{day.blocks.map((block, blockIndex) => <Fragment>
+          <DiaryText blocks={[block]} articleSlug={articleSlug} scope={`day-${dayIndex + 1}`} blockIndex={blockIndex} />
           {variant === 'gaoyou' && dayIndex === 1 && block.text === '看电影的时候，猪猪还嫌旁边的小孩子太吵闹了，哈哈哈。' && <CinemaMemory />}
           {variant === 'gaoyou' && dayIndex === 2 && block.text === '之后我们绕着景点，一直牵着手慢慢地逛。' && <div class="diary-photo-interlude" data-book-reveal><MemoryPhoto photo={memoryPhotos.posthouse} /></div>}
           {variant === 'xuzhou' && dayIndex === 0 && block.text === '**8月22日中午**，我们一起到了徐州站。' && <PlacePhotos place="徐州站" photos={[memoryPhotos.xuzhouStation]} />}
@@ -66,4 +68,5 @@ const shortDate = (date: string) => date.replace('月', '.').replace('日', '');
     <footer class="journal-ending"><span class="book-handwritten">下一页，也还是我们。♡</span><nav class="journal-next" aria-label="继续翻阅"><a href={previous ? `/games/${previous.slug}/` : '/games/#our-travels'}><small>← {previous ? '上一段旅程' : '回到纪念册'}</small><strong>{previous ? previous.city + '之旅' : '我们的第一年'}</strong></a><a href={next ? `/games/${next.slug}/` : '/games/year-one/'}><small>{next ? '下一段旅程' : '有些话，想说给你听'} ↗</small><strong>{next ? next.city + '之旅' : '一周年，写给猪猪的信'}</strong></a></nav></footer>
   </div>
   <MemoryMusic track={musicTracks[variant]} /><MemoryEffects />
+  <CommentLayer articleSlug={articleSlug} client:load />
 </main>

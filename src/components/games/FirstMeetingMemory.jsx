@@ -1,3 +1,6 @@
+import CommentLayer from './CommentLayer.jsx';
+import CommentableText from './CommentableText.jsx';
+
 export default function FirstMeetingMemory() {
   return (
     <main className="fm-page">
@@ -27,9 +30,7 @@ export default function FirstMeetingMemory() {
             <p className="fm-kicker"><span>01</span> 记忆档案</p>
             <h1 id="fm-title">第一次<br /><span>相遇</span></h1>
             <p className="fm-date-caption">计时与记忆的共同起点</p>
-            <p className="fm-lead">
-              从 2025 年 10 月 18 日起，首页计时器开始向前。日子不断增加，而这一天一直留在故事最前面。
-            </p>
+            <CommentableText articleSlug="first-meeting" anchorPrefix="hero/lead" className="fm-lead" text="从 2025 年 10 月 18 日起，首页计时器开始向前。日子不断增加，而这一天一直留在故事最前面。" />
           </div>
         </section>
 
@@ -40,9 +41,7 @@ export default function FirstMeetingMemory() {
           </div>
           <div className="fm-note-copy">
             <h2 id="fm-note-title">日子向前，<br />第一页留在这里。</h2>
-            <p>
-              以后还会有新的日期和故事，而 2025 年 10 月 18 日，始终是这段记忆的开端。
-            </p>
+            <CommentableText articleSlug="first-meeting" anchorPrefix="note/body" text="以后还会有新的日期和故事，而 2025 年 10 月 18 日，始终是这段记忆的开端。" />
           </div>
         </section>
 
@@ -56,6 +55,7 @@ export default function FirstMeetingMemory() {
           <span>OPENING ENTRY / 001</span>
           <a href="/games/">回到记忆时间线 <span aria-hidden="true">↗</span></a>
         </footer>
+        <CommentLayer articleSlug="first-meeting" />
       </div>
     </main>
   );

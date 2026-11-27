@@ -50,9 +50,13 @@ src/styles/     Shared styles
 
 ## Deployment
 
-Pushes to `master` are built and deployed to GitHub Pages by
-`.github/workflows/deploy.yml`. The production site uses the custom domain
-`www.fulafu.com`.
+Production runs on the `sv` server with Docker Compose. The web container serves the
+Astro build, the comments container stores SQLite data, and the dedicated Cloudflare
+Tunnel serves `www.fulafu.com`. The setup and backup commands are documented in
+`server/README.md`.
+
+The GitHub Pages workflow remains available as a static fallback build. It does not
+hold comment data.
 
 ## Credits
 

@@ -12,8 +12,8 @@ node server/hash-password.mjs "first long passphrase"
 node server/hash-password.mjs "second long passphrase"
 ```
 
-Copy `server/.env.example` to `server/.env`, add the two hashes, and choose the two display names.
-The `.env` file stays outside Git.
+Run `server/setup-users.sh` on the server to enter the two passwords without echoing them.
+The script writes only password hashes to `server/.env`, which stays outside Git.
 
 Start the full stack from the repository root.
 

@@ -172,12 +172,14 @@ export default function CommentLayer({ articleSlug }) {
     findSentenceElements(articleSlug).forEach((sentence) => {
       const anchorKey = sentence.dataset.commentAnchor;
       if (!wanted.has(anchorKey)) return;
-      let host = sentence.nextElementSibling;
+      const parentTag = sentence.parentElement?.tagName;
+      const insertionPoint = parentTag === 'STRONG' || parentTag === 'H3' ? sentence.parentElement : sentence;
+      let host = insertionPoint.nextElementSibling;
       if (!host?.matches?.('[data-comment-thread-host]')) {
         host = document.createElement('span');
         host.className = 'comment-thread-host';
         host.dataset.commentThreadHost = anchorKey;
-        sentence.after(host);
+        insertionPoint.after(host);
       }
       entries.push({ anchorKey, host });
     });

@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useEffect, useMemo, useState } from 'react';
 import '../../styles/comments.css';
 
@@ -31,34 +32,108 @@ function updateAnchorDecorations(articleSlug, commentsByAnchor, selectedKey) {
     else delete element.dataset.commentCount;
     element.classList.toggle('is-comment-selected', key === selectedKey);
     const label = element.textContent?.trim() || '';
-    element.setAttribute('aria-label', count ? `${label}，${count} 条评论` : label);
+    element.setAttribute('aria-label', count ? `${label}，${count} 条留言` : label);
   });
+}
+
+function findSentenceElements(articleSlug) {
+  return [...document.querySelectorAll('[data-comment-anchor]')]
+    .filter((element) => element.dataset.commentArticle === articleSlug);
+}
+
+function CommentEntry({ comment, canEdit, editing, editingBody, busy, onEdit, onSave, onCancel, onDelete }) {
+  if (editing) {
+    return (
+      <span className="comment-entry comment-entry-editing">
+        <form onSubmit={onSave}>
+          <textarea value={editingBody} onChange={(event) => onEdit(event.target.value)} maxLength={2000} autoFocus aria-label="修改留言" />
+          <span className="comment-form-actions"><button type="submit" disabled={busy}>保存</button><button type="button" onClick={onCancel}>取消</button></span>
+        </form>
+      </span>
+    );
+  }
+
+  return (
+    <span className="comment-entry">
+      <span className="comment-entry-meta"><strong>{comment.authorName}</strong><time dateTime={comment.createdAt}>{new Date(comment.createdAt).toLocaleString('zh-CN', { dateStyle: 'medium', timeStyle: 'short' })}</time></span>
+      <span className="comment-entry-body">{comment.body}</span>
+      {canEdit && <span className="comment-entry-actions"><button type="button" onClick={onEdit}>修改</button><button type="button" onClick={onDelete}>删除</button></span>}
+    </span>
+  );
+}
+
+function InlineThread({ anchorKey, comments, selected, me, loginOpen, password, draft, editingId, editingBody, busy, error, onActivate, onLoginOpen, onPassword, onLogin, onLogout, onDraft, onSubmit, onEditStart, onEditBody, onEditSave, onEditCancel, onDelete }) {
+  const active = selected?.anchorKey === anchorKey;
+  return (
+    <div className={`comment-thread ${active ? 'is-active' : ''}`} data-comment-thread={anchorKey} role="region" aria-label="句子留言">
+      <div className="comment-thread-head">
+        <span className="comment-thread-label">{comments.length ? `${comments.length} 条留言` : '还没有留言'}</span>
+        {!active && <button className="comment-thread-open" type="button" onClick={onActivate}>写留言</button>}
+      </div>
+
+      {comments.length > 0 && (
+        <div className="comment-thread-list">
+          {comments.map((comment) => (
+            <CommentEntry
+              key={comment.id}
+              comment={comment}
+              canEdit={me?.id === comment.authorId}
+              editing={editingId === comment.id}
+              editingBody={editingBody}
+              busy={busy}
+              onEdit={(value) => editingId === comment.id ? onEditBody(value) : onEditStart(comment)}
+              onSave={(event) => onEditSave(event, comment.id, anchorKey)}
+              onCancel={onEditCancel}
+              onDelete={() => onDelete(comment.id, anchorKey)}
+            />
+          ))}
+        </div>
+      )}
+
+      {active && (
+        <div className="comment-thread-composer">
+          {me ? (
+            <form onSubmit={(event) => onSubmit(event, anchorKey)}>
+              <div className="comment-composer-user"><span>以 {me.name} 的身份留言</span><button type="button" onClick={onLogout} disabled={busy}>退出</button></div>
+              <textarea value={draft} onChange={(event) => onDraft(event.target.value)} maxLength={2000} placeholder="写一句想留在这里的话" aria-label="留言内容" />
+              <div className="comment-composer-footer"><span>{draft.length}/2000</span><button type="submit" disabled={busy || !draft.trim()}>发布留言</button></div>
+            </form>
+          ) : loginOpen ? (
+            <form onSubmit={onLogin}>
+              <label className="comment-login-label">输入密码后发表评论</label>
+              <input type="password" value={password} onChange={(event) => onPassword(event.target.value)} autoComplete="current-password" required aria-label="评论密码" />
+              <div className="comment-form-actions"><button type="submit" disabled={busy}>进入</button><button type="button" onClick={() => onLoginOpen(false)}>取消</button></div>
+            </form>
+          ) : (
+            <button className="comment-login-trigger" type="button" onClick={() => onLoginOpen(true)}>输入密码，留下留言</button>
+          )}
+          {error && <p className="comment-error">{error}</p>}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function CommentLayer({ articleSlug }) {
   const [commentsByAnchor, setCommentsByAnchor] = useState({});
   const [selected, setSelected] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [hosts, setHosts] = useState([]);
   const [me, setMe] = useState(null);
   const [password, setPassword] = useState('');
   const [draft, setDraft] = useState('');
-  const [editingId, setEditingId] = useState(null);
+  const [editing, setEditing] = useState(null);
   const [editingBody, setEditingBody] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [serviceState, setServiceState] = useState('loading');
   const [loginOpen, setLoginOpen] = useState(false);
 
-  const selectedComments = selected ? commentsByAnchor[selected.anchorKey] || [] : [];
-  const currentCount = selectedComments.length;
-
-  const groupedComments = useMemo(() => {
-    const grouped = {};
-    Object.entries(commentsByAnchor).forEach(([key, comments]) => {
-      grouped[key] = comments.slice().sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    });
-    return grouped;
-  }, [commentsByAnchor]);
+  const groupedComments = useMemo(() => Object.fromEntries(
+    Object.entries(commentsByAnchor).map(([key, comments]) => [
+      key,
+      comments.slice().sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)),
+    ]),
+  ), [commentsByAnchor]);
 
   useEffect(() => {
     let active = true;
@@ -90,16 +165,38 @@ export default function CommentLayer({ articleSlug }) {
   }, [articleSlug, groupedComments, selected]);
 
   useEffect(() => {
+    if (serviceState !== 'ready') return undefined;
+    const wanted = new Set(Object.keys(groupedComments));
+    if (selected?.anchorKey) wanted.add(selected.anchorKey);
+    const entries = [];
+    findSentenceElements(articleSlug).forEach((sentence) => {
+      const anchorKey = sentence.dataset.commentAnchor;
+      if (!wanted.has(anchorKey)) return;
+      let host = sentence.nextElementSibling;
+      if (!host?.matches?.('[data-comment-thread-host]')) {
+        host = document.createElement('span');
+        host.className = 'comment-thread-host';
+        host.dataset.commentThreadHost = anchorKey;
+        sentence.after(host);
+      }
+      entries.push({ anchorKey, host });
+    });
+    setHosts(entries);
+    return undefined;
+  }, [articleSlug, groupedComments, selected, serviceState]);
+
+  useEffect(() => {
     const activate = (event) => {
       const target = event.target.closest?.('[data-comment-anchor]');
       if (!target || target.dataset.commentArticle !== articleSlug) return;
       event.preventDefault();
-      setSelected({
-        anchorKey: target.dataset.commentAnchor,
-        text: target.textContent?.trim() || '',
-      });
-      setOpen(true);
+      setSelected({ anchorKey: target.dataset.commentAnchor, text: target.textContent?.trim() || '' });
       setError('');
+      window.setTimeout(() => {
+        const host = [...document.querySelectorAll('[data-comment-thread-host]')]
+          .find((element) => element.dataset.commentThreadHost === target.dataset.commentAnchor);
+        host?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }, 0);
     };
     const onKeyDown = (event) => {
       if ((event.key !== 'Enter' && event.key !== ' ') || !event.target.matches?.('[data-comment-anchor]')) return;
@@ -113,15 +210,18 @@ export default function CommentLayer({ articleSlug }) {
     };
   }, [articleSlug]);
 
+  const activateAnchor = (anchorKey) => {
+    const sentence = findSentenceElements(articleSlug).find((element) => element.dataset.commentAnchor === anchorKey);
+    setSelected({ anchorKey, text: sentence?.textContent?.trim() || '' });
+    setError('');
+  };
+
   const login = async (event) => {
     event.preventDefault();
     setBusy(true);
     setError('');
     try {
-      const payload = await request('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ password }),
-      });
+      const payload = await request('/auth/login', { method: 'POST', body: JSON.stringify({ password }) });
       setMe(payload.user);
       setPassword('');
       setLoginOpen(false);
@@ -144,135 +244,90 @@ export default function CommentLayer({ articleSlug }) {
     }
   };
 
-  const submitComment = async (event) => {
+  const submitComment = async (event, anchorKey) => {
     event.preventDefault();
-    if (!selected || !draft.trim()) return;
+    if (!draft.trim()) return;
     setBusy(true);
     setError('');
     try {
       const payload = await request('/comments', {
         method: 'POST',
-        body: JSON.stringify({
-          articleSlug,
-          anchorKey: selected.anchorKey,
-          anchorTextSnapshot: selected.text,
-          body: draft.trim(),
-        }),
+        body: JSON.stringify({ articleSlug, anchorKey, anchorTextSnapshot: selected?.text || '', body: draft.trim() }),
       });
-      setCommentsByAnchor((current) => ({
-        ...current,
-        [selected.anchorKey]: [...(current[selected.anchorKey] || []), payload.comment],
-      }));
+      setCommentsByAnchor((current) => ({ ...current, [anchorKey]: [...(current[anchorKey] || []), payload.comment] }));
       setDraft('');
     } catch (requestError) {
       if (requestError.status === 401) setLoginOpen(true);
-      setError(requestError.message || '评论发布失败');
+      setError(requestError.message || '留言发布失败');
     } finally {
       setBusy(false);
     }
   };
 
-  const updateComment = async (event, commentId) => {
+  const updateComment = async (event, commentId, anchorKey) => {
     event.preventDefault();
     if (!editingBody.trim()) return;
     setBusy(true);
     setError('');
     try {
-      const payload = await request(`/comments/${commentId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ body: editingBody.trim() }),
-      });
-      setCommentsByAnchor((current) => ({
-        ...current,
-        [selected.anchorKey]: current[selected.anchorKey].map((comment) => comment.id === commentId ? payload.comment : comment),
-      }));
-      setEditingId(null);
+      const payload = await request(`/comments/${commentId}`, { method: 'PATCH', body: JSON.stringify({ body: editingBody.trim() }) });
+      setCommentsByAnchor((current) => ({ ...current, [anchorKey]: current[anchorKey].map((comment) => comment.id === commentId ? payload.comment : comment) }));
+      setEditing(null);
       setEditingBody('');
     } catch (requestError) {
-      setError(requestError.message || '评论修改失败');
+      setError(requestError.message || '留言修改失败');
     } finally {
       setBusy(false);
     }
   };
 
-  const deleteComment = async (commentId) => {
-    if (!window.confirm('确定删除这条评论吗？')) return;
+  const deleteComment = async (commentId, anchorKey) => {
+    if (!window.confirm('确定删除这条留言吗？')) return;
     setBusy(true);
     setError('');
     try {
       await request(`/comments/${commentId}`, { method: 'DELETE' });
-      setCommentsByAnchor((current) => ({
-        ...current,
-        [selected.anchorKey]: current[selected.anchorKey].filter((comment) => comment.id !== commentId),
-      }));
+      setCommentsByAnchor((current) => ({ ...current, [anchorKey]: current[anchorKey].filter((comment) => comment.id !== commentId) }));
     } catch (requestError) {
-      setError(requestError.message || '评论删除失败');
+      setError(requestError.message || '留言删除失败');
     } finally {
       setBusy(false);
     }
   };
 
-  if (serviceState === 'loading') return null;
+  if (serviceState !== 'ready') return null;
 
   return (
-    <div className={`comment-layer ${open ? 'is-open' : ''}`} aria-live="polite">
-      <button className="comment-layer-backdrop" type="button" aria-label="关闭评论" onClick={() => setOpen(false)} />
-      <aside className="comment-panel" aria-label="句子评论" aria-hidden={!open}>
-        <header className="comment-panel-header">
-          <div>
-            <span className="comment-panel-kicker">SENTENCE NOTES</span>
-            <strong>句子评论</strong>
-          </div>
-          <button className="comment-close" type="button" aria-label="关闭评论" onClick={() => setOpen(false)}>×</button>
-        </header>
-
-        {serviceState === 'offline' ? (
-          <p className="comment-status">{error || '评论服务暂时不可用。'}</p>
-        ) : !selected ? (
-          <p className="comment-status">点击正文中的一句话，打开它的评论。</p>
-        ) : (
-          <div className="comment-panel-content">
-            <blockquote className="comment-anchor-quote">“{selected.text}”</blockquote>
-            <p className="comment-count-label">{currentCount ? `${currentCount} 条评论` : '还没有评论'}</p>
-
-            <div className="comment-list">
-              {selectedComments.map((comment) => (
-                <article className="comment-item" key={comment.id}>
-                  {editingId === comment.id ? (
-                    <form onSubmit={(event) => updateComment(event, comment.id)}>
-                      <textarea value={editingBody} onChange={(event) => setEditingBody(event.target.value)} maxLength={2000} autoFocus />
-                      <div className="comment-form-actions"><button type="submit" disabled={busy}>保存</button><button type="button" onClick={() => setEditingId(null)}>取消</button></div>
-                    </form>
-                  ) : (
-                    <>
-                      <div className="comment-item-meta"><strong>{comment.authorName}</strong><time dateTime={comment.createdAt}>{new Date(comment.createdAt).toLocaleString('zh-CN', { dateStyle: 'medium', timeStyle: 'short' })}</time></div>
-                      <p>{comment.body}</p>
-                      {me?.id === comment.authorId && <div className="comment-item-actions"><button type="button" onClick={() => { setEditingId(comment.id); setEditingBody(comment.body); }}>修改</button><button type="button" onClick={() => deleteComment(comment.id)}>删除</button></div>}
-                    </>
-                  )}
-                </article>
-              ))}
-            </div>
-
-            {me ? (
-              <form className="comment-composer" onSubmit={submitComment}>
-                <div className="comment-composer-user"><span>以 {me.name} 的身份</span><button type="button" onClick={logout} disabled={busy}>退出</button></div>
-                <textarea value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={2000} placeholder="写一句想留在这里的话" aria-label="评论内容" />
-                <div className="comment-composer-footer"><span>{draft.length}/2000</span><button type="submit" disabled={busy || !draft.trim()}>发布评论</button></div>
-              </form>
-            ) : loginOpen ? (
-              <form className="comment-login" onSubmit={login}>
-                <label htmlFor="comment-password">输入密码后发表评论</label>
-                <input id="comment-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required />
-                <div className="comment-form-actions"><button type="submit" disabled={busy}>进入</button><button type="button" onClick={() => setLoginOpen(false)}>取消</button></div>
-              </form>
-            ) : (
-              <button className="comment-login-trigger" type="button" onClick={() => setLoginOpen(true)}>输入密码，留下评论</button>
-            )}
-            {error && <p className="comment-error">{error}</p>}
-          </div>
-        )}
-      </aside>
+    <div className="comment-layer-inline" aria-live="polite">
+      {hosts.map(({ anchorKey, host }) => createPortal(
+        <InlineThread
+          key={anchorKey}
+          anchorKey={anchorKey}
+          comments={groupedComments[anchorKey] || []}
+          selected={selected}
+          me={me}
+          loginOpen={loginOpen && selected?.anchorKey === anchorKey}
+          password={password}
+          draft={draft}
+          editingId={editing?.anchorKey === anchorKey ? editing.id : null}
+          editingBody={editingBody}
+          busy={busy}
+          error={selected?.anchorKey === anchorKey ? error : ''}
+          onActivate={() => activateAnchor(anchorKey)}
+          onLoginOpen={setLoginOpen}
+          onPassword={setPassword}
+          onLogin={login}
+          onLogout={logout}
+          onDraft={setDraft}
+          onSubmit={submitComment}
+          onEditStart={(comment) => { setEditing({ anchorKey, id: comment.id }); setEditingBody(comment.body); }}
+          onEditBody={setEditingBody}
+          onEditSave={updateComment}
+          onEditCancel={() => { setEditing(null); setEditingBody(''); }}
+          onDelete={deleteComment}
+        />,
+        host,
+      ))}
     </div>
   );
 }
